@@ -78,6 +78,7 @@ class Goals extends Component<Props, State> {
       targetType,
       draft: true,
       started: moment().valueOf(),
+      ascensionCount: 0,
     })
     this.setState({
       name: '',
@@ -102,12 +103,14 @@ class Goals extends Component<Props, State> {
       firebase.set(`/goals/${currentUserId}/${goalId}`, {
         ...edditedGoal,
         draft: false,
+        ascensionCount: 0,
       })
     } else {
       firebase.set(`/goals/${currentUserId}/${goalId}`, {
         ...edditedGoal,
         started: moment().valueOf(),
         draft: true,
+        ascensionCount: 0,
       })
     }
   }
@@ -121,6 +124,7 @@ class Goals extends Component<Props, State> {
     firebase.set(`/goals/${currentUserId}/${goalId}`, {
       ...edditedGoal,
       target: newTarget,
+      ascensionCount: edditedGoal.ascensionCount + 1,
     })
     // TODO: goal history (extended on date... etc.)
   }

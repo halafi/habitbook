@@ -2,6 +2,7 @@
 
 import React from 'react'
 import moment from 'moment'
+import * as R from 'ramda'
 
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -10,6 +11,7 @@ import ExpansionPanel, {
 } from 'material-ui/ExpansionPanel'
 import Typography from 'material-ui/Typography'
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
+import StarBorder from 'material-ui-icons/StarBorder'
 import Button from 'material-ui/Button'
 import Divider from 'material-ui/Divider'
 import TextField from 'material-ui/TextField'
@@ -33,6 +35,10 @@ const styles = theme => ({
   leftIcon: {
     marginRight: '4px',
   },
+  rightIcon: {
+    marginLeft: '4px',
+    height: '20px',
+  },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
@@ -40,6 +46,10 @@ const styles = theme => ({
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
+  },
+  starsContainer: {
+    marginLeft: '10px',
     color: theme.palette.text.secondary,
   },
 })
@@ -51,13 +61,17 @@ const styles = theme => ({
 const Goal = ({ goal, onDelete, onChangeDate, onToggleDraft, onExtendGoal, classes }: Props) => (
   <ExpansionPanel>
     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography />
       <Typography className={classes.heading}>
         {goal.name} {goal.draft && '(Draft)'}
       </Typography>
       {!goal.draft && (
         <Typography className={classes.secondaryHeading}>
           {getElapsedDaysTillNow(goal.started)} / {goal.target}
+        </Typography>
+      )}
+      {goal.ascensionCount > 0 && (
+        <Typography className={classes.starsContainer}>
+          {R.times(() => <StarBorder className={classes.rightIcon} />, goal.ascensionCount)}
         </Typography>
       )}
     </ExpansionPanelSummary>
@@ -117,7 +131,7 @@ const Goal = ({ goal, onDelete, onChangeDate, onToggleDraft, onExtendGoal, class
           ) : (
             <Tooltip
               id="tooltip-reset-bottom"
-              title="Reset your progress and start over"
+              title="Reset all your progress and start over"
               placement="bottom"
             >
               <Button dense onClick={onToggleDraft}>
