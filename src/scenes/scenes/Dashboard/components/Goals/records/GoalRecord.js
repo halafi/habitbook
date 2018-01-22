@@ -17,7 +17,6 @@ export type Goal = {
   target: number,
   draft: boolean,
   started: number,
-  completedUntil: number,
   // done: number,
   // created: number,
 }

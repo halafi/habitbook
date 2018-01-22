@@ -13,7 +13,7 @@ import { withStyles } from 'material-ui/styles'
 import Goal from './Goal'
 import NewGoalForm from './components/NewGoalForm'
 import { GOAL_DATE_TIME } from './consts/dateTimeConsts'
-
+import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
 import type { Goals as GoalsType, TargetType } from './records/GoalRecord'
 
 type Props = {
@@ -53,6 +53,7 @@ class Goals extends Component<Props, State> {
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChangeDate = this.handleChangeDate.bind(this)
     this.handleToggleDraft = this.handleToggleDraft.bind(this)
+    this.handleExtendGoal = this.handleExtendGoal.bind(this)
   }
 
   handleDelete(goalId) {
@@ -77,7 +78,6 @@ class Goals extends Component<Props, State> {
       targetType,
       draft: true,
       started: moment().valueOf(),
-      completedUntil: moment().valueOf(),
     })
     this.setState({
       name: '',
@@ -91,7 +91,6 @@ class Goals extends Component<Props, State> {
     firebase.set(`/goals/${currentUserId}/${goalId}`, {
       ...goals[currentUserId][goalId],
       started: newMoment.valueOf(),
-      completedUntil: newMoment.valueOf(),
     })
   }
 
@@ -103,16 +102,27 @@ class Goals extends Component<Props, State> {
       firebase.set(`/goals/${currentUserId}/${goalId}`, {
         ...edditedGoal,
         draft: false,
-        completedUntil: edditedGoal.started,
       })
     } else {
       firebase.set(`/goals/${currentUserId}/${goalId}`, {
         ...edditedGoal,
         started: moment().valueOf(),
         draft: true,
-        completedUntil: edditedGoal.started,
       })
     }
+  }
+
+  handleExtendGoal(goalId: string) {
+    const { currentUserId, goals, firebase } = this.props
+
+    const edditedGoal = goals[currentUserId][goalId]
+    const daysCompleted = getElapsedDaysTillNow(edditedGoal.started)
+    const newTarget = edditedGoal.target * 2 // TODO: table of targets
+    firebase.set(`/goals/${currentUserId}/${goalId}`, {
+      ...edditedGoal,
+      target: newTarget,
+    })
+    // TODO: goal history (extended on date... etc.)
   }
 
   render() {
@@ -137,6 +147,7 @@ class Goals extends Component<Props, State> {
                   onDelete={R.partial(this.handleDelete, [goalId])}
                   onChangeDate={R.partial(this.handleChangeDate, [goalId])}
                   onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
+                  onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
                 />
               ))}
             <NewGoalForm

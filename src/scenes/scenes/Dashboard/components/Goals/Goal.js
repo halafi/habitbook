@@ -13,9 +13,10 @@ import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
 import Button from 'material-ui/Button'
 import Divider from 'material-ui/Divider'
 import TextField from 'material-ui/TextField'
+import Tooltip from 'material-ui/Tooltip'
 import { withStyles } from 'material-ui/styles'
-import Done from 'material-ui-icons/Done'
 
+import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
 import { Goal as GoalType } from './records/GoalRecord'
 import { GOAL_DATE_TIME } from './consts/dateTimeConsts'
 
@@ -24,6 +25,7 @@ type Props = {
   onDelete: string => void,
   onChangeDate: (string, any) => void,
   onToggleDraft: string => void,
+  onExtendGoal: string => void,
   classes: any,
 }
 
@@ -45,14 +47,19 @@ const styles = theme => ({
 // TODO: controlled accordion
 // TODO: min date today
 // TODO: moment computes
-const Goal = ({ goal, onDelete, onChangeDate, onToggleDraft, classes }: Props) => (
+// TODO: difficulty and points
+const Goal = ({ goal, onDelete, onChangeDate, onToggleDraft, onExtendGoal, classes }: Props) => (
   <ExpansionPanel>
     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
       <Typography />
-      <Typography className={classes.heading}>{goal.name}</Typography>
-      <Typography className={classes.secondaryHeading}>
-        {moment(goal.completedUntil).diff(moment(goal.started), 'd')} / {goal.target}
+      <Typography className={classes.heading}>
+        {goal.name} {goal.draft && '(Draft)'}
       </Typography>
+      {!goal.draft && (
+        <Typography className={classes.secondaryHeading}>
+          {getElapsedDaysTillNow(goal.started)} / {goal.target}
+        </Typography>
+      )}
     </ExpansionPanelSummary>
     <ExpansionPanelDetails>
       <Typography>
@@ -64,7 +71,7 @@ const Goal = ({ goal, onDelete, onChangeDate, onToggleDraft, classes }: Props) =
         <br />
         <TextField
           id="start-date"
-          label="Start from"
+          label={goal.draft ? 'Start from' : 'Started'}
           type="date"
           value={moment(goal.started).format(GOAL_DATE_TIME)}
           InputLabelProps={{
@@ -75,37 +82,6 @@ const Goal = ({ goal, onDelete, onChangeDate, onToggleDraft, classes }: Props) =
         />
         <br />
         <br />
-        <TextField
-          id="end-date"
-          label="Completed until"
-          type="date"
-          value={moment(goal.completedUntil).format(GOAL_DATE_TIME)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          disabled
-        />
-        <Button className={classes.button} color="primary">
-          <Done className={classes.leftIcon} />{' '}
-          {moment(goal.completedUntil)
-            .clone()
-            .add(1, 'd')
-            .format('ddd')}{' '}
-          Done
-        </Button>
-        <Button mini className={classes.button} color="primary">
-          <Done className={classes.leftIcon} />{' '}
-          {moment(goal.completedUntil)
-            .clone()
-            .add(1, 'd')
-            .format('ddd')}
-          {' - '}
-          {moment(goal.completedUntil)
-            .clone()
-            .add(1, 'd')
-            .format('ddd')}{' '}
-          Done
-        </Button>
       </Typography>
     </ExpansionPanelDetails>
     <Divider />
@@ -115,24 +91,40 @@ const Goal = ({ goal, onDelete, onChangeDate, onToggleDraft, classes }: Props) =
           <Button dense onClick={onDelete}>
             Discard
           </Button>
-          <Button dense onClick={onToggleDraft} color="primary">
-            Start
-          </Button>
+          <Tooltip id="tooltip-begin-bottom" title="Begin tracking" placement="bottom">
+            <Button dense onClick={onToggleDraft} color="primary">
+              Start
+            </Button>
+          </Tooltip>
         </div>
       ) : (
         <div>
-          <Button dense onClick={onDelete}>
-            Give up
-          </Button>
-          <Button dense onClick={onToggleDraft}>
-            Retry
-          </Button>
-          <Button disabled dense onClick={null} color="primary">
-            <Done className={classes.leftIcon} /> Done
-          </Button>
-          <Button disabled dense onClick={null} color="primary">
-            Extend
-          </Button>
+          {getElapsedDaysTillNow(goal.started) >= goal.target ? (
+            <span>
+              <Button dense onClick={onDelete}>
+                Finish
+              </Button>
+              <Tooltip
+                id="tooltip-extend-bottom"
+                title="Double your target amount of days"
+                placement="bottom"
+              >
+                <Button dense onClick={onExtendGoal} color="primary">
+                  Ascend
+                </Button>
+              </Tooltip>
+            </span>
+          ) : (
+            <Tooltip
+              id="tooltip-reset-bottom"
+              title="Reset your progress and start over"
+              placement="bottom"
+            >
+              <Button dense onClick={onToggleDraft}>
+                Reset
+              </Button>
+            </Tooltip>
+          )}
         </div>
       )}
     </ExpansionPanelActions>
