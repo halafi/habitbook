@@ -9,9 +9,9 @@ import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles/index'
 
-import type { Profile } from '../../../../records/Profile'
+import type { Profile } from '../../../../../records/Profile'
 
-import type { Goals } from '../../../../records/Goal'
+import type { Goals } from '../../../../../records/Goal'
 
 type Props = {
   classes: Object,
@@ -26,7 +26,7 @@ type Props = {
 
 const styles = {
   card: {
-    width: '45%',
+    width: '48%',
     marginTop: '24px',
   },
 }

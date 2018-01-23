@@ -98,12 +98,13 @@ class GoalView extends Component<Props> {
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <Typography>
-            {goal.target}{' '}
-            {goal.targetType === 'DAYS'
-              ? 'days required to complete.'
-              : 'performances required to complete.'}
-            <br />
+          <div>
+            <Typography>
+              {goal.target}{' '}
+              {goal.targetType === 'DAYS'
+                ? 'days required to complete.'
+                : 'performances required to complete.'}
+            </Typography>
             <br />
             <TextField
               id="start-date"
@@ -135,7 +136,7 @@ class GoalView extends Component<Props> {
                 </option>
               ))}
             </TextField>
-          </Typography>
+          </div>
         </ExpansionPanelDetails>
         <Divider />
         <ExpansionPanelActions>

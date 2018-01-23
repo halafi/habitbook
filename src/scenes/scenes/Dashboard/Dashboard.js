@@ -3,8 +3,8 @@
 import React, { Component } from 'react'
 import moment from 'moment'
 
-import Stats from './components/Stats/Stats'
 import Goals from './components/Goals/GoalList'
+import FriendsAndStats from './components/FriendsAndStats/FriendsAndStats'
 
 import type { Profile } from '../../records/Profile'
 
@@ -22,7 +22,7 @@ class Intro extends Component<Props> {
     return (
       <div className="Dashboard">
         <Goals />
-        <Stats created={created} profile={profile} />
+        {/*<FriendsAndStats created={created} profile={profile} />*/}
       </div>
     )
   }

@@ -52,7 +52,7 @@ const NewGoalForm = ({
   <form className={classes.form} onSubmit={onSubmit} noValidate autoComplete="off">
     <TextField
       id="name"
-      label="New goal name"
+      label="New goal"
       value={name}
       onChange={ev => onChange('name', ev.target.value)}
       margin="normal"
