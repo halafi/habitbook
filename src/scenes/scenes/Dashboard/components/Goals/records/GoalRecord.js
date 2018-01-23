@@ -11,6 +11,25 @@ export const TARGET_TYPES = [
 
 export type TargetType = 'DAYS' | 'COUNT'
 
+export const GOAL_VISIBILITIES = [
+  {
+    value: 'secret',
+    label: 'Hidden',
+  },
+  {
+    value: 'private',
+    label: 'Only you',
+  },
+  {
+    value: 'public',
+    label: 'Friends',
+  },
+]
+
+export type Visibility = 'secret' | 'private' | 'public'
+
+export const getGoalVisibility = (level: 0 | 1 | 2): Visibility => GOAL_VISIBILITIES[level].value
+
 export type Goal = {
   name: string,
   targetType: TargetType,
@@ -18,6 +37,7 @@ export type Goal = {
   draft: boolean,
   started: number,
   ascensionCount: number,
+  visibility: string,
   // done: number,
   // created: number,
 }

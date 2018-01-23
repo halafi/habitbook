@@ -19,15 +19,17 @@ import Tooltip from 'material-ui/Tooltip'
 import { withStyles } from 'material-ui/styles'
 
 import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
-import { Goal as GoalType } from './records/GoalRecord'
+import type { Goal } from './records/GoalRecord'
+import { getGoalVisibility, GOAL_VISIBILITIES } from './records/GoalRecord'
 import { GOAL_DATE_TIME } from '../../../../../consts/dateTimeConsts'
 
 type Props = {
-  goal: GoalType,
+  goal: Goal,
   onDelete: string => void,
   onChangeDate: (string, any) => void,
   onToggleDraft: string => void,
   onExtendGoal: string => void,
+  onChangeVisibility: string => void,
   classes: any,
 }
 
@@ -58,15 +60,31 @@ const styles = theme => ({
 // TODO: min date today
 // TODO: moment computes
 // TODO: difficulty and points
-class Goal extends Component<Props> {
+class GoalView extends Component<Props> {
+  // constructor(props: Props) {
+  //   super(props)
+  //   this.state = {
+  //
+  //   }
+  // }
   render() {
-    const { goal, onDelete, onChangeDate, onToggleDraft, onExtendGoal, classes } = this.props
+    const {
+      goal,
+      onDelete,
+      onChangeDate,
+      onToggleDraft,
+      onExtendGoal,
+      onChangeVisibility,
+      classes,
+    } = this.props
+
+    const goalName = goal.visibility === getGoalVisibility(0) ? ' ¯\\_(ツ)_/¯' : goal.name
 
     return (
       <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.heading}>
-            {goal.name} {goal.draft && '(Draft)'}
+            {goalName} {goal.draft && '(Draft)'}
           </Typography>
           {!goal.draft && (
             <Typography className={classes.secondaryHeading}>
@@ -99,7 +117,24 @@ class Goal extends Component<Props> {
               disabled={!goal.draft}
             />
             <br />
-            <br />
+            <TextField
+              id="select-target-type"
+              select
+              label="Visible to"
+              value={goal.visibility}
+              onChange={onChangeVisibility}
+              SelectProps={{
+                native: true,
+              }}
+              margin="normal"
+              className={classes.textField}
+            >
+              {GOAL_VISIBILITIES.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </TextField>
           </Typography>
         </ExpansionPanelDetails>
         <Divider />
@@ -117,20 +152,26 @@ class Goal extends Component<Props> {
           )}
           {goal.draft
             ? [
-                <Button dense onClick={onDelete}>
+                <Button key="discardBtn" dense onClick={onDelete}>
                   Discard
                 </Button>,
-                <Tooltip id="tooltip-begin-bottom" title="Begin tracking" placement="bottom">
+                <Tooltip
+                  key="startBtn"
+                  id="tooltip-begin-bottom"
+                  title="Begin tracking"
+                  placement="bottom"
+                >
                   <Button dense onClick={onToggleDraft} color="primary">
                     Start
                   </Button>
                 </Tooltip>,
               ]
             : getElapsedDaysTillNow(goal.started) >= goal.target && [
-                <Button dense onClick={onDelete}>
+                <Button key="finishBtn" dense onClick={onDelete}>
                   Finish
                 </Button>,
                 <Tooltip
+                  key="ascendBtn"
                   id="tooltip-extend-bottom"
                   title="Double your target amount of days"
                   placement="bottom"
@@ -140,11 +181,10 @@ class Goal extends Component<Props> {
                   </Button>
                 </Tooltip>,
               ]}
-          }
         </ExpansionPanelActions>
       </ExpansionPanel>
     )
   }
 }
 
-export default withStyles(styles)(Goal)
+export default withStyles(styles)(GoalView)

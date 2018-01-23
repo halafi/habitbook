@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import moment from 'moment'
 
 import Stats from './components/Stats/Stats'
-import Goals from './components/Goals/Goals'
+import Goals from './components/Goals/GoalList'
 
 import type { Profile } from '../../records/Profile'
 

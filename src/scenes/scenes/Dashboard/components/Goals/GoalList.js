@@ -10,10 +10,11 @@ import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles'
 
-import Goal from './Goal'
+import GoalView from './GoalView'
 import NewGoalForm from './components/NewGoalForm'
 import { GOAL_DATE_TIME } from '../../../../../consts/dateTimeConsts'
-import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
+// import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
+import { getGoalVisibility } from './records/GoalRecord'
 import type { Goals as GoalsType, TargetType } from './records/GoalRecord'
 
 type Props = {
@@ -40,7 +41,7 @@ const styles = theme => ({
   },
 })
 
-class Goals extends Component<Props, State> {
+class GoalList extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
@@ -52,6 +53,7 @@ class Goals extends Component<Props, State> {
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChangeDate = this.handleChangeDate.bind(this)
+    this.handleChangeVisibility = this.handleChangeVisibility.bind(this)
     this.handleToggleDraft = this.handleToggleDraft.bind(this)
     this.handleExtendGoal = this.handleExtendGoal.bind(this)
   }
@@ -79,6 +81,7 @@ class Goals extends Component<Props, State> {
       draft: true,
       started: moment().valueOf(),
       ascensionCount: 0,
+      visibility: getGoalVisibility(1),
     })
     this.setState({
       name: '',
@@ -92,6 +95,15 @@ class Goals extends Component<Props, State> {
     firebase.set(`/goals/${currentUserId}/${goalId}`, {
       ...goals[currentUserId][goalId],
       started: newMoment.valueOf(),
+    })
+  }
+
+  handleChangeVisibility(goalId: string, ev: any) {
+    const { currentUserId, goals, firebase } = this.props
+
+    firebase.set(`/goals/${currentUserId}/${goalId}`, {
+      ...goals[currentUserId][goalId],
+      visibility: ev.target.value,
     })
   }
 
@@ -119,7 +131,7 @@ class Goals extends Component<Props, State> {
     const { currentUserId, goals, firebase } = this.props
 
     const edditedGoal = goals[currentUserId][goalId]
-    const daysCompleted = getElapsedDaysTillNow(edditedGoal.started)
+    // const daysCompleted = getElapsedDaysTillNow(edditedGoal.started)
     const newTarget = edditedGoal.target * 2 // TODO: table of targets
     firebase.set(`/goals/${currentUserId}/${goalId}`, {
       ...edditedGoal,
@@ -145,13 +157,14 @@ class Goals extends Component<Props, State> {
             {goals &&
               goals[currentUserId] &&
               Object.keys(goals[currentUserId]).map(goalId => (
-                <Goal
+                <GoalView
                   key={goalId}
                   goal={goals[currentUserId][goalId]}
                   onDelete={R.partial(this.handleDelete, [goalId])}
                   onChangeDate={R.partial(this.handleChangeDate, [goalId])}
                   onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
                   onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
+                  onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
                 />
               ))}
             <NewGoalForm
@@ -176,4 +189,4 @@ export default compose(
     currentUserId: firebase.auth.uid,
   })),
   withStyles(styles),
-)(Goals)
+)(GoalList)
