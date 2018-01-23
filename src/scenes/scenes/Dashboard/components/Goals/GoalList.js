@@ -14,13 +14,13 @@ import GoalView from './GoalView'
 import NewGoalForm from './components/NewGoalForm'
 import { GOAL_DATE_TIME } from '../../../../../consts/dateTimeConsts'
 // import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
-import { getGoalVisibility } from './records/GoalRecord'
-import type { Goals as GoalsType, TargetType } from './records/GoalRecord'
+import { getGoalVisibility } from '../../../../records/Goal'
+import type { Goals, TargetType } from '../../../../records/Goal'
 
 type Props = {
   classes: Object,
   goals: {
-    [userId: string]: GoalsType,
+    [userId: string]: Goals,
   },
   firebase: any,
   currentUserId: string,

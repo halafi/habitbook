@@ -21,8 +21,8 @@ class Intro extends Component<Props> {
 
     return (
       <div className="Dashboard">
-        {/*<Stats created={created} profile={profile} />*/}
         <Goals />
+        <Stats created={created} profile={profile} />
       </div>
     )
   }

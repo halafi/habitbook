@@ -19,8 +19,8 @@ import Tooltip from 'material-ui/Tooltip'
 import { withStyles } from 'material-ui/styles'
 
 import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
-import type { Goal } from './records/GoalRecord'
-import { getGoalVisibility, GOAL_VISIBILITIES } from './records/GoalRecord'
+import type { Goal } from '../../../../records/Goal'
+import { getGoalVisibility, GOAL_VISIBILITIES } from '../../../../records/Goal'
 import { GOAL_DATE_TIME } from '../../../../../consts/dateTimeConsts'
 
 type Props = {
