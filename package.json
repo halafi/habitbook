@@ -7,7 +7,7 @@
     "start": "parcel src/index.html -p 8080",
     "dev": "parcel src/index.html -p 8080",
     "build": "parcel build src/index.js --out-dir build --public-url ./",
-    "deploy": "firebase deploy"
+    "deploy": "parcel build src/index.js --out-dir build --public-url ./ && firebase deploy"
   },
   "author": "Filip Halas",
   "license": "ISC",
