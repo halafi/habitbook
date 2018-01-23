@@ -1,8 +1,8 @@
 // @flow
 
-import React from 'react'
+import React, { Component } from 'react'
 import moment from 'moment'
-import * as R from 'ramda'
+import R from 'ramda'
 
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -20,7 +20,7 @@ import { withStyles } from 'material-ui/styles'
 
 import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
 import { Goal as GoalType } from './records/GoalRecord'
-import { GOAL_DATE_TIME } from './consts/dateTimeConsts'
+import { GOAL_DATE_TIME } from '../../../../../consts/dateTimeConsts'
 
 type Props = {
   goal: GoalType,
@@ -58,77 +58,53 @@ const styles = theme => ({
 // TODO: min date today
 // TODO: moment computes
 // TODO: difficulty and points
-const Goal = ({ goal, onDelete, onChangeDate, onToggleDraft, onExtendGoal, classes }: Props) => (
-  <ExpansionPanel>
-    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography className={classes.heading}>
-        {goal.name} {goal.draft && '(Draft)'}
-      </Typography>
-      {!goal.draft && (
-        <Typography className={classes.secondaryHeading}>
-          {getElapsedDaysTillNow(goal.started)} / {goal.target}
-        </Typography>
-      )}
-      {goal.ascensionCount > 0 && (
-        <Typography className={classes.starsContainer}>
-          {R.times(() => <StarBorder className={classes.rightIcon} />, goal.ascensionCount)}
-        </Typography>
-      )}
-    </ExpansionPanelSummary>
-    <ExpansionPanelDetails>
-      <Typography>
-        {goal.target}{' '}
-        {goal.targetType === 'DAYS'
-          ? 'days required to complete.'
-          : 'performances required to complete.'}
-        <br />
-        <br />
-        <TextField
-          id="start-date"
-          label={goal.draft ? 'Start from' : 'Started'}
-          type="date"
-          value={moment(goal.started).format(GOAL_DATE_TIME)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          onChange={onChangeDate}
-          disabled={!goal.draft}
-        />
-        <br />
-        <br />
-      </Typography>
-    </ExpansionPanelDetails>
-    <Divider />
-    <ExpansionPanelActions>
-      {goal.draft ? (
-        <div>
-          <Button dense onClick={onDelete}>
-            Discard
-          </Button>
-          <Tooltip id="tooltip-begin-bottom" title="Begin tracking" placement="bottom">
-            <Button dense onClick={onToggleDraft} color="primary">
-              Start
-            </Button>
-          </Tooltip>
-        </div>
-      ) : (
-        <div>
-          {getElapsedDaysTillNow(goal.started) >= goal.target ? (
-            <span>
-              <Button dense onClick={onDelete}>
-                Finish
-              </Button>
-              <Tooltip
-                id="tooltip-extend-bottom"
-                title="Double your target amount of days"
-                placement="bottom"
-              >
-                <Button dense onClick={onExtendGoal} color="primary">
-                  Ascend
-                </Button>
-              </Tooltip>
-            </span>
-          ) : (
+class Goal extends Component<Props> {
+  render() {
+    const { goal, onDelete, onChangeDate, onToggleDraft, onExtendGoal, classes } = this.props
+
+    return (
+      <ExpansionPanel>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography className={classes.heading}>
+            {goal.name} {goal.draft && '(Draft)'}
+          </Typography>
+          {!goal.draft && (
+            <Typography className={classes.secondaryHeading}>
+              {getElapsedDaysTillNow(goal.started)} / {goal.target}
+            </Typography>
+          )}
+          {goal.ascensionCount > 0 && (
+            <Typography className={classes.starsContainer}>
+              {R.times(() => <StarBorder className={classes.rightIcon} />, goal.ascensionCount)}
+            </Typography>
+          )}
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <Typography>
+            {goal.target}{' '}
+            {goal.targetType === 'DAYS'
+              ? 'days required to complete.'
+              : 'performances required to complete.'}
+            <br />
+            <br />
+            <TextField
+              id="start-date"
+              label={goal.draft ? 'Start from' : 'Started'}
+              type="datetime-local"
+              value={moment(goal.started).format(GOAL_DATE_TIME)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              onChange={onChangeDate}
+              disabled={!goal.draft}
+            />
+            <br />
+            <br />
+          </Typography>
+        </ExpansionPanelDetails>
+        <Divider />
+        <ExpansionPanelActions>
+          {!goal.draft && (
             <Tooltip
               id="tooltip-reset-bottom"
               title="Reset all your progress and start over"
@@ -139,10 +115,36 @@ const Goal = ({ goal, onDelete, onChangeDate, onToggleDraft, onExtendGoal, class
               </Button>
             </Tooltip>
           )}
-        </div>
-      )}
-    </ExpansionPanelActions>
-  </ExpansionPanel>
-)
+          {goal.draft
+            ? [
+                <Button dense onClick={onDelete}>
+                  Discard
+                </Button>,
+                <Tooltip id="tooltip-begin-bottom" title="Begin tracking" placement="bottom">
+                  <Button dense onClick={onToggleDraft} color="primary">
+                    Start
+                  </Button>
+                </Tooltip>,
+              ]
+            : getElapsedDaysTillNow(goal.started) >= goal.target && [
+                <Button dense onClick={onDelete}>
+                  Finish
+                </Button>,
+                <Tooltip
+                  id="tooltip-extend-bottom"
+                  title="Double your target amount of days"
+                  placement="bottom"
+                >
+                  <Button dense onClick={onExtendGoal} color="primary">
+                    Ascend
+                  </Button>
+                </Tooltip>,
+              ]}
+          }
+        </ExpansionPanelActions>
+      </ExpansionPanel>
+    )
+  }
+}
 
 export default withStyles(styles)(Goal)
