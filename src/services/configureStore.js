@@ -15,9 +15,13 @@ export default function configureStore() {
     storageBucket: '',
     messagingSenderId: '988346533806',
   }
+
+  // http://react-redux-firebase.com/docs/recipes/profile.html
   const rrfConfig = {
     // react-redux-firebase config
     userProfile: 'users', // where profiles are stored in database
+    presence: 'presence', // where list of online users is stored in database
+    sessions: 'sessions',
   }
 
   // initialize firebase instance

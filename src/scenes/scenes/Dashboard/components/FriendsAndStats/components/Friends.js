@@ -4,17 +4,27 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { firebaseConnect } from 'react-redux-firebase'
+import * as R from 'ramda'
 
 import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
-import { withStyles } from 'material-ui/styles/index'
-
+import { withStyles } from 'material-ui/styles'
+import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List'
+import Checkbox from 'material-ui/Checkbox'
+import Avatar from 'material-ui/Avatar'
+import {
+  onlineUsersSelector,
+  usersSelector,
+} from '../../../../../../services/selectors/firebaseSelectors'
 import type { Profile } from '../../../../../records/Profile'
+import type { Users, User } from '../../../../../records/User'
 
 import type { Goals } from '../../../../../records/Goal'
 
 type Props = {
   classes: Object,
+  onlineUsers: Users,
+  users: Users,
   // created: string,
   // profile: Profile,
   // goals: {
@@ -29,11 +39,17 @@ const styles = {
     width: '48%',
     marginTop: '24px',
   },
+  offlineAvatar: {
+    filter: 'grayscale(1)',
+  },
+  onlineAvatar: {
+    filter: 'blur(20)',
+  },
 }
 
 class Friends extends Component<Props> {
   render() {
-    const { classes } = this.props
+    const { classes, onlineUsers, users } = this.props
 
     return (
       <Card className={classes.card}>
@@ -42,12 +58,33 @@ class Friends extends Component<Props> {
             Friends
           </Typography>
           <Typography component="div" paragraph>
-            <ul>
-              <li>Nobody</li>
-              <li>Nadie</li>
-              <li>Virtual friends</li>
-              <li>Richard</li>
-            </ul>
+            <List>
+              {users &&
+                Object.keys(users).map(userId => {
+                  const user: User = users[userId]
+
+                  return (
+                    <ListItem key={user.email} dense button className={classes.listItem}>
+                      <Avatar
+                        className={
+                          !onlineUsers[userId] ? classes.offlineAvatar : classes.onlineAvatar
+                        }
+                        alt={user.displayName}
+                        src={user.avatarUrl}
+                      />
+                      <ListItemText
+                        primary={`${user.displayName} ${onlineUsers[userId] ? '(online)' : ''}`}
+                      />
+                      {/*<ListItemSecondaryAction>*/}
+                      {/*<Checkbox*/}
+                      {/*onChange={this.handleToggle(value)}*/}
+                      {/*checked={this.state.checked.indexOf(value) !== -1}*/}
+                      {/*/>*/}
+                      {/*</ListItemSecondaryAction>*/}
+                    </ListItem>
+                  )
+                })}
+            </List>
           </Typography>
         </CardContent>
       </Card>
@@ -56,10 +93,12 @@ class Friends extends Component<Props> {
 }
 
 export default compose(
-  // firebaseConnect(['goals']),
-  // connect(({ firebase }) => ({
-  //   goals: firebase.data.goals,
-  //   currentUserId: firebase.auth.uid,
-  // })),
+  firebaseConnect(['goals', 'presence', 'users']),
+  connect(state => ({
+    onlineUsers: onlineUsersSelector(state),
+    users: usersSelector(state),
+    // goals: firebase.data.goals,
+    // currentUserId: firebase.auth.uid,
+  })),
   withStyles(styles),
 )(Friends)

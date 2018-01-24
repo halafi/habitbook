@@ -22,7 +22,7 @@ class Intro extends Component<Props> {
     return (
       <div className="Dashboard">
         <Goals />
-        {/*<FriendsAndStats created={created} profile={profile} />*/}
+        <FriendsAndStats created={created} profile={profile} />
       </div>
     )
   }

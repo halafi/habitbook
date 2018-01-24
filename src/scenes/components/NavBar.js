@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import { withFirebase } from 'react-redux-firebase'
+import { withFirebase, isLoaded, isEmpty } from 'react-redux-firebase'
 
 import { withStyles } from 'material-ui/styles'
 import AppBar from 'material-ui/AppBar'
@@ -43,8 +43,8 @@ class NavBar extends React.Component<Props> {
             Droid
           </Typography>
           <div>
-            {profile.isLoaded &&
-              profile.isEmpty && (
+            {isLoaded(profile) &&
+              isEmpty(profile) && (
                 <Button
                   onClick={() => {
                     firebase.login({
@@ -56,8 +56,8 @@ class NavBar extends React.Component<Props> {
                   Login
                 </Button>
               )}
-            {profile.isLoaded &&
-              !profile.isEmpty && (
+            {isLoaded(profile) &&
+              !isEmpty(profile) && (
                 <Button
                   onClick={() => {
                     firebase.logout()
