@@ -25,7 +25,9 @@ export default function configureStore() {
   }
 
   // initialize firebase instance
-  firebase.initializeApp(firebaseConfig)
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig)
+  }
 
   const logger = createLogger({
     collapsed: true,

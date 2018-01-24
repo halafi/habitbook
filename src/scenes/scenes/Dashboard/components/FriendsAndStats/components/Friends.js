@@ -12,6 +12,7 @@ import { withStyles } from 'material-ui/styles'
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List'
 import Checkbox from 'material-ui/Checkbox'
 import Avatar from 'material-ui/Avatar'
+import PeopleIcon from 'material-ui-icons/People'
 import {
   onlineUsersSelector,
   usersSelector,
@@ -34,7 +35,7 @@ type Props = {
   // currentUserId: string,
 }
 
-const styles = {
+const styles = theme => ({
   card: {
     width: '48%',
     marginTop: '24px',
@@ -45,7 +46,16 @@ const styles = {
   onlineAvatar: {
     filter: 'blur(20)',
   },
-}
+  primaryAvatar: {
+    margin: 10,
+    color: '#fff',
+    backgroundColor: theme.palette.primary['500'],
+  },
+  title: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+})
 
 class Friends extends Component<Props> {
   render() {
@@ -54,7 +64,10 @@ class Friends extends Component<Props> {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography type="headline" component="h2">
+          <Typography className={classes.title} type="headline" component="h2">
+            <Avatar className={classes.primaryAvatar}>
+              <PeopleIcon />
+            </Avatar>
             Friends
           </Typography>
           <Typography component="div" paragraph>

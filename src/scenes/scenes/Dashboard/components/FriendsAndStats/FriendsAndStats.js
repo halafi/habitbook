@@ -27,7 +27,7 @@ class FriendsAndStats extends PureComponent<Props> {
 
     return (
       <div className={classes.cardWrapper}>
-        {/*<Stats created={created} profile={profile} />*/}
+        <Stats created={created} profile={profile} />
         <Friends />
       </div>
     )

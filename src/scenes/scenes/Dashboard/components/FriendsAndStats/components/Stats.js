@@ -4,14 +4,19 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { firebaseConnect } from 'react-redux-firebase'
+import * as R from 'ramda'
 
 import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles/index'
+import Avatar from 'material-ui/Avatar'
+import PersonIcon from 'material-ui-icons/Person'
+import List, { ListItem, ListItemText } from 'material-ui/List'
 
 import type { Profile } from '../../../../../records/Profile'
 
 import type { Goals } from '../../../../../records/Goal'
+import { getElapsedDaysTillNow } from '../../../../../../services/dateTime/dateTimeUtils'
 
 type Props = {
   classes: Object,
@@ -24,12 +29,21 @@ type Props = {
   currentUserId: string,
 }
 
-const styles = {
+const styles = theme => ({
   card: {
     width: '48%',
     marginTop: '24px',
   },
-}
+  primaryAvatar: {
+    margin: 10,
+    color: '#fff',
+    backgroundColor: theme.palette.primary['500'],
+  },
+  title: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+})
 
 // TODO: player data
 class Stats extends Component<Props> {
@@ -39,19 +53,45 @@ class Stats extends Component<Props> {
     const currUserGoals = goals ? goals[currentUserId] : {}
     const currUserGoalsCount = Object.keys(currUserGoals).length
 
+    const totalTarget = R.reduce(
+      (acc, goalId) => acc + Number(currUserGoals[goalId].target),
+      0,
+      R.keys(currUserGoals),
+    )
+
+    const totalDaysCompleted = R.reduce(
+      (acc, goalId) => acc + getElapsedDaysTillNow(currUserGoals[goalId].started),
+      0,
+      R.keys(currUserGoals),
+    )
+
+    const percentDone = totalDaysCompleted / (totalTarget / 100)
+
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography type="headline" component="h2">
+          <Typography className={classes.title} type="headline" component="h2">
+            <Avatar className={classes.primaryAvatar}>
+              <PersonIcon />
+            </Avatar>
             Statistics
           </Typography>
           <Typography component="div" paragraph>
-            <ul>
-              <li>Karma: -</li>
-              <li>Goals completed: -</li>
-              <li>Goals in progress: {currUserGoalsCount}</li>
-              <li>Member since: {created}</li>
-            </ul>
+            <List dense={false}>
+              <ListItem>
+                <ListItemText primary="Rank: Novice" secondary="Karma: -" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Challenges completed: -" secondary="Ascensions: -" />
+              </ListItem>
+              <ListItem>
+                <ListItemText
+                  primary={`Challenges active: ${currUserGoalsCount}`}
+                  secondary={`Total completion: ${percentDone.toFixed(0)}%`}
+                />
+              </ListItem>
+            </List>
+            {/*Member since: {created}*/}
           </Typography>
         </CardContent>
       </Card>

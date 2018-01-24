@@ -5,10 +5,12 @@ import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { firebaseConnect } from 'react-redux-firebase'
 import moment from 'moment'
-import R from 'ramda'
+import * as R from 'ramda'
 import Card, { CardContent } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles'
+import Avatar from 'material-ui/Avatar'
+import AssignmentIcon from 'material-ui-icons/Assignment'
 
 import GoalView from './GoalView'
 import NewGoalForm from './components/NewGoalForm'
@@ -38,6 +40,15 @@ const styles = theme => ({
   },
   card: {
     width: '100%',
+  },
+  primaryAvatar: {
+    margin: 10,
+    color: '#fff',
+    backgroundColor: theme.palette.primary['500'],
+  },
+  title: {
+    display: 'flex',
+    alignItems: 'center',
   },
 })
 
@@ -150,8 +161,11 @@ class GoalList extends Component<Props, State> {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography type="headline" component="h2">
-            Goals
+          <Typography type="headline" component="h2" className={classes.title}>
+            <Avatar className={classes.primaryAvatar}>
+              <AssignmentIcon />
+            </Avatar>
+            Your Challenges
           </Typography>
           <div className={classes.goalsContainer}>
             {goals &&
