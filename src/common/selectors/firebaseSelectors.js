@@ -12,10 +12,10 @@ export const usersSelector = createSelector(
   (data: Object): Users => data.users,
 )
 
-const presenceSelector = createSelector(firebaseDataSelector, data => data.presence)
+// const presenceSelector = createSelector(firebaseDataSelector, data => data.presence)
 
-export const onlineUsersSelector = createSelector(
-  usersSelector,
-  presenceSelector,
-  (users: Object, presence: Object): Users => R.merge(presence, users),
-)
+// export const onlineUsersSelector = createSelector(
+//   usersSelector,
+//   presenceSelector,
+//   (users: Object, presence: Object): Users => R.merge(presence, users),
+// )

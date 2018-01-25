@@ -13,10 +13,7 @@ import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-
 import Checkbox from 'material-ui/Checkbox'
 import Avatar from 'material-ui/Avatar'
 import PeopleIcon from 'material-ui-icons/People'
-import {
-  onlineUsersSelector,
-  usersSelector,
-} from '../../../../../../../common/selectors/firebaseSelectors'
+import { usersSelector } from '../../../../../../../common/selectors/firebaseSelectors'
 import type { Profile } from '../../../../../../../common/records/Firebase/Profile'
 import type { Users, User } from '../../../../../../../common/records/Firebase/User'
 
@@ -24,7 +21,6 @@ import type { Goals } from '../../../../../../../common/records/Goal'
 
 type Props = {
   classes: Object,
-  onlineUsers: Users,
   users: Users,
   // created: string,
   // profile: Profile,
@@ -40,12 +36,6 @@ const styles = theme => ({
     width: '48%',
     marginTop: '24px',
   },
-  offlineAvatar: {
-    filter: 'grayscale(1)',
-  },
-  onlineAvatar: {
-    filter: 'blur(20)',
-  },
   primaryAvatar: {
     margin: 10,
     color: '#fff',
@@ -59,7 +49,7 @@ const styles = theme => ({
 
 class Friends extends Component<Props> {
   render() {
-    const { classes, onlineUsers, users } = this.props
+    const { classes, users } = this.props
 
     return (
       <Card className={classes.card}>
@@ -78,16 +68,8 @@ class Friends extends Component<Props> {
 
                   return (
                     <ListItem key={user.email} dense button className={classes.listItem}>
-                      <Avatar
-                        className={
-                          !onlineUsers[userId] ? classes.offlineAvatar : classes.onlineAvatar
-                        }
-                        alt={user.displayName}
-                        src={user.avatarUrl}
-                      />
-                      <ListItemText
-                        primary={`${user.displayName} ${onlineUsers[userId] ? '(online)' : ''}`}
-                      />
+                      <Avatar alt={user.displayName} src={user.avatarUrl} />
+                      <ListItemText primary={user.displayName} />
                       {/*<ListItemSecondaryAction>*/}
                       {/*<Checkbox*/}
                       {/*onChange={this.handleToggle(value)}*/}
@@ -108,7 +90,6 @@ class Friends extends Component<Props> {
 export default compose(
   firebaseConnect(['goals', 'presence', 'users']),
   connect(state => ({
-    onlineUsers: onlineUsersSelector(state),
     users: usersSelector(state),
     // goals: firebase.data.goals,
     // currentUserId: firebase.auth.uid,

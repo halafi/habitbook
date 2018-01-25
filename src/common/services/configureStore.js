@@ -20,8 +20,8 @@ export default function configureStore() {
   const rrfConfig = {
     // react-redux-firebase config
     userProfile: 'users', // where profiles are stored in database
-    presence: 'presence', // where list of online users is stored in database
-    sessions: 'sessions',
+    // presence: 'presence', // where list of online users is stored in database
+    // sessions: 'sessions',
   }
 
   // initialize firebase instance

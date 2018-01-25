@@ -96,7 +96,10 @@ class GoalView extends Component<Props> {
           )}
           {goal.ascensionCount > 0 && (
             <Typography className={classes.starsContainer}>
-              {R.times(() => <StarBorder className={classes.rightIcon} />, goal.ascensionCount)}
+              {R.times(
+                n => <StarBorder key={n} className={classes.rightIcon} />,
+                goal.ascensionCount,
+              )}
             </Typography>
           )}
         </ExpansionPanelSummary>
