@@ -20,7 +20,10 @@ import { withStyles } from 'material-ui/styles'
 
 import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
 import type { Goal } from '../../../../../../common/records/Goal'
-import { getGoalVisibility, GOAL_VISIBILITIES } from '../../../../../../common/records/Goal'
+import {
+  getGoalVisibility,
+  GOAL_VISIBILITIES,
+} from '../../../../../../common/records/GoalVisibility'
 import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
 
 type Props = {

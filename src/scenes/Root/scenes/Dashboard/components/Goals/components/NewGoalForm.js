@@ -7,8 +7,8 @@ import TextField from 'material-ui/TextField'
 import Done from 'material-ui-icons/Done'
 import { withStyles } from 'material-ui/styles'
 
-import { TARGET_TYPES } from '../../../../../../../common/records/Goal'
-import type { TargetType } from '../../../../../../../common/records/Goal'
+import { TARGET_TYPES } from '../../../../../../../common/records/GoalTargetType'
+import type { GoalTargetType } from '../../../../../../../common/records/GoalTargetType'
 
 type Props = {
   onSubmit: any => void,
@@ -16,7 +16,7 @@ type Props = {
   onChange: (string, string) => void,
   name: string,
   target: number,
-  targetType: TargetType,
+  targetType: GoalTargetType,
   formValid: boolean,
 }
 

@@ -6,7 +6,7 @@ import moment from 'moment'
 import Goals from './components/Goals/GoalList'
 import FriendsAndStats from './components/FriendsAndStats/FriendsAndStats'
 
-import type { Profile } from '../../../../common/records/Profile'
+import type { Profile } from '../../../../common/records/Firebase/Profile'
 
 type Props = {
   createdAt: string, // number

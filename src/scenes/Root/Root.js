@@ -8,8 +8,8 @@ import type { Dispatch } from 'redux'
 import NavBar from './components/NavBar'
 import Intro from './scenes/Welcome/Welcome'
 import Dashboard from './scenes/Dashboard/Dashboard'
-import type { Auth } from '../../common/records/Auth'
-import type { Profile } from '../../common/records/Profile'
+import type { Auth } from '../../common/records/Firebase/Auth'
+import type { Profile } from '../../common/records/Firebase/Profile'
 
 const ContentWrapper = styled.div`
   margin: 0 auto;

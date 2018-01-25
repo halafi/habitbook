@@ -1,8 +1,10 @@
+import type { ProviderData } from './ProviderData'
+
 export type User = {
   avatarUrl: string,
   displayName: string,
   email: string,
-  providerData: Array<any>,
+  providerData: ProviderData,
 }
 
 export type Users = {

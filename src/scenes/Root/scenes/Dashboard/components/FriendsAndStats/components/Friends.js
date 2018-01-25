@@ -17,8 +17,8 @@ import {
   onlineUsersSelector,
   usersSelector,
 } from '../../../../../../../common/selectors/firebaseSelectors'
-import type { Profile } from '../../../../../../../common/records/Profile'
-import type { Users, User } from '../../../../../../../common/records/User'
+import type { Profile } from '../../../../../../../common/records/Firebase/Profile'
+import type { Users, User } from '../../../../../../../common/records/Firebase/User'
 
 import type { Goals } from '../../../../../../../common/records/Goal'
 

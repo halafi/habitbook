@@ -11,7 +11,7 @@ import Button from 'material-ui/Button'
 // import IconButton from 'material-ui/IconButton'
 // import MenuIcon from 'material-ui-icons/Menu'
 
-import type { Profile } from '../../../common/records/Profile'
+import type { Profile } from '../../../common/records/Firebase/Profile'
 
 const styles = {
   flex: {

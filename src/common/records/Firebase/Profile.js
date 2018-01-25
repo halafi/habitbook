@@ -1,8 +1,10 @@
+import type { ProviderData } from './ProviderData'
+
 export type Profile = {
   isLoaded: boolean,
   isEmpty: boolean,
   avatarUrl?: string,
   displayName?: string,
   email?: string,
-  providerData?: Object,
+  providerData?: ProviderData,
 }

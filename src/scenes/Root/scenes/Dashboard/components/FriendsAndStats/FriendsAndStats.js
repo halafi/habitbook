@@ -5,7 +5,7 @@ import { withStyles } from 'material-ui/styles'
 import { compose } from 'redux'
 import Friends from './components/Friends'
 import Stats from './components/Stats'
-import type { Profile } from '../../../../../../common/records/Profile'
+import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 
 type Props = {
   classes: Object,

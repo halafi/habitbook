@@ -16,8 +16,9 @@ import GoalView from './GoalView'
 import NewGoalForm from './components/NewGoalForm'
 import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
 // import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
-import { getGoalVisibility } from '../../../../../../common/records/Goal'
-import type { Goals, TargetType } from '../../../../../../common/records/Goal'
+import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
+import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
+import type { Goals } from '../../../../../../common/records/Goal'
 
 type Props = {
   classes: Object,
@@ -30,7 +31,7 @@ type Props = {
 
 type State = {
   name: string,
-  targetType: TargetType,
+  targetType: GoalTargetType,
   target: number,
 }
 
