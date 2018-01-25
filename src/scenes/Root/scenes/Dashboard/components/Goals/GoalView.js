@@ -18,10 +18,10 @@ import TextField from 'material-ui/TextField'
 import Tooltip from 'material-ui/Tooltip'
 import { withStyles } from 'material-ui/styles'
 
-import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
-import type { Goal } from '../../../../records/Goal'
-import { getGoalVisibility, GOAL_VISIBILITIES } from '../../../../records/Goal'
-import { GOAL_DATE_TIME } from '../../../../../consts/dateTimeConsts'
+import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
+import type { Goal } from '../../../../../../common/records/Goal'
+import { getGoalVisibility, GOAL_VISIBILITIES } from '../../../../../../common/records/Goal'
+import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
 
 type Props = {
   goal: Goal,

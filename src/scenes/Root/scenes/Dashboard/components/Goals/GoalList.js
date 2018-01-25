@@ -14,10 +14,10 @@ import AssignmentIcon from 'material-ui-icons/Assignment'
 
 import GoalView from './GoalView'
 import NewGoalForm from './components/NewGoalForm'
-import { GOAL_DATE_TIME } from '../../../../../consts/dateTimeConsts'
+import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
 // import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
-import { getGoalVisibility } from '../../../../records/Goal'
-import type { Goals, TargetType } from '../../../../records/Goal'
+import { getGoalVisibility } from '../../../../../../common/records/Goal'
+import type { Goals, TargetType } from '../../../../../../common/records/Goal'
 
 type Props = {
   classes: Object,

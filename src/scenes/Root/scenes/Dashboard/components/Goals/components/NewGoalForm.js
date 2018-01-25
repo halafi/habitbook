@@ -7,8 +7,8 @@ import TextField from 'material-ui/TextField'
 import Done from 'material-ui-icons/Done'
 import { withStyles } from 'material-ui/styles'
 
-import { TARGET_TYPES } from '../../../../../records/Goal'
-import type { TargetType } from '../../../../../records/Goal'
+import { TARGET_TYPES } from '../../../../../../../common/records/Goal'
+import type { TargetType } from '../../../../../../../common/records/Goal'
 
 type Props = {
   onSubmit: any => void,

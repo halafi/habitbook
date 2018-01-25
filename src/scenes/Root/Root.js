@@ -6,10 +6,10 @@ import styled from 'styled-components'
 import type { Dispatch } from 'redux'
 
 import NavBar from './components/NavBar'
-import Intro from './scenes/Welcome/Intro'
+import Intro from './scenes/Welcome/Welcome'
 import Dashboard from './scenes/Dashboard/Dashboard'
-import type { Auth } from './records/Auth'
-import type { Profile } from './records/Profile'
+import type { Auth } from '../../common/records/Auth'
+import type { Profile } from '../../common/records/Profile'
 
 const ContentWrapper = styled.div`
   margin: 0 auto;

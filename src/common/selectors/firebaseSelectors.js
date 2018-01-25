@@ -3,7 +3,7 @@
 import { createSelector } from 'reselect'
 import * as R from 'ramda'
 
-import { Users } from '../../scenes/records/User'
+import { Users } from '../records/User'
 
 const firebaseDataSelector = state => state.firebase.data
 

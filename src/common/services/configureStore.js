@@ -4,7 +4,7 @@ import { reactReduxFirebase } from 'react-redux-firebase'
 // import thunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 
-import rootReducer from './reducers/index'
+import rootReducer from '../reducers/index'
 
 export default function configureStore() {
   const firebaseConfig = {

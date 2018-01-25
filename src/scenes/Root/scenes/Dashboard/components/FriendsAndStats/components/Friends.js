@@ -16,11 +16,11 @@ import PeopleIcon from 'material-ui-icons/People'
 import {
   onlineUsersSelector,
   usersSelector,
-} from '../../../../../../services/selectors/firebaseSelectors'
-import type { Profile } from '../../../../../records/Profile'
-import type { Users, User } from '../../../../../records/User'
+} from '../../../../../../../common/selectors/firebaseSelectors'
+import type { Profile } from '../../../../../../../common/records/Profile'
+import type { Users, User } from '../../../../../../../common/records/User'
 
-import type { Goals } from '../../../../../records/Goal'
+import type { Goals } from '../../../../../../../common/records/Goal'
 
 type Props = {
   classes: Object,

@@ -13,10 +13,10 @@ import Avatar from 'material-ui/Avatar'
 import PersonIcon from 'material-ui-icons/Person'
 import List, { ListItem, ListItemText } from 'material-ui/List'
 
-import type { Profile } from '../../../../../records/Profile'
+import type { Profile } from '../../../../../../../common/records/Profile'
 
-import type { Goals } from '../../../../../records/Goal'
-import { getElapsedDaysTillNow } from '../../../../../../services/dateTime/dateTimeUtils'
+import type { Goals } from '../../../../../../../common/records/Goal'
+import { getElapsedDaysTillNow } from '../../../../../../../common/services/dateTimeUtils'
 
 type Props = {
   classes: Object,
