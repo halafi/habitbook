@@ -20,6 +20,7 @@ import { getGoalVisibility } from '../../../../../../common/records/GoalVisibili
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
+import {getElapsedDaysTillNow} from "../../../../../../common/services/dateTimeUtils";
 
 type Props = {
   classes: Object,
@@ -95,6 +96,7 @@ class GoalList extends Component<Props, State> {
       targetType,
       draft: true,
       started: moment().valueOf(),
+      created: moment().valueOf(),
       ascensionCount: 0,
       visibility: getGoalVisibility(1),
     })
@@ -149,10 +151,12 @@ class GoalList extends Component<Props, State> {
     // const daysCompleted = getElapsedDaysTillNow(edditedGoal.started)
     const newTarget = edditedGoal.target * 2 // TODO: table of targets
 
-    firebase.updateProfile({
-      goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
-      ascensions: profile.ascensions ? profile.ascensions + 1 : 1,
-    })
+    if (getElapsedDaysTillNow(edditedGoal.created) >= 1) {
+      firebase.updateProfile({
+        goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
+        ascensions: profile.ascensions ? profile.ascensions + 1 : 1,
+      })
+    }
 
     firebase.set(`/goals/${currentUserId}/${goalId}`, {
       ...edditedGoal,
@@ -163,10 +167,15 @@ class GoalList extends Component<Props, State> {
   }
 
   handleCompleteGoal(goalId: string) {
-    const { firebase, profile } = this.props
-    firebase.updateProfile({
-      goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
-    })
+    const { firebase, profile, currentUserId, goals } = this.props
+
+    const updatedGoal = goals[currentUserId][goalId]
+
+    if (getElapsedDaysTillNow(updatedGoal.created) >= 1) {
+      firebase.updateProfile({
+        goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
+      })
+    }
     this.handleDelete(goalId)
   }
 
