@@ -5,12 +5,10 @@ import { withStyles } from 'material-ui/styles'
 import { compose } from 'redux'
 import Friends from './components/Friends'
 import Stats from './components/Stats'
-import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 
 type Props = {
   classes: Object,
   created: string,
-  profile: Profile,
 }
 
 const styles = {
@@ -23,11 +21,11 @@ const styles = {
 
 class FriendsAndStats extends PureComponent<Props> {
   render() {
-    const { created, profile, classes } = this.props
+    const { created, classes } = this.props
 
     return (
       <div className={classes.cardWrapper}>
-        <Stats created={created} profile={profile} />
+        <Stats created={created} />
         <Friends />
       </div>
     )

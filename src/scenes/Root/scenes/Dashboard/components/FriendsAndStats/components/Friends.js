@@ -25,7 +25,7 @@ type Props = {
   // created: string,
   // profile: Profile,
   // goals: {
-  //   [userId: string]: Goals,
+  //   [userId: string]: GoalList,
   // },
   // firebase: any,
   // currentUserId: string,

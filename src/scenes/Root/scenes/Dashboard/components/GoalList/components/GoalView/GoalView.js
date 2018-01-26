@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react'
 import moment from 'moment'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -18,17 +18,18 @@ import TextField from 'material-ui/TextField'
 import Tooltip from 'material-ui/Tooltip'
 import { withStyles } from 'material-ui/styles'
 
-import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
-import type { Goal } from '../../../../../../common/records/Goal'
+import { getElapsedDaysTillNow } from '../../../../../../../../common/services/dateTimeUtils'
+import type { Goal } from '../../../../../../../../common/records/Goal'
 import {
   getGoalVisibility,
   GOAL_VISIBILITIES,
-} from '../../../../../../common/records/GoalVisibility'
-import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
+} from '../../../../../../../../common/records/GoalVisibility'
+import { GOAL_DATE_TIME } from '../../../../../../../../common/consts/dateTimeConsts'
 
 type Props = {
   goal: Goal,
-  onDelete: string => void,
+  onDelete: () => void,
+  onComplete: () => void,
   onChangeDate: (string, any) => void,
   onToggleDraft: string => void,
   onExtendGoal: string => void,
@@ -42,7 +43,7 @@ const styles = theme => ({
   },
   rightIcon: {
     marginLeft: '4px',
-    height: '20px',
+    height: '16px',
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -74,6 +75,7 @@ class GoalView extends Component<Props> {
     const {
       goal,
       onDelete,
+      onComplete,
       onChangeDate,
       onToggleDraft,
       onExtendGoal,
@@ -174,7 +176,7 @@ class GoalView extends Component<Props> {
                 </Tooltip>,
               ]
             : getElapsedDaysTillNow(goal.started) >= goal.target && [
-                <Button key="finishBtn" dense onClick={onDelete}>
+                <Button key="finishBtn" dense onClick={onComplete}>
                   Finish
                 </Button>,
                 <Tooltip

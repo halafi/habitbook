@@ -33,13 +33,7 @@ class Root extends Component<Props> {
         <NavBar profile={profile} />
         <ContentWrapper>
           {profile.isLoaded && (
-            <div>
-              {profile.isEmpty ? (
-                <Intro />
-              ) : (
-                <Dashboard createdAt={auth.createdAt} profile={profile} />
-              )}
-            </div>
+            <div>{profile.isEmpty ? <Intro /> : <Dashboard createdAt={auth.createdAt} />}</div>
           )}
         </ContentWrapper>
       </div>

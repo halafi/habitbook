@@ -14,8 +14,8 @@ import PersonIcon from 'material-ui-icons/Person'
 import List, { ListItem, ListItemText } from 'material-ui/List'
 
 import type { Profile } from '../../../../../../../common/records/Firebase/Profile'
-
 import type { Goals } from '../../../../../../../common/records/Goal'
+
 import { getElapsedDaysTillNow } from '../../../../../../../common/services/dateTimeUtils'
 
 type Props = {
@@ -51,7 +51,8 @@ class Stats extends Component<Props> {
     const { classes, created, profile, goals, currentUserId } = this.props
 
     const currUserGoals = goals ? goals[currentUserId] : {}
-    const currUserGoalsCount = Object.keys(currUserGoals).length
+    const currUserGoalsCount =
+      currUserGoals && Object.keys(currUserGoals) ? Object.keys(currUserGoals).length : 0
 
     const totalTarget = R.reduce(
       (acc, goalId) => acc + Number(currUserGoals[goalId].target),
@@ -66,6 +67,7 @@ class Stats extends Component<Props> {
     )
 
     const percentDone = totalDaysCompleted / (totalTarget / 100)
+    const percentDoneFormatted = Number.isNaN(percentDone) ? 0 : percentDone.toFixed(0)
 
     return (
       <Card className={classes.card}>
@@ -82,12 +84,15 @@ class Stats extends Component<Props> {
                 <ListItemText primary="Rank: Novice" secondary="Karma: -" />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Challenges completed: -" secondary="Ascensions: -" />
+                <ListItemText
+                  primary={`Challenges completed: ${profile.goalsCompleted || 0}`}
+                  secondary={`Ascensions: ${profile.ascensions || 0}`}
+                />
               </ListItem>
               <ListItem>
                 <ListItemText
                   primary={`Challenges active: ${currUserGoalsCount}`}
-                  secondary={`Total completion: ${percentDone.toFixed(0)}%`}
+                  secondary={`Total completion: ${percentDoneFormatted}%`}
                 />
               </ListItem>
             </List>
@@ -102,6 +107,7 @@ class Stats extends Component<Props> {
 export default compose(
   firebaseConnect(['goals']),
   connect(({ firebase }) => ({
+    profile: firebase.profile,
     goals: firebase.data.goals,
     currentUserId: firebase.auth.uid,
   })),

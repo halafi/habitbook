@@ -7,4 +7,6 @@ export type Profile = {
   displayName?: string,
   email?: string,
   providerData?: ProviderData,
+  goalsCompleted?: number,
+  ascensions?: number,
 }

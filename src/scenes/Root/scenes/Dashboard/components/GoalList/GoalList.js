@@ -12,16 +12,18 @@ import { withStyles } from 'material-ui/styles'
 import Avatar from 'material-ui/Avatar'
 import AssignmentIcon from 'material-ui-icons/Assignment'
 
-import GoalView from './GoalView'
-import NewGoalForm from './components/NewGoalForm'
+import GoalView from './components/GoalView/GoalView'
+import NewGoalForm from './components/NewGoalForm/NewGoalForm'
 import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
 // import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
+import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 
 type Props = {
   classes: Object,
+  profile: Profile,
   goals: {
     [userId: string]: Goals,
   },
@@ -62,6 +64,7 @@ class GoalList extends Component<Props, State> {
       targetType: 'DAYS',
     }
     this.handleDelete = this.handleDelete.bind(this)
+    this.handleCompleteGoal = this.handleCompleteGoal.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChangeDate = this.handleChangeDate.bind(this)
@@ -140,17 +143,31 @@ class GoalList extends Component<Props, State> {
   }
 
   handleExtendGoal(goalId: string) {
-    const { currentUserId, goals, firebase } = this.props
+    const { currentUserId, goals, firebase, profile } = this.props
 
     const edditedGoal = goals[currentUserId][goalId]
     // const daysCompleted = getElapsedDaysTillNow(edditedGoal.started)
     const newTarget = edditedGoal.target * 2 // TODO: table of targets
+
+    firebase.updateProfile({
+      goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
+      ascensions: profile.ascensions ? profile.ascensions + 1 : 1,
+    })
+
     firebase.set(`/goals/${currentUserId}/${goalId}`, {
       ...edditedGoal,
       target: newTarget,
       ascensionCount: edditedGoal.ascensionCount + 1,
     })
     // TODO: goal history (extended on date... etc.)
+  }
+
+  handleCompleteGoal(goalId: string) {
+    const { firebase, profile } = this.props
+    firebase.updateProfile({
+      goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
+    })
+    this.handleDelete(goalId)
   }
 
   render() {
@@ -176,6 +193,7 @@ class GoalList extends Component<Props, State> {
                   key={goalId}
                   goal={goals[currentUserId][goalId]}
                   onDelete={R.partial(this.handleDelete, [goalId])}
+                  onComplete={R.partial(this.handleCompleteGoal, [goalId])}
                   onChangeDate={R.partial(this.handleChangeDate, [goalId])}
                   onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
                   onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
@@ -200,6 +218,7 @@ class GoalList extends Component<Props, State> {
 export default compose(
   firebaseConnect(['goals']),
   connect(({ firebase }) => ({
+    profile: firebase.profile,
     goals: firebase.data.goals,
     currentUserId: firebase.auth.uid,
   })),
