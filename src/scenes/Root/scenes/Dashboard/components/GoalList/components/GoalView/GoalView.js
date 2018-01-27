@@ -25,6 +25,7 @@ import {
   GOAL_VISIBILITIES,
 } from '../../../../../../../../common/records/GoalVisibility'
 import { GOAL_DATE_TIME } from '../../../../../../../../common/consts/dateTimeConsts'
+import { getFinishKarma, getAscensionKarma } from '../services/helpers'
 
 type Props = {
   goal: Goal,
@@ -91,6 +92,8 @@ class GoalView extends Component<Props> {
       return null
     }
 
+    const finished = getElapsedDaysTillNow(goal.started) >= goal.target
+
     return (
       <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -151,6 +154,21 @@ class GoalView extends Component<Props> {
                 </option>
               ))}
             </TextField>
+            {finished &&
+              !goal.draft && (
+                <Typography component="div">
+                  <br />
+                  Make a choice:
+                  <ul>
+                    <li>Collect {getFinishKarma(goal)} Karma and be done with this challenge</li>
+                    <li>
+                      Collect {getAscensionKarma(goal)} Karma and double the challenge duration (
+                      {getAscensionKarma({ ...goal, ascensionCount: goal.ascensionCount + 1 })} or 0
+                      Karma next time)
+                    </li>
+                  </ul>
+                </Typography>
+              )}
           </div>
         </ExpansionPanelDetails>
         <Divider />
@@ -183,7 +201,7 @@ class GoalView extends Component<Props> {
                     </Button>
                   </Tooltip>,
                 ]
-              : getElapsedDaysTillNow(goal.started) >= goal.target && [
+              : finished && [
                   <Button key="finishBtn" dense onClick={onComplete}>
                     Finish
                   </Button>,

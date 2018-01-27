@@ -15,11 +15,11 @@ import AssignmentIcon from 'material-ui-icons/Assignment'
 import GoalView from './components/GoalView/GoalView'
 import NewGoalForm from './components/NewGoalForm/NewGoalForm'
 import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
-import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
+import { getAscensionKarma, getFinishKarma } from './components/services/helpers'
 
 type Props = {
   classes: Object,
@@ -152,12 +152,13 @@ class GoalList extends Component<Props, State> {
     // const daysCompleted = getElapsedDaysTillNow(edditedGoal.started)
     const newTarget = edditedGoal.target * 2 // TODO: table of targets
 
-    if (getElapsedDaysTillNow(edditedGoal.created) >= 1) {
-      firebase.updateProfile({
-        goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
-        ascensions: profile.ascensions ? profile.ascensions + 1 : 1,
-      })
-    }
+    firebase.updateProfile({
+      goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
+      ascensions: profile.ascensions ? profile.ascensions + 1 : 1,
+      karma: profile.karma
+        ? profile.karma + getAscensionKarma(edditedGoal)
+        : getAscensionKarma(edditedGoal),
+    })
 
     firebase.set(`/goals/${currentUserId}/${goalId}`, {
       ...edditedGoal,
@@ -172,11 +173,12 @@ class GoalList extends Component<Props, State> {
 
     const updatedGoal = goals[goalId]
 
-    if (getElapsedDaysTillNow(updatedGoal.created) >= 1) {
-      firebase.updateProfile({
-        goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
-      })
-    }
+    firebase.updateProfile({
+      goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
+      karma: profile.karma
+        ? profile.karma + getFinishKarma(updatedGoal)
+        : getFinishKarma(updatedGoal),
+    })
     this.handleDelete(goalId)
   }
 

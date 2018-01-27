@@ -9,7 +9,7 @@ export type Goal = {
   ascensionCount: number,
   visibility: string,
   // done: number,
-  created: number, // TODO: do not reward day old goals
+  created: number,
 }
 
 export type Goals = {

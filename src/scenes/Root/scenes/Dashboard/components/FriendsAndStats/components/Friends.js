@@ -63,7 +63,6 @@ class Friends extends Component<Props> {
 
   handleSelectUser(userId) {
     const { currentUserId, selectUserAction } = this.props
-    console.log(currentUserId)
     if (userId.includes(currentUserId)) {
       selectUserAction(null)
     } else {

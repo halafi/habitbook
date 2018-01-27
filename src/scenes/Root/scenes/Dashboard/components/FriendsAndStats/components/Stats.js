@@ -22,6 +22,7 @@ import {
   usersSelector,
 } from '../../../../../../../common/selectors/firebaseSelectors'
 import { selectedUserIdSelector } from '../../../../../../../common/selectors/dashboardSelectors'
+import { getRank } from '../../../../../../../common/records/Rank'
 
 type Props = {
   classes: Object,
@@ -89,7 +90,12 @@ class Stats extends Component<Props> {
           <Typography component="div" paragraph>
             <List dense={false}>
               <ListItem>
-                <ListItemText primary="Rank: Novice" secondary="Karma: -" />
+                {profile && (
+                  <ListItemText
+                    primary={`Rank: ${getRank(profile.karma)}`}
+                    secondary={`Karma: ${profile.karma || 0}`}
+                  />
+                )}
               </ListItem>
               <ListItem>
                 {profile && (

@@ -9,4 +9,5 @@ export type Profile = {
   providerData?: ProviderData,
   goalsCompleted?: number,
   ascensions?: number,
+  karma?: number,
 }
