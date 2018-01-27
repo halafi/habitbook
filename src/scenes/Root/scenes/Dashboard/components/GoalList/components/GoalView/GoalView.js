@@ -35,6 +35,7 @@ type Props = {
   onExtendGoal: string => void,
   onChangeVisibility: string => void,
   classes: any,
+  readOnly: boolean,
 }
 
 const styles = theme => ({
@@ -81,9 +82,15 @@ class GoalView extends Component<Props> {
       onExtendGoal,
       onChangeVisibility,
       classes,
+      readOnly,
     } = this.props
+    console.log(goal)
 
     const goalName = goal.visibility === getGoalVisibility(0) ? ' ¯\\_(ツ)_/¯' : goal.name
+
+    if ((readOnly && goal.visibility !== getGoalVisibility(2)) || (readOnly && goal.draft)) {
+      return null
+    }
 
     return (
       <ExpansionPanel>
@@ -137,6 +144,7 @@ class GoalView extends Component<Props> {
               }}
               margin="normal"
               className={classes.textField}
+              disabled={readOnly}
             >
               {GOAL_VISIBILITIES.map(option => (
                 <option key={option.value} value={option.value}>
@@ -147,50 +155,52 @@ class GoalView extends Component<Props> {
           </div>
         </ExpansionPanelDetails>
         <Divider />
-        <ExpansionPanelActions>
-          {!goal.draft && (
-            <Tooltip
-              id="tooltip-reset-bottom"
-              title="Reset all your progress and start over"
-              placement="bottom"
-            >
-              <Button dense onClick={onToggleDraft}>
-                Reset
-              </Button>
-            </Tooltip>
-          )}
-          {goal.draft
-            ? [
-                <Button key="discardBtn" dense onClick={onDelete}>
-                  Discard
-                </Button>,
-                <Tooltip
-                  key="startBtn"
-                  id="tooltip-begin-bottom"
-                  title="Begin tracking"
-                  placement="bottom"
-                >
-                  <Button dense onClick={onToggleDraft} color="primary">
-                    Start
-                  </Button>
-                </Tooltip>,
-              ]
-            : getElapsedDaysTillNow(goal.started) >= goal.target && [
-                <Button key="finishBtn" dense onClick={onComplete}>
-                  Finish
-                </Button>,
-                <Tooltip
-                  key="ascendBtn"
-                  id="tooltip-extend-bottom"
-                  title="Double your target amount of days"
-                  placement="bottom"
-                >
-                  <Button dense onClick={onExtendGoal} color="primary">
-                    Ascend
-                  </Button>
-                </Tooltip>,
-              ]}
-        </ExpansionPanelActions>
+        {!readOnly && (
+          <ExpansionPanelActions>
+            {!goal.draft && (
+              <Tooltip
+                id="tooltip-reset-bottom"
+                title="Reset all your progress and start over"
+                placement="bottom"
+              >
+                <Button dense onClick={onToggleDraft}>
+                  Reset
+                </Button>
+              </Tooltip>
+            )}
+            {goal.draft
+              ? [
+                  <Button key="discardBtn" dense onClick={onDelete}>
+                    Discard
+                  </Button>,
+                  <Tooltip
+                    key="startBtn"
+                    id="tooltip-begin-bottom"
+                    title="Begin tracking"
+                    placement="bottom"
+                  >
+                    <Button dense onClick={onToggleDraft} color="primary">
+                      Start
+                    </Button>
+                  </Tooltip>,
+                ]
+              : getElapsedDaysTillNow(goal.started) >= goal.target && [
+                  <Button key="finishBtn" dense onClick={onComplete}>
+                    Finish
+                  </Button>,
+                  <Tooltip
+                    key="ascendBtn"
+                    id="tooltip-extend-bottom"
+                    title="Double your target amount of days"
+                    placement="bottom"
+                  >
+                    <Button dense onClick={onExtendGoal} color="primary">
+                      Ascend
+                    </Button>
+                  </Tooltip>,
+                ]}
+          </ExpansionPanelActions>
+        )}
       </ExpansionPanel>
     )
   }

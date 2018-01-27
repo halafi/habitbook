@@ -17,11 +17,15 @@ import NewGoalForm from './components/NewGoalForm/NewGoalForm'
 import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
 import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
+import { selectedUserIdSelector } from '../../../../../../common/selectors/dashboardSelectors'
+import { usersSelector } from '../../../../../../common/selectors/firebaseSelectors'
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
+import type { Users } from '../../../../../../common/records/Firebase/User'
 
 type Props = {
+  users: Users,
   classes: Object,
   profile: Profile,
   goals: {
@@ -29,6 +33,7 @@ type Props = {
   },
   firebase: any,
   currentUserId: string,
+  selectedUserId: string,
 }
 
 type State = {
@@ -179,10 +184,19 @@ class GoalList extends Component<Props, State> {
   }
 
   render() {
-    const { classes, goals, currentUserId } = this.props
+    const { classes, goals, currentUserId, selectedUserId, users } = this.props
     const { name, target, targetType } = this.state
 
     const formValid = name.length > 0 && target > 0
+
+    let shownGoals
+    if (goals) {
+      shownGoals = selectedUserId ? goals[selectedUserId] : goals[currentUserId]
+    }
+    const formattedName =
+      users && selectedUserId ? `${users[selectedUserId].displayName.split(' ')[0]}'s` : 'Your'
+
+    const readOnly = Boolean(selectedUserId)
 
     return (
       <Card className={classes.card}>
@@ -191,31 +205,33 @@ class GoalList extends Component<Props, State> {
             <Avatar className={classes.primaryAvatar}>
               <AssignmentIcon />
             </Avatar>
-            Your Challenges
+            {formattedName} Challenges
           </Typography>
           <div className={classes.goalsContainer}>
-            {goals &&
-              goals[currentUserId] &&
-              Object.keys(goals[currentUserId]).map(goalId => (
+            {shownGoals &&
+              Object.keys(shownGoals).map(goalId => (
                 <GoalView
                   key={goalId}
-                  goal={goals[currentUserId][goalId]}
+                  goal={shownGoals[goalId]}
                   onDelete={R.partial(this.handleDelete, [goalId])}
                   onComplete={R.partial(this.handleCompleteGoal, [goalId])}
                   onChangeDate={R.partial(this.handleChangeDate, [goalId])}
                   onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
                   onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
                   onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
+                  readOnly={readOnly}
                 />
               ))}
-            <NewGoalForm
-              onSubmit={this.handleSubmit}
-              name={name}
-              target={target}
-              targetType={targetType}
-              onChange={this.handleChange}
-              formValid={formValid}
-            />
+            {!readOnly && (
+              <NewGoalForm
+                onSubmit={this.handleSubmit}
+                name={name}
+                target={target}
+                targetType={targetType}
+                onChange={this.handleChange}
+                formValid={formValid}
+              />
+            )}
           </div>
         </CardContent>
       </Card>
@@ -225,10 +241,12 @@ class GoalList extends Component<Props, State> {
 
 export default compose(
   firebaseConnect(['goals']),
-  connect(({ firebase }) => ({
-    profile: firebase.profile,
-    goals: firebase.data.goals,
-    currentUserId: firebase.auth.uid,
+  connect(state => ({
+    users: usersSelector(state),
+    profile: state.firebase.profile,
+    goals: state.firebase.data.goals,
+    currentUserId: state.firebase.auth.uid,
+    selectedUserId: selectedUserIdSelector(state),
   })),
   withStyles(styles),
 )(GoalList)
