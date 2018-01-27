@@ -8,7 +8,6 @@ import Stats from './components/Stats'
 
 type Props = {
   classes: Object,
-  created: string,
 }
 
 const styles = {
@@ -21,11 +20,11 @@ const styles = {
 
 class FriendsAndStats extends PureComponent<Props> {
   render() {
-    const { created, classes } = this.props
+    const { classes } = this.props
 
     return (
       <div className={classes.cardWrapper}>
-        <Stats created={created} />
+        <Stats />
         <Friends />
       </div>
     )

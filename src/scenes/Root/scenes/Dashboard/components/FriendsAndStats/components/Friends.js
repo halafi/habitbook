@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { compose } from 'redux'
+import { compose, bindActionCreators } from 'redux'
+
 import { firebaseConnect } from 'react-redux-firebase'
 import * as R from 'ramda'
 
@@ -13,11 +14,15 @@ import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-
 import Checkbox from 'material-ui/Checkbox'
 import Avatar from 'material-ui/Avatar'
 import PeopleIcon from 'material-ui-icons/People'
-import { usersSelector } from '../../../../../../../common/selectors/firebaseSelectors'
+import {
+  currentUserIdSelector,
+  usersSelector,
+} from '../../../../../../../common/selectors/firebaseSelectors'
+import { selectedUserIdSelector } from '../../../../../../../common/selectors/dashboardSelectors'
 import type { Profile } from '../../../../../../../common/records/Firebase/Profile'
 import type { Users, User } from '../../../../../../../common/records/Firebase/User'
-
 import type { Goals } from '../../../../../../../common/records/Goal'
+import { selectUser } from '../../../../../../../common/actions/dashboardActions'
 
 type Props = {
   classes: Object,
@@ -28,7 +33,9 @@ type Props = {
   //   [userId: string]: GoalList,
   // },
   // firebase: any,
-  // currentUserId: string,
+  currentUserId: string,
+  selectUserAction: string => void,
+  selectedUserId: string, // uid
 }
 
 const styles = theme => ({
@@ -48,8 +55,24 @@ const styles = theme => ({
 })
 
 class Friends extends Component<Props> {
+  constructor(props: Props) {
+    super(props)
+
+    this.handleSelectUser = this.handleSelectUser.bind(this)
+  }
+
+  handleSelectUser(userId) {
+    const { currentUserId, selectUserAction } = this.props
+    console.log(currentUserId)
+    if (userId.includes(currentUserId)) {
+      selectUserAction(null)
+    } else {
+      selectUserAction(userId)
+    }
+  }
+
   render() {
-    const { classes, users } = this.props
+    const { classes, users, selectedUserId, currentUserId } = this.props
 
     return (
       <Card className={classes.card}>
@@ -67,9 +90,18 @@ class Friends extends Component<Props> {
                   const user: User = users[userId]
 
                   return (
-                    <ListItem key={user.email} dense button className={classes.listItem}>
+                    <ListItem
+                      onClick={() => this.handleSelectUser(userId)}
+                      key={user.email}
+                      dense
+                      button
+                      className={classes.listItem}
+                    >
                       <Avatar alt={user.displayName} src={user.avatarUrl} />
-                      <ListItemText primary={user.displayName} />
+                      <ListItemText
+                        secondary={selectedUserId === userId ? 'showing' : ''}
+                        primary={user.displayName}
+                      />
                       {/*<ListItemSecondaryAction>*/}
                       {/*<Checkbox*/}
                       {/*onChange={this.handleToggle(value)}*/}
@@ -89,10 +121,16 @@ class Friends extends Component<Props> {
 
 export default compose(
   firebaseConnect(['goals', 'presence', 'users']),
-  connect(state => ({
-    users: usersSelector(state),
-    // goals: firebase.data.goals,
-    // currentUserId: firebase.auth.uid,
-  })),
+  connect(
+    state => ({
+      users: usersSelector(state),
+      // goals: firebase.data.goals,
+      currentUserId: currentUserIdSelector(state),
+      selectedUserId: selectedUserIdSelector(state),
+    }),
+    dispatch => ({
+      selectUserAction: bindActionCreators(selectUser, dispatch),
+    }),
+  ),
   withStyles(styles),
 )(Friends)

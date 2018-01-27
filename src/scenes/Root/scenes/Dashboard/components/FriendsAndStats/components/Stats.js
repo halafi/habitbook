@@ -13,20 +13,25 @@ import Avatar from 'material-ui/Avatar'
 import PersonIcon from 'material-ui-icons/Person'
 import List, { ListItem, ListItemText } from 'material-ui/List'
 
-import type { Profile } from '../../../../../../../common/records/Firebase/Profile'
 import type { Goals } from '../../../../../../../common/records/Goal'
+import type { Users } from '../../../../../../../common/records/Firebase/User'
 
 import { getElapsedDaysTillNow } from '../../../../../../../common/services/dateTimeUtils'
+import {
+  currentUserIdSelector,
+  usersSelector,
+} from '../../../../../../../common/selectors/firebaseSelectors'
+import { selectedUserIdSelector } from '../../../../../../../common/selectors/dashboardSelectors'
 
 type Props = {
   classes: Object,
-  created: string,
-  profile: Profile,
   goals: {
     [userId: string]: Goals,
   },
   firebase: any,
   currentUserId: string,
+  selectedUserId: string,
+  users: Users,
 }
 
 const styles = theme => ({
@@ -48,9 +53,12 @@ const styles = theme => ({
 // TODO: player data
 class Stats extends Component<Props> {
   render() {
-    const { classes, created, profile, goals, currentUserId } = this.props
+    const { users, classes, goals, currentUserId, selectedUserId } = this.props
 
-    const currUserGoals = goals ? goals[currentUserId] : {}
+    const shownUserId = selectedUserId || currentUserId
+    const profile = users && users[shownUserId]
+
+    const currUserGoals = goals ? goals[shownUserId] : {}
     const currUserGoalsCount =
       currUserGoals && Object.keys(currUserGoals) ? Object.keys(currUserGoals).length : 0
 
@@ -84,10 +92,12 @@ class Stats extends Component<Props> {
                 <ListItemText primary="Rank: Novice" secondary="Karma: -" />
               </ListItem>
               <ListItem>
-                <ListItemText
-                  primary={`Challenges completed: ${profile.goalsCompleted || 0}`}
-                  secondary={`Ascensions: ${profile.ascensions || 0}`}
-                />
+                {profile && (
+                  <ListItemText
+                    primary={`Challenges completed: ${profile.goalsCompleted || 0}`}
+                    secondary={`Ascensions: ${profile.ascensions || 0}`}
+                  />
+                )}
               </ListItem>
               <ListItem>
                 <ListItemText
@@ -96,7 +106,6 @@ class Stats extends Component<Props> {
                 />
               </ListItem>
             </List>
-            {/*Member since: {created}*/}
           </Typography>
         </CardContent>
       </Card>
@@ -106,10 +115,11 @@ class Stats extends Component<Props> {
 
 export default compose(
   firebaseConnect(['goals']),
-  connect(({ firebase }) => ({
-    profile: firebase.profile,
-    goals: firebase.data.goals,
-    currentUserId: firebase.auth.uid,
+  connect(state => ({
+    users: usersSelector(state),
+    goals: state.firebase.data.goals,
+    currentUserId: currentUserIdSelector(state),
+    selectedUserId: selectedUserIdSelector(state),
   })),
   withStyles(styles),
 )(Stats)

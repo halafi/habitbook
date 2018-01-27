@@ -4,8 +4,12 @@ import { createSelector } from 'reselect'
 import * as R from 'ramda'
 
 import { Users } from '../records/Firebase/User'
+import type { Auth } from '../records/Firebase/Auth'
 
 const firebaseDataSelector = state => state.firebase.data
+// const firebaseAuthSelector = state => state.firebase.auth
+
+export const currentUserIdSelector = state => state.firebase.auth.uid
 
 export const usersSelector = createSelector(
   firebaseDataSelector,

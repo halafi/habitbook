@@ -8,7 +8,6 @@ import type { Dispatch } from 'redux'
 import NavBar from './components/NavBar'
 import Intro from './scenes/Welcome/Welcome'
 import Dashboard from './scenes/Dashboard/Dashboard'
-import type { Auth } from '../../common/records/Firebase/Auth'
 import type { Profile } from '../../common/records/Firebase/Profile'
 
 const ContentWrapper = styled.div`
@@ -19,29 +18,25 @@ const ContentWrapper = styled.div`
 `
 
 type Props = {
-  auth: Auth,
   profile: Profile,
   dispatch: Dispatch<*>,
 }
 
 class Root extends Component<Props> {
   render() {
-    const { profile, auth } = this.props
+    const { profile } = this.props
 
     return (
       <div>
         <NavBar profile={profile} />
         <ContentWrapper>
-          {profile.isLoaded && (
-            <div>{profile.isEmpty ? <Intro /> : <Dashboard createdAt={auth.createdAt} />}</div>
-          )}
+          {profile.isLoaded && <div>{profile.isEmpty ? <Intro /> : <Dashboard />}</div>}
         </ContentWrapper>
       </div>
     )
   }
 }
 
-export default connect(({ firebase: { auth, profile } }) => ({
-  auth,
+export default connect(({ firebase: { profile } }) => ({
   profile,
 }))(Root)

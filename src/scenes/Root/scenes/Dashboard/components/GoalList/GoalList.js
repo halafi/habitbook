@@ -15,12 +15,11 @@ import AssignmentIcon from 'material-ui-icons/Assignment'
 import GoalView from './components/GoalView/GoalView'
 import NewGoalForm from './components/NewGoalForm/NewGoalForm'
 import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
-// import { getElapsedDaysTillNow } from '../../../../../services/dateTime/dateTimeUtils'
+import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
-import {getElapsedDaysTillNow} from "../../../../../../common/services/dateTimeUtils";
 
 type Props = {
   classes: Object,
