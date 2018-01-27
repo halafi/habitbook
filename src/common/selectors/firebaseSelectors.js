@@ -5,6 +5,7 @@ import * as R from 'ramda'
 
 import { Users } from '../records/Firebase/User'
 import type { Auth } from '../records/Firebase/Auth'
+import type { Goals } from '../records/Goal'
 
 const firebaseDataSelector = state => state.firebase.data
 // const firebaseAuthSelector = state => state.firebase.auth
@@ -14,6 +15,11 @@ export const currentUserIdSelector = state => state.firebase.auth.uid
 export const usersSelector = createSelector(
   firebaseDataSelector,
   (data: Object): Users => data.users,
+)
+
+export const goalsSelector = createSelector(
+  firebaseDataSelector,
+  (data: Object): Goals => data.goals,
 )
 
 // const presenceSelector = createSelector(firebaseDataSelector, data => data.presence)

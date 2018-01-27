@@ -84,7 +84,6 @@ class GoalView extends Component<Props> {
       classes,
       readOnly,
     } = this.props
-    console.log(goal)
 
     const goalName = goal.visibility === getGoalVisibility(0) ? ' ¯\\_(ツ)_/¯' : goal.name
 
