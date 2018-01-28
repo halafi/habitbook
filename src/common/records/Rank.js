@@ -1,4 +1,4 @@
-export type Rank = ''
+export type Rank = string // FIXME: once ranks are final
 
 const RANKS = {
   NOVICE: 'Novice',
@@ -37,3 +37,5 @@ export const getRank = (karma: number): Rank => {
   }
   return RANKS.NEO
 }
+
+export const getRankId = (rank: Rank): number => Object.values(RANKS).indexOf(rank) + 1

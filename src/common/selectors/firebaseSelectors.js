@@ -17,6 +17,10 @@ export const usersSelector = createSelector(
   (data: Object): Users => data.users,
 )
 
+export const userEmailsSelector = createSelector(usersSelector, (users: Users): Array<string> =>
+  R.compose(R.map(R.prop(['email'])), R.values)(users),
+)
+
 export const goalsSelector = createSelector(
   firebaseDataSelector,
   (data: Object): Goals => data.goals,
