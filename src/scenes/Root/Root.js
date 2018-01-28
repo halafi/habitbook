@@ -1,42 +1,49 @@
 // @flow
 
 import React, { Component } from 'react'
+import { compose } from 'redux'
 import { connect } from 'react-redux'
-import styled from 'styled-components'
 import type { Dispatch } from 'redux'
+import { withStyles } from 'material-ui/styles'
 
 import NavBar from './components/NavBar'
 import Intro from './scenes/Welcome/Welcome'
 import Dashboard from './scenes/Dashboard/Dashboard'
 import type { Profile } from '../../common/records/Firebase/Profile'
 
-const ContentWrapper = styled.div`
-  margin: 0 auto;
-  max-width: 900px;
-  padding: 24px;
-  margin-bottom: 100px;
-`
+const styles = {
+  contentWrapper: {
+    margin: '0 auto',
+    maxWidth: '900px',
+    padding: '24px',
+    marginBottom: '100px',
+  },
+}
 
 type Props = {
   profile: Profile,
   dispatch: Dispatch<*>,
+  classes: Object,
 }
 
 class Root extends Component<Props> {
   render() {
-    const { profile } = this.props
+    const { profile, classes } = this.props
 
     return (
       <div>
         <NavBar profile={profile} />
-        <ContentWrapper>
+        <div className={classes.contentWrapper}>
           {profile.isLoaded && <div>{profile.isEmpty ? <Intro /> : <Dashboard />}</div>}
-        </ContentWrapper>
+        </div>
       </div>
     )
   }
 }
 
-export default connect(({ firebase: { profile } }) => ({
-  profile,
-}))(Root)
+export default compose(
+  withStyles(styles),
+  connect(({ firebase: { profile } }) => ({
+    profile,
+  })),
+)(Root)

@@ -20,6 +20,7 @@ import type { GoalTargetType } from '../../../../../../common/records/GoalTarget
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 import { getAscensionKarma, getFinishKarma } from './components/services/helpers'
+import NoGoalsImg from '../../../../../../../images/nogoals.svg'
 
 type Props = {
   classes: Object,
@@ -45,6 +46,7 @@ const styles = theme => ({
   },
   card: {
     width: '100%',
+    minHeight: '515px',
   },
   primaryAvatar: {
     margin: 10,
@@ -54,6 +56,11 @@ const styles = theme => ({
   title: {
     display: 'flex',
     alignItems: 'center',
+  },
+  imageWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 })
 
@@ -197,9 +204,9 @@ class GoalList extends Component<Props, State> {
             </Avatar>
             {title}
           </Typography>
-          {goals && (
-            <div className={classes.goalsContainer}>
-              {Object.keys(goals).map(goalId => (
+          <div className={classes.goalsContainer}>
+            {goals &&
+              Object.keys(goals).map(goalId => (
                 <GoalView
                   key={goalId}
                   goal={goals[goalId]}
@@ -212,18 +219,22 @@ class GoalList extends Component<Props, State> {
                   readOnly={readOnly}
                 />
               ))}
-              {!readOnly && (
-                <NewGoalForm
-                  onSubmit={this.handleSubmit}
-                  name={name}
-                  target={target}
-                  targetType={targetType}
-                  onChange={this.handleChange}
-                  formValid={formValid}
-                />
-              )}
-            </div>
-          )}
+            {!goals && (
+              <div className={classes.imageWrapper}>
+                <img alt="no-goals" src={NoGoalsImg} />
+              </div>
+            )}
+            {!readOnly && (
+              <NewGoalForm
+                onSubmit={this.handleSubmit}
+                name={name}
+                target={target}
+                targetType={targetType}
+                onChange={this.handleChange}
+                formValid={formValid}
+              />
+            )}
+          </div>
         </CardContent>
       </Card>
     )

@@ -1,0 +1,25 @@
+
+<svg width="442px" height="311px" viewBox="428 217 442 311" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+  <desc>Created with Sketch.</desc>
+  <defs>
+    <rect id="path-1" x="428" y="217" width="442" height="311"></rect>
+    <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="442" height="311" fill="white">
+      <use xlink:href="#path-1"></use>
+    </mask>
+  </defs>
+  <use id="Rectangle" stroke="#979797" mask="url(#mask-2)" stroke-width="0.4" fill="none" xlink:href="#path-1"></use>
+  <text id="There-are-no-challen" stroke="none" fill="none" font-family="Helvetica" font-size="14" font-weight="normal">
+    <tspan x="560" y="308" fill="#000000">There are no challenges yet.</tspan>
+  </text>
+  <text id="idea-for-you:-Medita" stroke="none" fill="none" font-family="Helvetica" font-size="14" font-weight="normal">
+    <tspan x="560" y="449" fill="#8D8787">Idea for you: MeditateDaily</tspan>
+  </text>
+  <text id="/\_/\-=(-°w°-)=-)-(" stroke="none" fill="none" font-family="CourierNewPSMT, Courier New" font-size="14" font-weight="normal" line-spacing="19" letter-spacing="0.5">
+    <tspan x="594" y="345" fill="#787878">&#160;&#160;/\_/\</tspan>
+    <tspan x="594" y="364.8" fill="#787878">=(&#160;°w°&#160;)=</tspan>
+    <tspan x="594" y="384.6" fill="#787878">&#160;&#160;)&#160;&#160;&#160;(&#160;&#160;//</tspan>
+    <tspan x="594" y="404.4" fill="#787878">&#160;(__&#160;__)/</tspan>
+    <tspan x="674.112305" y="404.4" fill="#787878">/</tspan>
+  </text>
+</svg>

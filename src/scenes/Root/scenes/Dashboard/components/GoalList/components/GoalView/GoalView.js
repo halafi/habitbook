@@ -163,8 +163,7 @@ class GoalView extends Component<Props> {
                     <li>Collect {getFinishKarma(goal)} Karma and be done with this challenge</li>
                     <li>
                       Collect {getAscensionKarma(goal)} Karma and double the challenge duration (
-                      {getAscensionKarma({ ...goal, ascensionCount: goal.ascensionCount + 1 })} or 0
-                      Karma next time)
+                      {getAscensionKarma({ ...goal, ascensionCount: goal.ascensionCount + 1 })} next time)
                     </li>
                   </ul>
                 </Typography>

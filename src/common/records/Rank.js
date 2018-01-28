@@ -13,6 +13,8 @@ const RANKS = {
   NEO: 'Neo',
 }
 
+// TODO: decrease numbers to make more achievable
+// TODO: rank images
 export const getRank = (karma: number): Rank => {
   if (!karma || karma < 10) {
     return RANKS.NOVICE

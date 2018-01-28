@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { firebaseConnect } from 'react-redux-firebase'
+import { withStyles } from 'material-ui/styles'
 
 import GoalList from './components/GoalList/GoalList'
 import FriendsAndStats from './components/FriendsAndStats/FriendsAndStats'
@@ -15,15 +16,26 @@ import type { Users } from '../../../../common/records/Firebase/User'
 import { goalsSelector, usersSelector } from '../../../../common/selectors/firebaseSelectors'
 
 type Props = {
+  classes: Object,
   goals: Goals,
   users: Users,
   currentUserId: string,
   selectedUserId: ?string,
 }
 
+const styles = {
+  contentWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    minHeight: 'calc(100vh - 188px)',
+  },
+}
+
+// TODO: table with history - transparent profile
 class Dashboard extends Component<Props> {
   render() {
-    const { goals, users, selectedUserId, currentUserId } = this.props
+    const { goals, users, selectedUserId, currentUserId, classes } = this.props
 
     let shownGoals
     if (goals) {
@@ -36,7 +48,7 @@ class Dashboard extends Component<Props> {
         : 'Your Challenges'
 
     return (
-      <div className="Dashboard">
+      <div className={classes.contentWrapper}>
         <GoalList title={title} goals={shownGoals} readOnly={Boolean(selectedUserId)} />
         <FriendsAndStats />
       </div>
@@ -45,6 +57,7 @@ class Dashboard extends Component<Props> {
 }
 
 export default compose(
+  withStyles(styles),
   firebaseConnect(['goals']),
   connect(state => ({
     users: usersSelector(state),
