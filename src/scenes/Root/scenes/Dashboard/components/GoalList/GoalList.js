@@ -43,6 +43,10 @@ type State = {
 const styles = theme => ({
   goalsContainer: {
     marginTop: '16px',
+    minHeight: '400px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   card: {
     width: '100%',
@@ -205,25 +209,27 @@ class GoalList extends Component<Props, State> {
             {title}
           </Typography>
           <div className={classes.goalsContainer}>
-            {goals &&
-              Object.keys(goals).map(goalId => (
-                <GoalView
-                  key={goalId}
-                  goal={goals[goalId]}
-                  onDelete={R.partial(this.handleDelete, [goalId])}
-                  onComplete={R.partial(this.handleCompleteGoal, [goalId])}
-                  onChangeDate={R.partial(this.handleChangeDate, [goalId])}
-                  onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
-                  onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
-                  onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
-                  readOnly={readOnly}
-                />
-              ))}
-            {!goals && (
-              <div className={classes.imageWrapper}>
-                <img alt="no-goals" src={NoGoalsImg} />
-              </div>
-            )}
+            <div>
+              {goals &&
+                Object.keys(goals).map(goalId => (
+                  <GoalView
+                    key={goalId}
+                    goal={goals[goalId]}
+                    onDelete={R.partial(this.handleDelete, [goalId])}
+                    onComplete={R.partial(this.handleCompleteGoal, [goalId])}
+                    onChangeDate={R.partial(this.handleChangeDate, [goalId])}
+                    onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
+                    onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
+                    onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
+                    readOnly={readOnly}
+                  />
+                ))}
+              {!goals && (
+                <div className={classes.imageWrapper}>
+                  <img alt="no-goals" src={NoGoalsImg} />
+                </div>
+              )}
+            </div>
             {!readOnly && (
               <NewGoalForm
                 onSubmit={this.handleSubmit}
