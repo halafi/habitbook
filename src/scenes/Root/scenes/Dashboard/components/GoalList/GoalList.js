@@ -83,25 +83,23 @@ class GoalList extends Component<Props, State> {
       modal: null,
       modalGoalId: null,
     }
-    this.handleDelete = this.handleDelete.bind(this)
-    this.handleConfirmDelete = this.handleConfirmDelete.bind(this)
-    this.handleCompleteGoal = this.handleCompleteGoal.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleChangeDate = this.handleChangeDate.bind(this)
-    this.handleChangeVisibility = this.handleChangeVisibility.bind(this)
-    this.handleToggleDraft = this.handleToggleDraft.bind(this)
-    this.handleExtendGoal = this.handleExtendGoal.bind(this)
   }
 
-  handleDelete(goalId) {
+  handleDelete = goalId => {
     this.setState({
       modal: 'delete',
       modalGoalId: goalId,
     })
   }
 
-  handleConfirmDelete() {
+  handleReset = goalId => {
+    this.setState({
+      modal: 'reset',
+      modalGoalId: goalId,
+    })
+  }
+
+  handleConfirmDelete = () => {
     const { firebase, currentUserId } = this.props
     const { modalGoalId } = this.state
 
@@ -113,13 +111,13 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleChange(fieldName: string, value: string) {
+  handleChange = (fieldName: string, value: string) => {
     this.setState({
       [fieldName]: value,
     })
   }
 
-  handleSubmit(ev: any) {
+  handleSubmit = (ev: any) => {
     ev.preventDefault()
 
     const { currentUserId, firebase } = this.props
@@ -140,7 +138,7 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleChangeDate(goalId: string, ev: any) {
+  handleChangeDate = (goalId: string, ev: any) => {
     const { currentUserId, goals, firebase } = this.props
     const newMoment = ev.target.value ? moment(ev.target.value, GOAL_DATE_TIME) : moment()
 
@@ -150,7 +148,7 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleChangeVisibility(goalId: string, ev: any) {
+  handleChangeVisibility = (goalId: string, ev: any) => {
     const { currentUserId, goals, firebase } = this.props
 
     firebase.set(`/goals/${currentUserId}/${goalId}`, {
@@ -159,7 +157,18 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleToggleDraft(goalId: string) {
+  handleConfirmReset = () => {
+    const { modalGoalId } = this.state
+
+    this.handleToggleDraft(modalGoalId)
+
+    this.setState({
+      modal: null,
+      modalGoalId: null,
+    })
+  }
+
+  handleToggleDraft = (goalId: string) => {
     const { currentUserId, goals, firebase } = this.props
 
     const edditedGoal = goals[goalId]
@@ -179,7 +188,7 @@ class GoalList extends Component<Props, State> {
     }
   }
 
-  handleExtendGoal(goalId: string) {
+  handleExtendGoal = (goalId: string) => {
     const { currentUserId, goals, firebase, profile } = this.props
 
     const edditedGoal = goals[goalId]
@@ -202,7 +211,7 @@ class GoalList extends Component<Props, State> {
     // TODO: goal history (extended on date... etc.)
   }
 
-  handleCompleteGoal(goalId: string) {
+  handleCompleteGoal = (goalId: string) => {
     const { firebase, profile, goals } = this.props
 
     const updatedGoal = goals[goalId]
@@ -232,6 +241,14 @@ class GoalList extends Component<Props, State> {
         >
           Are you sure you want to permanently delete this challenge?
         </ConfirmationModal>
+        <ConfirmationModal
+          title="Reset progress"
+          open={modal === 'reset'}
+          onClose={() => this.setState({ modal: null })}
+          onConfirm={this.handleConfirmReset}
+        >
+          Are you sure you want to reset your progress?
+        </ConfirmationModal>
         <CardContent>
           <Typography type="headline" component="h2" className={classes.title}>
             <Avatar className={classes.primaryAvatar}>
@@ -250,6 +267,7 @@ class GoalList extends Component<Props, State> {
                     onComplete={R.partial(this.handleCompleteGoal, [goalId])}
                     onChangeDate={R.partial(this.handleChangeDate, [goalId])}
                     onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
+                    onReset={R.partial(this.handleReset, [goalId])}
                     onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
                     onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
                     readOnly={readOnly}

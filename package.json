@@ -33,6 +33,7 @@
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
     "babel-plugin-ramda": "^1.4.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-es3-member-expression-literals": "^6.22.0",
     "babel-plugin-transform-es3-property-literals": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -51,6 +52,6 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-prettier": "^2.4.0",
     "eslint-plugin-react": "^7.5.1",
-    "flow-bin": "^0.63.1"
+    "flow-bin": "^0.64.0"
   }
 }

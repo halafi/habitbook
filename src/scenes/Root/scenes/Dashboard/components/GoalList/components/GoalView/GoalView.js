@@ -33,6 +33,7 @@ type Props = {
   onComplete: () => void,
   onChangeDate: (string, any) => void,
   onToggleDraft: string => void,
+  onReset: string => void,
   onExtendGoal: string => void,
   onChangeVisibility: string => void,
   classes: any,
@@ -67,12 +68,6 @@ const styles = theme => ({
 // TODO: moment computes
 // TODO: difficulty and points
 class GoalView extends Component<Props> {
-  // constructor(props: Props) {
-  //   super(props)
-  //   this.state = {
-  //
-  //   }
-  // }
   render() {
     const {
       goal,
@@ -80,6 +75,7 @@ class GoalView extends Component<Props> {
       onComplete,
       onChangeDate,
       onToggleDraft,
+      onReset,
       onExtendGoal,
       onChangeVisibility,
       classes,
@@ -163,7 +159,8 @@ class GoalView extends Component<Props> {
                     <li>Collect {getFinishKarma(goal)} Karma and be done with this challenge</li>
                     <li>
                       Collect {getAscensionKarma(goal)} Karma and double the challenge duration (
-                      {getAscensionKarma({ ...goal, ascensionCount: goal.ascensionCount + 1 })} next time)
+                      {getAscensionKarma({ ...goal, ascensionCount: goal.ascensionCount + 1 })} next
+                      time)
                     </li>
                   </ul>
                 </Typography>
@@ -174,31 +171,18 @@ class GoalView extends Component<Props> {
         {!readOnly && (
           <ExpansionPanelActions>
             {!goal.draft && (
-              <Tooltip
-                id="tooltip-reset-bottom"
-                title="Reset all your progress and start over"
-                placement="bottom"
-              >
-                <Button dense onClick={onToggleDraft}>
-                  Reset
-                </Button>
-              </Tooltip>
+              <Button dense onClick={onReset}>
+                Reset
+              </Button>
             )}
             {goal.draft
               ? [
                   <Button key="discardBtn" dense onClick={onDelete}>
                     Discard
                   </Button>,
-                  <Tooltip
-                    key="startBtn"
-                    id="tooltip-begin-bottom"
-                    title="Begin tracking"
-                    placement="bottom"
-                  >
-                    <Button dense onClick={onToggleDraft} color="primary">
-                      Start
-                    </Button>
-                  </Tooltip>,
+                  <Button dense onClick={onToggleDraft} color="primary">
+                    Start
+                  </Button>,
                 ]
               : finished && [
                   <Button key="finishBtn" dense onClick={onComplete}>

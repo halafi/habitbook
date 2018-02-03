@@ -93,20 +93,15 @@ class Friends extends Component<Props, State> {
     this.state = {
       email: '',
     }
-
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleDeleteFriend = this.handleDeleteFriend.bind(this)
-    this.handleSelectUser = this.handleSelectUser.bind(this)
   }
 
-  handleChange(fieldName: string, value: string) {
+  handleChange = (fieldName: string, value: string) => {
     this.setState({
       [fieldName]: value,
     })
   }
 
-  handleSubmit(ev: any) {
+  handleSubmit = (ev: any) => {
     ev.preventDefault()
 
     const { userEmails, users, currentUserId, profile, firebase } = this.props
@@ -133,7 +128,7 @@ class Friends extends Component<Props, State> {
     })
   }
 
-  handleDeleteFriend(email: string) {
+  handleDeleteFriend = (email: string) => {
     const { profile, firebase, selectUserAction } = this.props
 
     const oldFriendList = profile.friends || []
@@ -146,7 +141,7 @@ class Friends extends Component<Props, State> {
     selectUserAction(null)
   }
 
-  handleSelectUser(userId) {
+  handleSelectUser = userId => {
     const { currentUserId, selectUserAction, selectedUserId } = this.props
     if (userId.includes(currentUserId) || userId === selectedUserId) {
       selectUserAction(null)
