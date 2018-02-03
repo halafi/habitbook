@@ -14,6 +14,7 @@ import AssignmentIcon from 'material-ui-icons/Assignment'
 
 import GoalView from './components/GoalView/GoalView'
 import NewGoalForm from './components/NewGoalForm/NewGoalForm'
+import ConfirmationModal from '../../../../../../common/components/ConfirmationDialog/ConfirmationDialog'
 import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
@@ -34,10 +35,14 @@ type Props = {
   readOnly: boolean,
 }
 
+type GoalModal = 'delete' | 'reset'
+
 type State = {
   name: string,
   targetType: GoalTargetType,
   target: number,
+  modal: ?GoalModal,
+  modalGoalId: ?string,
 }
 
 const styles = theme => ({
@@ -75,8 +80,11 @@ class GoalList extends Component<Props, State> {
       name: '',
       target: 30,
       targetType: 'DAYS',
+      modal: null,
+      modalGoalId: null,
     }
     this.handleDelete = this.handleDelete.bind(this)
+    this.handleConfirmDelete = this.handleConfirmDelete.bind(this)
     this.handleCompleteGoal = this.handleCompleteGoal.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -87,7 +95,22 @@ class GoalList extends Component<Props, State> {
   }
 
   handleDelete(goalId) {
-    this.props.firebase.remove(`/goals/${this.props.currentUserId}/${goalId}`)
+    this.setState({
+      modal: 'delete',
+      modalGoalId: goalId,
+    })
+  }
+
+  handleConfirmDelete() {
+    const { firebase, currentUserId } = this.props
+    const { modalGoalId } = this.state
+
+    firebase.remove(`/goals/${currentUserId}/${modalGoalId}`)
+
+    this.setState({
+      modal: null,
+      modalGoalId: null,
+    })
   }
 
   handleChange(fieldName: string, value: string) {
@@ -195,12 +218,20 @@ class GoalList extends Component<Props, State> {
 
   render() {
     const { classes, goals, readOnly, title } = this.props
-    const { name, target, targetType } = this.state
+    const { name, target, targetType, modal } = this.state
 
     const formValid = name.length > 0 && target > 0
 
     return (
       <Card className={classes.card}>
+        <ConfirmationModal
+          title="Discard challenge"
+          open={modal === 'delete'}
+          onClose={() => this.setState({ modal: null })}
+          onConfirm={this.handleConfirmDelete}
+        >
+          Are you sure you want to permanently delete this challenge?
+        </ConfirmationModal>
         <CardContent>
           <Typography type="headline" component="h2" className={classes.title}>
             <Avatar className={classes.primaryAvatar}>

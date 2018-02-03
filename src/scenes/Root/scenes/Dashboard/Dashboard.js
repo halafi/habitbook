@@ -27,7 +27,7 @@ const styles = {
   contentWrapper: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     minHeight: 'calc(100vh - 188px)',
   },
 }
