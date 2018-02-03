@@ -131,7 +131,7 @@ class GoalList extends Component<Props, State> {
       started: moment().valueOf(),
       created: moment().valueOf(),
       ascensionCount: 0,
-      visibility: getGoalVisibility(1),
+      visibility: getGoalVisibility(2),
     })
     this.setState({
       name: '',
@@ -234,7 +234,7 @@ class GoalList extends Component<Props, State> {
     return (
       <Card className={classes.card}>
         <ConfirmationModal
-          title="Discard challenge"
+          title="Remove challenge"
           open={modal === 'delete'}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmDelete}

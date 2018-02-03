@@ -178,7 +178,7 @@ class GoalView extends Component<Props> {
             {goal.draft
               ? [
                   <Button key="discardBtn" dense onClick={onDelete}>
-                    Discard
+                    Remove
                   </Button>,
                   <Button dense onClick={onToggleDraft} color="primary">
                     Start
