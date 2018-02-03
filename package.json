@@ -12,8 +12,8 @@
   "author": "Filip Halas",
   "license": "ISC",
   "dependencies": {
-    "firebase": "^4.8.2",
-    "jest": "^22.0.6",
+    "firebase": "^4.9.1",
+    "jest": "^22.1.4",
     "material-ui": "^1.0.0-beta.27",
     "material-ui-icons": "^1.0.0-beta.17",
     "moment": "^2.20.1",
@@ -23,7 +23,7 @@
     "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
-    "react-redux-firebase": "^2.0.0",
+    "react-redux-firebase": "^2.0.3",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "reselect": "^3.0.1"

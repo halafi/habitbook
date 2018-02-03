@@ -73,7 +73,7 @@ const NewGoalForm = ({
       value={targetType}
       onChange={ev => onChange('targetType', ev.target.value)}
       SelectProps={{
-        native: true, // FIXME: native broken
+        native: true,
       }}
       margin="normal"
       className={classes.textField}
