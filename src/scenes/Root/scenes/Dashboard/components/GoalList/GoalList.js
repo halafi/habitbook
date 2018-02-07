@@ -11,6 +11,7 @@ import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles'
 import Avatar from 'material-ui/Avatar'
 import AssignmentIcon from 'material-ui-icons/Assignment'
+import TextField from 'material-ui/TextField'
 
 import GoalView from './components/GoalView/GoalView'
 import NewGoalForm from './components/NewGoalForm/NewGoalForm'
@@ -21,8 +22,9 @@ import { getGoalVisibility } from '../../../../../../common/records/GoalVisibili
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
-import { getAscensionKarma, getFinishKarma } from './components/services/helpers'
+import { getAscensionKarma, getFinishKarma, getSortedGoalsIds } from './components/services/helpers'
 import NoGoalsImg from '../../../../../../../images/nogoals.svg'
+import { GOAL_SORT_TYPES } from './components/consts/sortTypes'
 
 type Props = {
   classes: Object,
@@ -71,6 +73,11 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 })
 
@@ -158,7 +165,7 @@ class GoalList extends Component<Props, State> {
     this.updateUserGoal(goalId, { visibility: ev.target.value })
 
   handleConfirmReset = () => {
-    const { currentUserId, goals } = this.props
+    const { goals } = this.props
     const { modalGoalId } = this.state
 
     const newStreak = getElapsedDaysTillNow(goals[modalGoalId].started)
@@ -212,6 +219,14 @@ class GoalList extends Component<Props, State> {
     })
   }
 
+  handleChangeSort = (ev: any) => {
+    const { firebase } = this.props
+
+    firebase.updateProfile({
+      sort: ev.target.value,
+    })
+  }
+
   handleCompleteGoal = (goalId: string) => {
     const { firebase, profile, goals } = this.props
 
@@ -227,10 +242,12 @@ class GoalList extends Component<Props, State> {
   }
 
   render() {
-    const { classes, goals, readOnly, title } = this.props
+    const { classes, goals, readOnly, title, profile } = this.props
     const { name, target, targetType, modal } = this.state
 
     const formValid = name.length > 0 && target > 0
+    const sort = profile.sort || 'default'
+    // const sortGoalIds = getSortedGoalsIds(goals, sort)
 
     return (
       <Card className={classes.card}>
@@ -251,12 +268,32 @@ class GoalList extends Component<Props, State> {
           Are you sure you want to reset your progress?
         </ConfirmationModal>
         <CardContent>
-          <Typography type="headline" component="h2" className={classes.title}>
-            <Avatar className={classes.primaryAvatar}>
-              <AssignmentIcon />
-            </Avatar>
-            {title}
-          </Typography>
+          <div className={classes.header}>
+            <Typography type="headline" component="h2" className={classes.title}>
+              <Avatar className={classes.primaryAvatar}>
+                <AssignmentIcon />
+              </Avatar>
+              {title}
+            </Typography>
+            <TextField
+              id="select-target-type"
+              select
+              label="Sort by"
+              value={sort}
+              onChange={this.handleChangeSort}
+              SelectProps={{
+                native: true,
+              }}
+              margin="normal"
+              className={classes.textField}
+            >
+              {GOAL_SORT_TYPES.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </TextField>
+          </div>
           <div className={classes.goalsContainer}>
             <div>
               {goals &&
