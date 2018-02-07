@@ -113,10 +113,11 @@ class GoalView extends Component<Props> {
         <ExpansionPanelDetails>
           <div>
             <Typography>
-              {goal.target}{' '}
-              {goal.targetType === 'DAYS'
-                ? 'days required to complete.'
-                : 'performances required to complete.'}
+              {goal.target} days required to complete.
+              <br />
+              {goal.streak
+                ? `Longest streak: ${goal.streak} ${goal.streak > 1 ? 'days' : 'day'}.`
+                : ''}
             </Typography>
             <br />
             <TextField

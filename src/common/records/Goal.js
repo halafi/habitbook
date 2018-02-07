@@ -1,15 +1,15 @@
 import type { GoalTargetType } from './GoalTargetType'
 
 export type Goal = {
-  name: string,
-  targetType: GoalTargetType,
-  target: number,
-  draft: boolean,
-  started: number,
   ascensionCount: number,
-  visibility: string,
-  // done: number,
   created: number,
+  draft: boolean,
+  streak: number,
+  name: string,
+  started: number,
+  target: number,
+  targetType: GoalTargetType,
+  visibility: string,
 }
 
 export type Goals = {

@@ -16,6 +16,7 @@ import GoalView from './components/GoalView/GoalView'
 import NewGoalForm from './components/NewGoalForm/NewGoalForm'
 import ConfirmationModal from '../../../../../../common/components/ConfirmationDialog/ConfirmationDialog'
 import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
+import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
@@ -85,6 +86,15 @@ class GoalList extends Component<Props, State> {
     }
   }
 
+  updateUserGoal = (goalId, update) => {
+    const { firebase, currentUserId, goals } = this.props
+
+    firebase.set(`/goals/${currentUserId}/${goalId}`, {
+      ...goals[goalId],
+      ...update,
+    })
+  }
+
   handleDelete = goalId => {
     this.setState({
       modal: 'delete',
@@ -124,13 +134,14 @@ class GoalList extends Component<Props, State> {
     const { name, target, targetType } = this.state
 
     firebase.push(`/goals/${currentUserId}`, {
+      ascensionCount: 0,
+      created: moment().valueOf(),
+      draft: true,
+      streak: 0,
       name,
+      started: moment().valueOf(),
       target,
       targetType,
-      draft: true,
-      started: moment().valueOf(),
-      created: moment().valueOf(),
-      ascensionCount: 0,
       visibility: getGoalVisibility(2),
     })
     this.setState({
@@ -139,28 +150,26 @@ class GoalList extends Component<Props, State> {
   }
 
   handleChangeDate = (goalId: string, ev: any) => {
-    const { currentUserId, goals, firebase } = this.props
     const newMoment = ev.target.value ? moment(ev.target.value, GOAL_DATE_TIME) : moment()
-
-    firebase.set(`/goals/${currentUserId}/${goalId}`, {
-      ...goals[goalId],
-      started: newMoment.valueOf(),
-    })
+    this.updateUserGoal(goalId, { started: newMoment.valueOf() })
   }
 
-  handleChangeVisibility = (goalId: string, ev: any) => {
-    const { currentUserId, goals, firebase } = this.props
-
-    firebase.set(`/goals/${currentUserId}/${goalId}`, {
-      ...goals[goalId],
-      visibility: ev.target.value,
-    })
-  }
+  handleChangeVisibility = (goalId: string, ev: any) =>
+    this.updateUserGoal(goalId, { visibility: ev.target.value })
 
   handleConfirmReset = () => {
+    const { currentUserId, goals } = this.props
     const { modalGoalId } = this.state
 
-    this.handleToggleDraft(modalGoalId)
+    const newStreak = getElapsedDaysTillNow(goals[modalGoalId].started)
+    const previousStreak = goals[modalGoalId].streak || 0
+
+    this.updateUserGoal(modalGoalId, {
+      started: moment().valueOf(),
+      draft: true,
+      ascensionCount: 0,
+      streak: newStreak > previousStreak ? newStreak : previousStreak,
+    })
 
     this.setState({
       modal: null,
@@ -169,18 +178,12 @@ class GoalList extends Component<Props, State> {
   }
 
   handleToggleDraft = (goalId: string) => {
-    const { currentUserId, goals, firebase } = this.props
+    const { goals } = this.props
 
-    const edditedGoal = goals[goalId]
-    if (edditedGoal.draft) {
-      firebase.set(`/goals/${currentUserId}/${goalId}`, {
-        ...edditedGoal,
-        draft: false,
-        ascensionCount: 0,
-      })
+    if (goals[goalId]) {
+      this.updateUserGoal(goalId, { draft: false, ascensionCount: 0 })
     } else {
-      firebase.set(`/goals/${currentUserId}/${goalId}`, {
-        ...edditedGoal,
+      this.updateUserGoal(goalId, {
         started: moment().valueOf(),
         draft: true,
         ascensionCount: 0,
@@ -189,7 +192,7 @@ class GoalList extends Component<Props, State> {
   }
 
   handleExtendGoal = (goalId: string) => {
-    const { currentUserId, goals, firebase, profile } = this.props
+    const { goals, firebase, profile } = this.props
 
     const edditedGoal = goals[goalId]
     // const daysCompleted = getElapsedDaysTillNow(edditedGoal.started)
@@ -203,12 +206,10 @@ class GoalList extends Component<Props, State> {
         : getAscensionKarma(edditedGoal),
     })
 
-    firebase.set(`/goals/${currentUserId}/${goalId}`, {
-      ...edditedGoal,
+    this.updateUserGoal(goalId, {
       target: newTarget,
       ascensionCount: edditedGoal.ascensionCount + 1,
     })
-    // TODO: goal history (extended on date... etc.)
   }
 
   handleCompleteGoal = (goalId: string) => {
