@@ -36,6 +36,7 @@ type Props = {
   onReset: string => void,
   onExtendGoal: string => void,
   onChangeVisibility: string => void,
+  onRenameGoal: any => void, // SyntheticEvent<> TODO flowtyped
   classes: any,
   readOnly: boolean,
 }
@@ -61,6 +62,20 @@ const styles = theme => ({
     marginLeft: '10px',
     color: theme.palette.text.secondary,
   },
+  form: {
+    marginTop: '-12px',
+    padding: '0',
+  },
+  textField: {
+    marginLeft: '0px',
+    marginRight: '16px',
+    width: '200px',
+  },
+  // descriptionField: {
+  //   marginLeft: '0px',
+  //   marginRight: '16px',
+  //   width: '100%',
+  // },
 })
 
 // TODO: controlled accordion
@@ -78,6 +93,7 @@ class GoalView extends Component<Props> {
       onReset,
       onExtendGoal,
       onChangeVisibility,
+      onRenameGoal,
       classes,
       readOnly,
     } = this.props
@@ -112,6 +128,47 @@ class GoalView extends Component<Props> {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <div>
+            <form className={classes.form}>
+              <TextField
+                id="name"
+                label="Name"
+                value={goal.name}
+                onChange={onRenameGoal}
+                className={classes.textField}
+                disabled={readOnly}
+              />
+              <TextField
+                id="start-date"
+                label={goal.draft ? 'Start from' : 'Started'}
+                type="datetime-local"
+                value={moment(goal.started).format(GOAL_DATE_TIME)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={onChangeDate}
+                className={classes.textField}
+                disabled={readOnly || !goal.draft}
+              />
+              <TextField
+                id="select-target-type"
+                select
+                label="Visible to"
+                value={goal.visibility}
+                onChange={onChangeVisibility}
+                SelectProps={{
+                  native: true,
+                }}
+                margin="normal"
+                disabled={readOnly}
+              >
+                {GOAL_VISIBILITIES.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </TextField>
+            </form>
+            <br />
             <Typography>
               {goal.target} days required to complete.
               <br />
@@ -119,38 +176,7 @@ class GoalView extends Component<Props> {
                 ? `Longest streak: ${goal.streak} ${goal.streak > 1 ? 'days' : 'day'}.`
                 : ''}
             </Typography>
-            <br />
-            <TextField
-              id="start-date"
-              label={goal.draft ? 'Start from' : 'Started'}
-              type="datetime-local"
-              value={moment(goal.started).format(GOAL_DATE_TIME)}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={onChangeDate}
-              disabled={!goal.draft}
-            />
-            <br />
-            <TextField
-              id="select-target-type"
-              select
-              label="Visible to"
-              value={goal.visibility}
-              onChange={onChangeVisibility}
-              SelectProps={{
-                native: true,
-              }}
-              margin="normal"
-              className={classes.textField}
-              disabled={readOnly}
-            >
-              {GOAL_VISIBILITIES.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </TextField>
+
             {finished &&
               !goal.draft && (
                 <Typography component="div">

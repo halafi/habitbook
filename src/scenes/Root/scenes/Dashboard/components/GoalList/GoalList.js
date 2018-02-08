@@ -241,6 +241,12 @@ class GoalList extends Component<Props, State> {
     this.handleDelete(goalId)
   }
 
+  handleRenameGoal = (goalId: string, ev: any) => {
+    this.updateUserGoal(goalId, {
+      name: ev.target.value,
+    })
+  }
+
   render() {
     const { classes, goals, readOnly, title, profile } = this.props
     const { name, target, targetType, modal } = this.state
@@ -308,6 +314,7 @@ class GoalList extends Component<Props, State> {
                     onReset={R.partial(this.handleReset, [goalId])}
                     onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
                     onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
+                    onRenameGoal={R.partial(this.handleRenameGoal, [goalId])}
                     readOnly={readOnly}
                   />
                 ))}
