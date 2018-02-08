@@ -3,6 +3,7 @@
 import React, { Component } from 'react'
 import moment from 'moment'
 import * as R from 'ramda'
+import { PieChart, Pie, Cell, Sector, ResponsiveContainer } from 'recharts'
 
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -71,12 +72,58 @@ const styles = theme => ({
     marginRight: '16px',
     width: '200px',
   },
+  panelContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
   // descriptionField: {
   //   marginLeft: '0px',
   //   marginRight: '16px',
   //   width: '100%',
   // },
 })
+
+const COLORS = ['#C0C0C0', '#3748AC']
+
+// TODO: extract to helpers
+const renderActiveShape = (props: Object) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, percent } = props
+
+  return (
+    <g>
+      <text
+        fontFamily="Roboto"
+        fontSize="16"
+        fontWeight={700}
+        x={cx}
+        y={cy}
+        dy={8}
+        textAnchor="middle"
+        fill={fill}
+      >
+        {percent * 100}%
+      </text>
+      <Sector
+        cx={cx}
+        cy={cy}
+        endAngle={endAngle}
+        fill={fill}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        startAngle={startAngle}
+      />
+      <Sector
+        cx={cx}
+        cy={cy}
+        endAngle={endAngle}
+        fill={fill}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        startAngle={startAngle}
+      />
+    </g>
+  )
+}
 
 // TODO: controlled accordion
 // TODO: min date today
@@ -104,7 +151,22 @@ class GoalView extends Component<Props> {
       return null
     }
 
-    const finished = getElapsedDaysTillNow(goal.started) >= goal.target
+    const elapsedDaysTillNow = getElapsedDaysTillNow(goal.started)
+    const finished = elapsedDaysTillNow >= goal.target
+
+    const chartData = [
+      {
+        name: 'Target',
+        value:
+          Number(goal.target) - elapsedDaysTillNow >= 0
+            ? Number(goal.target) - elapsedDaysTillNow
+            : 0,
+      },
+      {
+        name: 'Finished',
+        value: elapsedDaysTillNow > Number(goal.target) ? Number(goal.target) : elapsedDaysTillNow,
+      },
+    ]
 
     return (
       <ExpansionPanel>
@@ -114,7 +176,7 @@ class GoalView extends Component<Props> {
           </Typography>
           {!goal.draft && (
             <Typography className={classes.secondaryHeading}>
-              {getElapsedDaysTillNow(goal.started)} / {goal.target}
+              {elapsedDaysTillNow} / {goal.target}
             </Typography>
           )}
           {goal.ascensionCount > 0 && (
@@ -127,71 +189,95 @@ class GoalView extends Component<Props> {
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <div>
-            <form className={classes.form}>
-              <TextField
-                id="name"
-                label="Name"
-                value={goal.name}
-                onChange={onRenameGoal}
-                className={classes.textField}
-                disabled={readOnly}
-              />
-              <TextField
-                id="start-date"
-                label={goal.draft ? 'Start from' : 'Started'}
-                type="datetime-local"
-                value={moment(goal.started).format(GOAL_DATE_TIME)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={onChangeDate}
-                className={classes.textField}
-                disabled={readOnly || !goal.draft}
-              />
-              <TextField
-                id="select-target-type"
-                select
-                label="Visible to"
-                value={goal.visibility}
-                onChange={onChangeVisibility}
-                SelectProps={{
-                  native: true,
-                }}
-                margin="normal"
-                disabled={readOnly}
-              >
-                {GOAL_VISIBILITIES.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </form>
-            <br />
-            <Typography>
-              {goal.target} days required to complete.
+          <div className={classes.panelContainer}>
+            <div>
+              <form className={classes.form}>
+                <TextField
+                  id="name"
+                  label="Name"
+                  value={goal.name}
+                  onChange={onRenameGoal}
+                  className={classes.textField}
+                  disabled={readOnly}
+                />
+                <TextField
+                  id="start-date"
+                  label={goal.draft ? 'Start from' : 'Started'}
+                  type="datetime-local"
+                  value={moment(goal.started).format(GOAL_DATE_TIME)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={onChangeDate}
+                  className={classes.textField}
+                  disabled={readOnly || !goal.draft}
+                />
+                <TextField
+                  id="select-target-type"
+                  select
+                  label="Visible to"
+                  value={goal.visibility}
+                  onChange={onChangeVisibility}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  margin="normal"
+                  disabled={readOnly}
+                >
+                  {GOAL_VISIBILITIES.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
+              </form>
               <br />
-              {goal.streak
-                ? `Longest streak: ${goal.streak} ${goal.streak > 1 ? 'days' : 'day'}.`
-                : ''}
-            </Typography>
-
-            {finished &&
-              !goal.draft && (
-                <Typography component="div">
-                  <br />
-                  Make a choice:
-                  <ul>
-                    <li>Collect {getFinishKarma(goal)} Karma and be done with this challenge</li>
-                    <li>
-                      Collect {getAscensionKarma(goal)} Karma and double the challenge duration (
-                      {getAscensionKarma({ ...goal, ascensionCount: goal.ascensionCount + 1 })} next
-                      time)
-                    </li>
-                  </ul>
-                </Typography>
-              )}
+              <Typography>
+                {goal.target} days required to complete.
+                <br />
+                {goal.streak
+                  ? `Longest streak: ${goal.streak} ${goal.streak > 1 ? 'days' : 'day'}.`
+                  : ''}
+              </Typography>
+              {finished &&
+                !goal.draft && (
+                  <Typography component="div">
+                    <br />
+                    Make a choice:
+                    <ul>
+                      <li>Collect {getFinishKarma(goal)} Karma and be done with this challenge</li>
+                      <li>
+                        Collect {getAscensionKarma(goal)} Karma and double the challenge duration (
+                        {getAscensionKarma({
+                          ...goal,
+                          ascensionCount: goal.ascensionCount + 1,
+                        })}{' '}
+                        next time)
+                      </li>
+                    </ul>
+                  </Typography>
+                )}
+            </div>
+            <div>
+              <ResponsiveContainer width={200} height={200}>
+                <PieChart width={200} height={200}>
+                  <Pie
+                    isAnimationActive={false}
+                    activeIndex={1}
+                    activeShape={renderActiveShape}
+                    data={chartData}
+                    cx="65%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={65}
+                    fill="#8884d8"
+                    paddingAngle={finished ? 0 : 3}
+                  >
+                    {chartData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </ExpansionPanelDetails>
         <Divider />
