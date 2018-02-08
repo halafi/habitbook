@@ -101,7 +101,7 @@ const renderActiveShape = (props: Object) => {
         textAnchor="middle"
         fill={fill}
       >
-        {percent * 100}%
+        {(percent * 100).toFixed(0)}%
       </text>
       <Sector
         cx={cx}
