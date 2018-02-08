@@ -271,7 +271,7 @@ class GoalView extends Component<Props> {
                     innerRadius={50}
                     outerRadius={65}
                     fill="#8884d8"
-                    paddingAngle={finished ? 0 : 3}
+                    paddingAngle={finished || elapsedDaysTillNow <= 0 ? 0 : 3}
                   >
                     {chartData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)}
                   </Pie>

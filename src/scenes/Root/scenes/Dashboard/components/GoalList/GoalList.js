@@ -209,7 +209,7 @@ class GoalList extends Component<Props, State> {
       goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
       ascensions: profile.ascensions ? profile.ascensions + 1 : 1,
       karma: profile.karma
-        ? profile.karma + getAscensionKarma(edditedGoal)
+        ? Number(profile.karma) + getAscensionKarma(edditedGoal)
         : getAscensionKarma(edditedGoal),
     })
 
@@ -235,7 +235,7 @@ class GoalList extends Component<Props, State> {
     firebase.updateProfile({
       goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
       karma: profile.karma
-        ? profile.karma + getFinishKarma(updatedGoal)
+        ? Number(profile.karma) + getFinishKarma(updatedGoal)
         : getFinishKarma(updatedGoal),
     })
     this.handleDelete(goalId)

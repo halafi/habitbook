@@ -7,7 +7,7 @@ import { getElapsedDaysTillNow } from '../../../../../../../../common/services/d
 
 export const getAscensionKarma = (goal: Goal): number =>
   Math.round(goal.target * (goal.ascensionCount + 1) / 2)
-export const getFinishKarma = (goal: Goal): number => goal.target
+export const getFinishKarma = (goal: Goal): number => Number(goal.target)
 
 export const getSortedGoalsIds = (goals: Goals, sortType: SortType): Array<string> => {
   let sortFn = R.identity // do not sort by default
