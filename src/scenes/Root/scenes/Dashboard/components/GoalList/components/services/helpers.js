@@ -10,7 +10,16 @@ export const getAscensionKarma = (goal: Goal): number =>
 export const getFinishKarma = (goal: Goal): number => goal.target
 
 export const getSortedGoalsIds = (goals: Goals, sortType: SortType): Array<string> => {
-  let sortFn = R.identity
+  let sortFn = R.identity // do not sort by default
+
+  const sortDraftFn = (a, b) => {
+    if (a[1].draft && !b[1].draft) {
+      return 1
+    } else if (!a[1].draft && b[1].draft) {
+      return -1
+    }
+    return 0
+  }
 
   if (sortType === 'name') {
     sortFn = (a, b) => a[1].name.localeCompare(b[1].name)
@@ -18,15 +27,23 @@ export const getSortedGoalsIds = (goals: Goals, sortType: SortType): Array<strin
     sortFn = (a, b) => {
       const aElapsedDays = getElapsedDaysTillNow(a[1].started)
       const bElapsedDays = getElapsedDaysTillNow(b[1].started)
-      if (aElapsedDays < bElapsedDays) {
+      if (bElapsedDays < aElapsedDays) {
         return -1
-      } else if (aElapsedDays > bElapsedDays) {
+      } else if (bElapsedDays > aElapsedDays) {
+        return 1
+      }
+      return 0
+    }
+  } else if (sortType === 'oldestFirst') {
+    sortFn = (a, b) => {
+      if (a[1].created < b[1].created) {
+        return -1
+      } else if (a[1].created > b[1].created) {
         return 1
       }
       return 0
     }
   }
 
-  const fn = R.compose(R.map(R.nth(0)), R.sort(sortFn), R.toPairs)
-  return fn(goals)
+  return R.compose(R.map(R.nth(0)), R.sort(sortDraftFn), R.sort(sortFn), R.toPairs)(goals)
 }

@@ -246,8 +246,8 @@ class GoalList extends Component<Props, State> {
     const { name, target, targetType, modal } = this.state
 
     const formValid = name.length > 0 && target > 0
-    const sort = profile.sort || 'default'
-    // const sortGoalIds = getSortedGoalsIds(goals, sort)
+    const sort = profile.sort || 'oldest'
+    const sortedGoalIds = getSortedGoalsIds(goals, sort)
 
     return (
       <Card className={classes.card}>
@@ -297,7 +297,7 @@ class GoalList extends Component<Props, State> {
           <div className={classes.goalsContainer}>
             <div>
               {goals &&
-                Object.keys(goals).map(goalId => (
+                sortedGoalIds.map(goalId => (
                   <GoalView
                     key={goalId}
                     goal={goals[goalId]}
