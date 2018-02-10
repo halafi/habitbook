@@ -30,7 +30,7 @@ import { selectUser } from '../../../../../../../common/actions/dashboardActions
 import { getRank, getRankId } from '../../../../../../../common/records/Rank'
 import { getGoalVisibility } from '../../../../../../../common/records/GoalVisibility'
 import { emailValid } from '../../../../../../../common/services/validators'
-import { getAscensionKarma } from '../../GoalList/components/services/helpers'
+import { getAscensionKarma } from '../../GoalList/services/helpers'
 
 type Props = {
   classes: Object,

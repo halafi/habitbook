@@ -13,18 +13,18 @@ import Avatar from 'material-ui/Avatar'
 import AssignmentIcon from 'material-ui-icons/Assignment'
 import TextField from 'material-ui/TextField'
 
-import GoalView from './components/components/GoalView/GoalView'
-import NewGoalForm from './components/components/NewGoalForm/NewGoalForm'
+import GoalView from './components/GoalView/GoalView'
+import NewGoalForm from './components/NewGoalForm/NewGoalForm'
 import ConfirmationModal from '../../../../../../common/components/ConfirmationModal/ConfirmationModal'
-import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
+import { getElapsedDaysTillNow, getElapsedDaysBetween } from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
-import { getAscensionKarma, getFinishKarma, getSortedGoalsIds } from './components/services/helpers'
+import { getAscensionKarma, getFinishKarma, getSortedGoalsIds } from './services/helpers'
 import NoGoalsImg from '../../../../../../../images/nogoals.svg'
-import { GOAL_SORT_TYPES } from './components/consts/sortTypes'
-import ResetDialog from './components/components/ResetDialog/ResetDialog'
+import { GOAL_SORT_TYPES } from './consts/sortTypes'
+import ResetDialog from './components/ResetDialog/ResetDialog'
 
 type Props = {
   classes: Object,
@@ -46,6 +46,7 @@ type State = {
   target: number,
   modal: ?GoalModal,
   modalGoalId: ?string,
+  modalDateTime: ?number,
 }
 
 const styles = theme => ({
@@ -90,6 +91,7 @@ class GoalList extends Component<Props, State> {
       targetType: 'DAYS',
       modal: null,
       modalGoalId: null,
+      modalDateTime: null,
     }
   }
 
@@ -166,16 +168,19 @@ class GoalList extends Component<Props, State> {
 
   handleConfirmReset = () => {
     const { goals } = this.props
-    const { modalGoalId } = this.state
+    const { modalGoalId, modalDateTime } = this.state
 
-    const newStreak = getElapsedDaysTillNow(goals[modalGoalId].started)
+    const newStreak = getElapsedDaysBetween(goals[modalGoalId].started, modalDateTime)
     const previousStreak = goals[modalGoalId].streak || 0
+    // const failures = goals[modalGoalId].failures || []
+    // failures.push(modalDateTime)
 
     this.updateUserGoal(modalGoalId, {
       started: moment().valueOf(),
       draft: true,
       ascensionCount: 0,
       streak: newStreak > previousStreak ? newStreak : previousStreak,
+      // failures,
     })
 
     this.setState({
@@ -249,7 +254,7 @@ class GoalList extends Component<Props, State> {
 
   render() {
     const { classes, goals, readOnly, title, profile } = this.props
-    const { name, target, targetType, modal } = this.state
+    const { name, target, targetType, modal, modalDateTime } = this.state
 
     const formValid = name.length > 0 && target > 0
     const sort = profile.sort || 'oldest'
@@ -269,6 +274,8 @@ class GoalList extends Component<Props, State> {
           open={modal === 'reset'}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmReset}
+          dateTime={modalDateTime}
+          onDateTimeChange={val => this.setState({ modalDateTime: val })}
         />
         <CardContent>
           <div className={classes.header}>

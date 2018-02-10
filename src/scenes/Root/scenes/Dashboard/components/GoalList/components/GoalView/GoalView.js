@@ -18,13 +18,13 @@ import TextField from 'material-ui/TextField'
 import Tooltip from 'material-ui/Tooltip'
 import { withStyles } from 'material-ui/styles'
 
-import { getElapsedDaysTillNow } from '../../../../../../../../../common/services/dateTimeUtils'
-import DateTimePicker from '../../../../../../../../../common/components/DateTimePicker/DateTimePicker'
-import type { Goal } from '../../../../../../../../../common/records/Goal'
+import { getElapsedDaysTillNow } from '../../../../../../../../common/services/dateTimeUtils'
+import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
+import type { Goal } from '../../../../../../../../common/records/Goal'
 import {
   getGoalVisibility,
   GOAL_VISIBILITIES,
-} from '../../../../../../../../../common/records/GoalVisibility'
+} from '../../../../../../../../common/records/GoalVisibility'
 import { getFinishKarma, getAscensionKarma } from '../../services/helpers'
 
 type Props = {

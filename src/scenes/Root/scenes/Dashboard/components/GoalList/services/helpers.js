@@ -1,9 +1,9 @@
 // @flow
 
 import * as R from 'ramda'
-import type { Goal, Goals } from '../../../../../../../../common/records/Goal'
+import type { Goal, Goals } from '../../../../../../../common/records/Goal'
 import type SortType from '../consts/sortTypes'
-import { getElapsedDaysTillNow } from '../../../../../../../../common/services/dateTimeUtils'
+import { getElapsedDaysTillNow } from '../../../../../../../common/services/dateTimeUtils'
 
 export const getAscensionKarma = (goal: Goal): number =>
   Math.round(goal.target * (goal.ascensionCount + 1) / 2)
