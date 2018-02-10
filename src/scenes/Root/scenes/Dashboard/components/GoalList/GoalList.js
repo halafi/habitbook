@@ -16,7 +16,6 @@ import TextField from 'material-ui/TextField'
 import GoalView from './components/components/GoalView/GoalView'
 import NewGoalForm from './components/components/NewGoalForm/NewGoalForm'
 import ConfirmationModal from '../../../../../../common/components/ConfirmationModal/ConfirmationModal'
-import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
 import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
@@ -157,9 +156,9 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleChangeDate = (goalId: string, ev: any) => {
-    const newMoment = ev.target.value ? moment(ev.target.value, GOAL_DATE_TIME) : moment()
-    this.updateUserGoal(goalId, { started: newMoment.valueOf() })
+  handleChangeDate = (goalId: string, newDate: number) => {
+    const newDateTimeMillis = newDate || moment().valueOf()
+    this.updateUserGoal(goalId, { started: newDateTimeMillis })
   }
 
   handleChangeVisibility = (goalId: string, ev: any) =>

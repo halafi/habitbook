@@ -2,8 +2,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import moment from 'moment'
 
-import DateTimePicker from './DateTimePicker'
-import { GOAL_DATE_TIME } from '../../consts/dateTimeConsts'
+import DateTimePicker, { DATE_TIME_FORMAT } from './DateTimePicker'
 
 describe('DateTimePicker', () => {
   const dateNow = Date.now
@@ -39,10 +38,10 @@ describe('DateTimePicker', () => {
     let wrapper = shallow(
       <DateTimePicker id="test-picker" label="Date Time" value={val1} onChange={null} />,
     )
-    expect(moment(wrapper.props().value).format(GOAL_DATE_TIME)).toEqual('2018-02-03T18:21')
+    expect(moment(wrapper.props().value).format(DATE_TIME_FORMAT)).toEqual('2018-02-03T18:21')
     wrapper = shallow(
       <DateTimePicker id="test-picker" label="Date Time" value={val2} onChange={null} />,
     )
-    expect(moment(wrapper.props().value).format(GOAL_DATE_TIME)).toEqual('2018-02-13T18:21')
+    expect(moment(wrapper.props().value).format(DATE_TIME_FORMAT)).toEqual('2018-02-13T18:21')
   })
 })

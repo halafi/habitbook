@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react'
-import moment from 'moment'
 import * as R from 'ramda'
 import { PieChart, Pie, Cell, Sector, ResponsiveContainer } from 'recharts'
 
@@ -26,7 +25,6 @@ import {
   getGoalVisibility,
   GOAL_VISIBILITIES,
 } from '../../../../../../../../../common/records/GoalVisibility'
-import { GOAL_DATE_TIME } from '../../../../../../../../../common/consts/dateTimeConsts'
 import { getFinishKarma, getAscensionKarma } from '../../services/helpers'
 
 type Props = {
@@ -71,7 +69,13 @@ const styles = theme => ({
   textField: {
     marginLeft: '0px',
     marginRight: '16px',
-    width: '200px',
+    width: '150px',
+  },
+  dateTimePicker: {
+    display: 'inline-block',
+    marginLeft: '0px',
+    marginRight: '16px',
+    width: '255px',
   },
   panelContainer: {
     display: 'flex',
@@ -204,9 +208,9 @@ class GoalView extends Component<Props> {
                 <DateTimePicker
                   id="start-date"
                   label={goal.draft ? 'Start from' : 'Started'}
-                  value={moment(goal.started).format(GOAL_DATE_TIME)}
+                  value={goal.started}
                   onChange={onChangeDate}
-                  className={classes.textField}
+                  className={classes.dateTimePicker}
                   disabled={readOnly || !goal.draft}
                 />
                 <TextField
