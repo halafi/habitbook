@@ -13,7 +13,7 @@ type Props = {
   value: number,
 }
 
-export const DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm'
+const DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm'
 const DATE_FORMAT = 'YYYY-MM-DD'
 const TIME_FORMAT = 'HH:mm'
 
