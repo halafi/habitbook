@@ -8,13 +8,20 @@ import { GOAL_DATE_TIME } from '../../consts/dateTimeConsts'
 type Props = {
   id: string,
   className: ?string,
-  disabled: boolean,
+  disabled: ?boolean,
   label: ?string,
   onChange: any => void,
   value: string,
 }
 
-const DateTimePicker = ({ id, label, value, onChange, className, disabled }: Props) => (
+const DateTimePicker = ({
+  id,
+  label,
+  value,
+  onChange,
+  className = '',
+  disabled = false,
+}: Props) => (
   <TextField
     id={id}
     label={label}
