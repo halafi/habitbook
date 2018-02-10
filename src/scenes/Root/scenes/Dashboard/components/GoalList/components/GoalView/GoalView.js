@@ -1,8 +1,18 @@
 // @flow
 
 import React, { Component } from 'react'
+import moment from 'moment'
 import * as R from 'ramda'
-import { PieChart, Pie, Cell, Sector, ResponsiveContainer } from 'recharts'
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Sector,
+  Line,
+  LineChart,
+  CartesianGrid,
+} from 'recharts'
 
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -18,7 +28,10 @@ import TextField from 'material-ui/TextField'
 import Tooltip from 'material-ui/Tooltip'
 import { withStyles } from 'material-ui/styles'
 
-import { getElapsedDaysTillNow } from '../../../../../../../../common/services/dateTimeUtils'
+import {
+  getElapsedDaysTillNow,
+  getElapsedDaysBetween,
+} from '../../../../../../../../common/services/dateTimeUtils'
 import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
 import type { Goal } from '../../../../../../../../common/records/Goal'
 import {
@@ -131,9 +144,6 @@ const renderActiveShape = (props: Object) => {
 }
 
 // TODO: controlled accordion
-// TODO: min date today
-// TODO: moment computes
-// TODO: difficulty and points
 class GoalView extends Component<Props> {
   render() {
     const {
@@ -159,7 +169,7 @@ class GoalView extends Component<Props> {
     const elapsedDaysTillNow = getElapsedDaysTillNow(goal.started)
     const finished = elapsedDaysTillNow >= goal.target
 
-    const chartData = [
+    const progressChartData = [
       {
         name: 'Target',
         value:
@@ -172,6 +182,48 @@ class GoalView extends Component<Props> {
         value: elapsedDaysTillNow > Number(goal.target) ? Number(goal.target) : elapsedDaysTillNow,
       },
     ]
+
+    const momentumChartData = []
+
+    if (goal.resets) {
+      R.times(n => {
+        const resetsOnCurrentDay = goal.resets.filter(
+          reset => moment(reset).diff(moment(goal.created), 'd') - 1 === n,
+        )
+
+        const numOfResets = resetsOnCurrentDay.length
+
+        if (numOfResets) {
+          // Lose 1 point for failed day, another 0.2 points for every other fail on the same day
+          const decreasePoints = momentumChartData[n - 1]
+            ? momentumChartData[n - 1].points - 1 - 0.2 * numOfResets
+            : 0
+
+          momentumChartData.push({
+            name: moment(goal.created)
+              .add(n, 'd')
+              .format('DD MMM'),
+            points: decreasePoints,
+          })
+        } else {
+          // Get 0.25 points for good day, 0.5 points if you lose more than 1 point previous day
+          const diff =
+            momentumChartData[n - 2] &&
+            momentumChartData[n - 1] &&
+            momentumChartData[n - 2].points - momentumChartData[n - 1].points >= 1
+
+          const increasePoints = momentumChartData[n - 1]
+            ? momentumChartData[n - 1].points + (diff ? 0.5 : 0.25)
+            : 0.25
+          momentumChartData.push({
+            name: moment(goal.created)
+              .add(n, 'd')
+              .format('DD MMM'),
+            points: increasePoints,
+          })
+        }
+      }, getElapsedDaysTillNow(goal.created))
+    }
 
     return (
       <ExpansionPanel>
@@ -194,79 +246,83 @@ class GoalView extends Component<Props> {
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <div className={classes.panelContainer}>
-            <div>
-              <form className={classes.form}>
-                <TextField
-                  id="name"
-                  label="Name"
-                  value={goal.name}
-                  onChange={onRenameGoal}
-                  className={classes.textField}
-                  disabled={readOnly}
-                />
-                <DateTimePicker
-                  id="start-date"
-                  label={goal.draft ? 'Start from' : 'Started'}
-                  value={goal.started}
-                  onChange={onChangeDate}
-                  className={classes.dateTimePicker}
-                  disabled={readOnly || !goal.draft}
-                />
-                <TextField
-                  id="select-target-type"
-                  select
-                  label="Visible to"
-                  value={goal.visibility}
-                  onChange={onChangeVisibility}
-                  SelectProps={{
-                    native: true,
-                  }}
-                  margin="normal"
-                  disabled={readOnly}
-                >
-                  {GOAL_VISIBILITIES.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </TextField>
-              </form>
-              <br />
-              <Typography>
-                {goal.target} days required to complete.
+          <div>
+            <div className={classes.panelContainer}>
+              <div>
+                <form className={classes.form}>
+                  <TextField
+                    id="name"
+                    label="Name"
+                    value={goal.name}
+                    onChange={onRenameGoal}
+                    className={classes.textField}
+                    disabled={readOnly}
+                  />
+                  <DateTimePicker
+                    id="start-date"
+                    label={goal.draft ? 'Start from' : 'Started'}
+                    value={goal.started}
+                    onChange={onChangeDate}
+                    className={classes.dateTimePicker}
+                    disabled={readOnly || !goal.draft}
+                  />
+                  <TextField
+                    id="select-target-type"
+                    select
+                    label="Visible to"
+                    value={goal.visibility}
+                    onChange={onChangeVisibility}
+                    SelectProps={{
+                      native: true,
+                    }}
+                    margin="normal"
+                    disabled={readOnly}
+                  >
+                    {GOAL_VISIBILITIES.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </TextField>
+                </form>
                 <br />
-                {goal.streak
-                  ? `Longest streak: ${goal.streak} ${goal.streak > 1 ? 'days' : 'day'}.`
-                  : ''}
-              </Typography>
-              {finished &&
-                !goal.draft && (
-                  <Typography component="div">
-                    <br />
-                    Make a choice:
-                    <ul>
-                      <li>Collect {getFinishKarma(goal)} Karma and be done with this challenge</li>
-                      <li>
-                        Collect {getAscensionKarma(goal)} Karma and double the challenge duration (
-                        {getAscensionKarma({
-                          ...goal,
-                          ascensionCount: goal.ascensionCount + 1,
-                        })}{' '}
-                        next time)
-                      </li>
-                    </ul>
-                  </Typography>
-                )}
-            </div>
-            <div>
-              <ResponsiveContainer width={200} height={200}>
+                <Typography>
+                  {goal.target} days required to complete.
+                  <br />
+                  {goal.streak
+                    ? `Longest streak: ${goal.streak} ${goal.streak > 1 ? 'days' : 'day'}.`
+                    : ''}
+                </Typography>
+                {finished &&
+                  !goal.draft && (
+                    <Typography component="div">
+                      <br />
+                      Make a choice:
+                      <ul>
+                        <li>
+                          Collect {getFinishKarma(goal)} Karma and be done with this challenge
+                        </li>
+                        <li>
+                          Collect {getAscensionKarma(goal)} Karma and double the challenge duration
+                          (
+                          {getAscensionKarma({
+                            ...goal,
+                            ascensionCount: goal.ascensionCount + 1,
+                          })}{' '}
+                          next time)
+                        </li>
+                      </ul>
+                    </Typography>
+                  )}
+              </div>
+              <div>
                 <PieChart width={200} height={200}>
                   <Pie
+                    dataKey="value"
                     isAnimationActive={false}
                     activeIndex={1}
                     activeShape={renderActiveShape}
-                    data={chartData}
+                    data={progressChartData}
                     cx="65%"
                     cy="50%"
                     innerRadius={50}
@@ -274,10 +330,28 @@ class GoalView extends Component<Props> {
                     fill="#8884d8"
                     paddingAngle={finished || elapsedDaysTillNow <= 0 ? 0 : 3}
                   >
-                    {chartData.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} />)}
+                    {progressChartData.map((entry, index) => (
+                      <Cell key={entry} fill={COLORS[index % COLORS.length]} />
+                    ))}
                   </Pie>
                 </PieChart>
-              </ResponsiveContainer>
+              </div>
+            </div>
+            <div>
+              {goal.resets && (
+                <ResponsiveContainer width="100%" height={200}>
+                  <LineChart data={momentumChartData}>
+                    <CartesianGrid strokeDasharray="1 1" />
+                    <Line
+                      dot={false}
+                      type="step"
+                      dataKey="points"
+                      stroke="#8884d8"
+                      isAnimationActive={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
         </ExpansionPanelDetails>

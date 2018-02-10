@@ -10,6 +10,7 @@ export type Goal = {
   target: number,
   targetType: GoalTargetType,
   visibility: string,
+  resets: Array<number>,
 }
 
 export type Goals = {
