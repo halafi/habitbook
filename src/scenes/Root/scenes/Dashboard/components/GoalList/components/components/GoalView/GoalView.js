@@ -19,14 +19,15 @@ import TextField from 'material-ui/TextField'
 import Tooltip from 'material-ui/Tooltip'
 import { withStyles } from 'material-ui/styles'
 
-import { getElapsedDaysTillNow } from '../../../../../../../../common/services/dateTimeUtils'
-import type { Goal } from '../../../../../../../../common/records/Goal'
+import { getElapsedDaysTillNow } from '../../../../../../../../../common/services/dateTimeUtils'
+import DateTimePicker from '../../../../../../../../../common/components/DateTimePicker/DateTimePicker'
+import type { Goal } from '../../../../../../../../../common/records/Goal'
 import {
   getGoalVisibility,
   GOAL_VISIBILITIES,
-} from '../../../../../../../../common/records/GoalVisibility'
-import { GOAL_DATE_TIME } from '../../../../../../../../common/consts/dateTimeConsts'
-import { getFinishKarma, getAscensionKarma } from '../services/helpers'
+} from '../../../../../../../../../common/records/GoalVisibility'
+import { GOAL_DATE_TIME } from '../../../../../../../../../common/consts/dateTimeConsts'
+import { getFinishKarma, getAscensionKarma } from '../../services/helpers'
 
 type Props = {
   goal: Goal,
@@ -200,14 +201,10 @@ class GoalView extends Component<Props> {
                   className={classes.textField}
                   disabled={readOnly}
                 />
-                <TextField
+                <DateTimePicker
                   id="start-date"
                   label={goal.draft ? 'Start from' : 'Started'}
-                  type="datetime-local"
                   value={moment(goal.started).format(GOAL_DATE_TIME)}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                   onChange={onChangeDate}
                   className={classes.textField}
                   disabled={readOnly || !goal.draft}

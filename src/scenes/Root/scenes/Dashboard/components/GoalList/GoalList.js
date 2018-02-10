@@ -13,9 +13,9 @@ import Avatar from 'material-ui/Avatar'
 import AssignmentIcon from 'material-ui-icons/Assignment'
 import TextField from 'material-ui/TextField'
 
-import GoalView from './components/GoalView/GoalView'
-import NewGoalForm from './components/NewGoalForm/NewGoalForm'
-import ConfirmationModal from '../../../../../../common/components/ConfirmationDialog/ConfirmationDialog'
+import GoalView from './components/components/GoalView/GoalView'
+import NewGoalForm from './components/components/NewGoalForm/NewGoalForm'
+import ConfirmationModal from '../../../../../../common/components/ConfirmationModal/ConfirmationModal'
 import { GOAL_DATE_TIME } from '../../../../../../common/consts/dateTimeConsts'
 import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
@@ -25,6 +25,7 @@ import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 import { getAscensionKarma, getFinishKarma, getSortedGoalsIds } from './components/services/helpers'
 import NoGoalsImg from '../../../../../../../images/nogoals.svg'
 import { GOAL_SORT_TYPES } from './components/consts/sortTypes'
+import ResetDialog from './components/components/ResetDialog/ResetDialog'
 
 type Props = {
   classes: Object,
@@ -265,14 +266,11 @@ class GoalList extends Component<Props, State> {
         >
           Are you sure you want to permanently delete this challenge?
         </ConfirmationModal>
-        <ConfirmationModal
-          title="Reset progress"
+        <ResetDialog
           open={modal === 'reset'}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmReset}
-        >
-          Are you sure you want to reset your progress?
-        </ConfirmationModal>
+        />
         <CardContent>
           <div className={classes.header}>
             <Typography type="headline" component="h2" className={classes.title}>
