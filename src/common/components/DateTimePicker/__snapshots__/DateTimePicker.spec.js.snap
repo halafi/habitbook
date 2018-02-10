@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DateTimePicker /> renders <DateTimePicker /> component 1`] = `
+<TextField
+  InputLabelProps={
+    Object {
+      "shrink": true,
+    }
+  }
+  className={undefined}
+  disabled={undefined}
+  id={undefined}
+  label={undefined}
+  onChange={undefined}
+  required={false}
+  select={false}
+  type="datetime-local"
+  value="2018-02-10T12:10"
+/>
+`;

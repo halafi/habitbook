@@ -6,12 +6,28 @@
   "scripts": {
     "start": "parcel src/index.html -p 8080",
     "dev": "parcel src/index.html -p 8080",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
     "build": "parcel build src/index.js --out-dir build --public-url ./",
     "deploy": "parcel build src/index.js --out-dir build --public-url ./ && firebase deploy"
   },
   "author": "Filip Halas",
   "license": "ISC",
+  "jest": {
+    "setupTestFrameworkScriptFile": "<rootDir>/src/setupTests.js",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!**/node_modules/**",
+      "!**/dist/**",
+      "!**/build/**",
+      "!**/setupTests.js"
+    ]
+  },
   "dependencies": {
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "enzyme-to-json": "^3.3.1",
     "firebase": "^4.9.1",
     "jest": "^22.1.4",
     "material-ui": "^1.0.0-beta.27",
@@ -33,6 +49,7 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
+    "babel-jest": "^22.2.2",
     "babel-plugin-ramda": "^1.4.3",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-es3-member-expression-literals": "^6.22.0",
@@ -53,6 +70,7 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-prettier": "^2.4.0",
     "eslint-plugin-react": "^7.5.1",
-    "flow-bin": "^0.64.0"
+    "flow-bin": "^0.64.0",
+    "regenerator-runtime": "^0.11.1"
   }
 }
