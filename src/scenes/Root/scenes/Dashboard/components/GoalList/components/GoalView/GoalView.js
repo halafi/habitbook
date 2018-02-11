@@ -86,6 +86,10 @@ const styles = theme => ({
   heatmap: {
     marginTop: '16px',
     height: '150',
+    padding: '16px 16px 14px 16px',
+    borderRadius: '3px',
+    borderColor: '#d1d5da',
+    border: '1px #e1e4e8 solid',
   },
   // descriptionField: {
   //   marginLeft: '0px',
@@ -233,7 +237,7 @@ class GoalView extends Component<Props> {
                 Remove
               </Button>,
               <Button key="failBtn" dense onClick={onReset}>
-                Fail
+                Reset
               </Button>,
             ]}
             {goal.draft

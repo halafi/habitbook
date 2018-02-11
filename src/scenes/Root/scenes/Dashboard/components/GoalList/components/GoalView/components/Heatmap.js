@@ -3,30 +3,48 @@
 import React, { PureComponent } from 'react'
 import * as R from 'ramda'
 import moment from 'moment/moment'
-
+import { withStyles } from 'material-ui/styles'
 import CalendarHeatmap from 'react-calendar-heatmap'
+import '../../../../../../../../../../styles/react-calendar-heatmap.css'
+
 import { getElapsedDaysTillNow } from '../../../../../../../../../common/services/dateTimeUtils'
 import type { Goal } from '../../../../../../../../../common/records/Goal'
 
 type Props = {
   goal: Goal,
   className: ?string,
+  classes: Object,
 }
 
-const getClassForValue = value => {
+const getClassForValue = (classes: Object, value: Object) => {
   if (!value) {
-    return 'color-gitlab-0'
+    return classes.colorGitlab0
   }
   if (value.count === 0) {
-    return 'color-gitlab-1'
-  } else {
-    return 'color-gitlab-0'
+    return classes.colorGitlab1
   }
+  return classes.colorGitlab0
+}
+
+const styles = {
+  colorGitlab0: { fill: '#ededed' },
+  colorGitlab1: { fill: '#acd5f2' },
+  // colorGitlab2: { fill: '#fa8d1' },
+  // colorGitlab3: { fill: '#49729' },
+  // colorGitlab4: { fill: '#254e77' },
+  reactCalendarHeatmap: {
+    height: '125px',
+    width: '100%',
+    borderRadius: '3px',
+    borderColor: '#d1d5da',
+    border: '1px #e1e4e8 solid',
+    padding: '0 16px 0 16px',
+  },
 }
 
 class Heatmap extends PureComponent<Props> {
   render() {
-    const { goal, className } = this.props
+    const { goal, className, classes } = this.props
 
     let heatMapData = []
 
@@ -87,11 +105,11 @@ class Heatmap extends PureComponent<Props> {
           gutterSize={1}
           showMonthLabels={false}
           showWeekdayLabels={false}
-          classForValue={getClassForValue}
+          classForValue={R.partial(getClassForValue, [classes])}
         />
       </div>
     )
   }
 }
 
-export default Heatmap
+export default withStyles(styles)(Heatmap)
