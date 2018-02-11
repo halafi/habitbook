@@ -3,10 +3,11 @@
 import React, { PureComponent } from 'react'
 import { PieChart, Pie, Cell, Sector } from 'recharts'
 import type { Goal } from '../../../../../../../../../common/records/Goal'
+import { getElapsedHoursTillNow } from '../../../../../../../../../common/services/dateTimeUtils'
 
 type Props = {
   goal: Goal,
-  elapsedDaysTillNow: number,
+  lastReset: ?number,
   finished: boolean,
 }
 
@@ -53,19 +54,21 @@ const renderActiveShape = (props: Object) => {
 
 class ProgressChart extends PureComponent<Props> {
   render() {
-    const { goal, elapsedDaysTillNow, finished } = this.props
+    const { goal, lastReset, finished } = this.props
+
+    const elapsedHoursTillNow = getElapsedHoursTillNow(lastReset || goal.started)
+    const elapsedHours = elapsedHoursTillNow >= 0 ? elapsedHoursTillNow : 0
+
+    const goalInHours = Number(goal.target) * 24
 
     const progressChartData = [
       {
         name: 'Target',
-        value:
-          Number(goal.target) - elapsedDaysTillNow >= 0
-            ? Number(goal.target) - elapsedDaysTillNow
-            : 0,
+        value: goalInHours - elapsedHours > 0 ? goalInHours - elapsedHours : 0,
       },
       {
         name: 'Finished',
-        value: elapsedDaysTillNow > Number(goal.target) ? Number(goal.target) : elapsedDaysTillNow,
+        value: elapsedHours * 24 > goalInHours ? goalInHours : elapsedHours,
       },
     ]
 
@@ -82,7 +85,7 @@ class ProgressChart extends PureComponent<Props> {
           innerRadius={50}
           outerRadius={65}
           fill="#8884d8"
-          paddingAngle={finished || elapsedDaysTillNow <= 0 ? 0 : 3}
+          paddingAngle={finished || elapsedHours <= 0 ? 0 : 3}
         >
           {progressChartData.map((entry, index) => (
             <Cell key={entry} fill={COLORS[index % COLORS.length]} />

@@ -222,8 +222,9 @@ class GoalView extends Component<Props> {
               <div>
                 <ProgressChart
                   goal={goal}
-                  elapsedDaysTillNow={elapsedDaysTillNow}
+                  // elapsedDaysTillNow={elapsedDaysTillNow}
                   finished={finished}
+                  lastReset={lastReset}
                 />
               </div>
             </div>

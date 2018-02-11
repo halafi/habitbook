@@ -5,7 +5,6 @@ import * as R from 'ramda'
 import moment from 'moment/moment'
 import { withStyles } from 'material-ui/styles'
 import CalendarHeatmap from 'react-calendar-heatmap'
-import '../../../../../../../../../../styles/react-calendar-heatmap.css'
 
 import { getElapsedDaysTillNow } from '../../../../../../../../../common/services/dateTimeUtils'
 import type { Goal } from '../../../../../../../../../common/records/Goal'
