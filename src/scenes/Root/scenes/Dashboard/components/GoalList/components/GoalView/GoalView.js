@@ -1,9 +1,7 @@
 // @flow
 
 import React, { Component } from 'react'
-import moment from 'moment'
 import * as R from 'ramda'
-import { ResponsiveContainer, Line, LineChart, CartesianGrid } from 'recharts'
 
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -29,6 +27,7 @@ import {
 import { getFinishKarma, getAscensionKarma } from '../../services/helpers'
 import ProgressChart from './components/ProgressChart'
 import Heatmap from './components/Heatmap'
+// import MomentumChart from './components/MomentumChart'
 
 type Props = {
   goal: Goal,
@@ -121,48 +120,6 @@ class GoalView extends Component<Props> {
     const lastReset = goal.resets && goal.resets[goal.resets.length - 1]
     const elapsedDaysTillNow = getElapsedDaysTillNow(lastReset || goal.started)
     const finished = elapsedDaysTillNow >= goal.target
-
-    const momentumChartData = []
-
-    if (goal.resets) {
-      R.times(n => {
-        const resetsOnCurrentDay = goal.resets.filter(
-          reset => moment(reset).diff(moment(goal.started), 'd') - 1 === n,
-        )
-
-        const numOfResets = resetsOnCurrentDay.length
-
-        if (numOfResets) {
-          // Lose 1 point for failed day, another 0.2 points for every other fail on the same day
-          const decreasePoints = momentumChartData[n - 1]
-            ? momentumChartData[n - 1].points - 1 - 0.2 * numOfResets
-            : 0
-
-          momentumChartData.push({
-            name: moment(goal.started)
-              .add(n, 'd')
-              .format('DD MMM'),
-            points: decreasePoints,
-          })
-        } else {
-          // Get 0.25 points for good day, 0.5 points if you lose more than 1 point previous day
-          const diff =
-            momentumChartData[n - 2] &&
-            momentumChartData[n - 1] &&
-            momentumChartData[n - 2].points - momentumChartData[n - 1].points >= 1
-
-          const increasePoints = momentumChartData[n - 1]
-            ? momentumChartData[n - 1].points + (diff ? 0.5 : 0.25)
-            : 0.25
-          momentumChartData.push({
-            name: moment(goal.started)
-              .add(n, 'd')
-              .format('DD MMM'),
-            points: increasePoints,
-          })
-        }
-      }, getElapsedDaysTillNow(goal.started))
-    }
 
     return (
       <ExpansionPanel>
@@ -263,21 +220,7 @@ class GoalView extends Component<Props> {
               </div>
             </div>
             <div>
-              {goal.resets &&
-                false && (
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={momentumChartData}>
-                      <CartesianGrid strokeDasharray="1 1" />
-                      <Line
-                        dot={false}
-                        type="step"
-                        dataKey="points"
-                        stroke="#8884d8"
-                        isAnimationActive={false}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                )}
+              {/*{goal.resets && <MomentumChart goal={goal} />}*/}
               <Heatmap goal={goal} className={classes.heatmap} />
             </div>
           </div>
