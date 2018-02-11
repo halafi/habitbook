@@ -38,6 +38,7 @@
     "react": "^16.2.0",
     "react-addons-css-transition-group": "^15.6.2",
     "react-calendar-heatmap": "^1.6.3",
+    "react-content-loader": "^3.0.2",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
     "react-redux-firebase": "^2.0.3",

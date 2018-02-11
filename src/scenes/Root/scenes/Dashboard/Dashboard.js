@@ -9,6 +9,7 @@ import { withStyles } from 'material-ui/styles'
 import GoalList from './components/GoalList/GoalList'
 import FriendsAndStats from './components/FriendsAndStats/FriendsAndStats'
 import { selectedUserIdSelector } from '../../../../common/selectors/dashboardSelectors'
+import Loader from './components/GoalList/components/Loader/Loader'
 
 import type { Goals } from '../../../../common/records/Goal'
 import type { Users } from '../../../../common/records/Firebase/User'
@@ -47,6 +48,13 @@ class Dashboard extends Component<Props> {
         ? `${users[selectedUserId].displayName.split(' ')[0]}'s Challenges`
         : 'Your Challenges'
 
+    if (!goals) {
+      return (
+        <div className={classes.contentWrapper}>
+          <Loader />
+        </div>
+      )
+    }
     return (
       <div className={classes.contentWrapper}>
         <GoalList title={title} goals={shownGoals} readOnly={Boolean(selectedUserId)} />
