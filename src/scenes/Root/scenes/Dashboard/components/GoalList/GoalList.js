@@ -288,7 +288,7 @@ class GoalList extends Component<Props, State> {
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmReset}
           dateTime={modalDateTime}
-          onDateTimeChange={val => this.setState({ modalDateTime: val })}
+          onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <CardContent>
           <div className={classes.header}>
