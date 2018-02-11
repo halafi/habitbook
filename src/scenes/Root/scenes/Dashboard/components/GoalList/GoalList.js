@@ -176,8 +176,6 @@ class GoalList extends Component<Props, State> {
     resets.push(modalDateTime)
 
     this.updateUserGoal(modalGoalId, {
-      started: moment().valueOf(),
-      draft: true,
       ascensionCount: 0,
       streak: newStreak > previousStreak ? newStreak : previousStreak,
       resets,
@@ -207,8 +205,7 @@ class GoalList extends Component<Props, State> {
     const { goals, firebase, profile } = this.props
 
     const edditedGoal = goals[goalId]
-    // const daysCompleted = getElapsedDaysTillNow(edditedGoal.started)
-    const newTarget = edditedGoal.target * 2 // TODO: table of targets
+    const newTarget = edditedGoal.target * 2
 
     firebase.updateProfile({
       goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,

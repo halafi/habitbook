@@ -3,16 +3,7 @@
 import React, { Component } from 'react'
 import moment from 'moment'
 import * as R from 'ramda'
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Sector,
-  Line,
-  LineChart,
-  CartesianGrid,
-} from 'recharts'
+import { ResponsiveContainer, Line, LineChart, CartesianGrid } from 'recharts'
 
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -28,10 +19,7 @@ import TextField from 'material-ui/TextField'
 import Tooltip from 'material-ui/Tooltip'
 import { withStyles } from 'material-ui/styles'
 
-import {
-  getElapsedDaysTillNow,
-  getElapsedDaysBetween,
-} from '../../../../../../../../common/services/dateTimeUtils'
+import { getElapsedDaysTillNow } from '../../../../../../../../common/services/dateTimeUtils'
 import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
 import type { Goal } from '../../../../../../../../common/records/Goal'
 import {
@@ -39,6 +27,8 @@ import {
   GOAL_VISIBILITIES,
 } from '../../../../../../../../common/records/GoalVisibility'
 import { getFinishKarma, getAscensionKarma } from '../../services/helpers'
+import ProgressChart from './components/ProgressChart'
+import Heatmap from './components/Heatmap'
 
 type Props = {
   goal: Goal,
@@ -94,54 +84,16 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  heatmap: {
+    marginTop: '16px',
+    height: '150',
+  },
   // descriptionField: {
   //   marginLeft: '0px',
   //   marginRight: '16px',
   //   width: '100%',
   // },
 })
-
-const COLORS = ['#C0C0C0', '#3748AC']
-
-// TODO: extract to helpers
-const renderActiveShape = (props: Object) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, percent } = props
-
-  return (
-    <g>
-      <text
-        fontFamily="Roboto"
-        fontSize="16"
-        fontWeight={700}
-        x={cx}
-        y={cy}
-        dy={8}
-        textAnchor="middle"
-        fill={fill}
-      >
-        {(percent * 100).toFixed(0)}%
-      </text>
-      <Sector
-        cx={cx}
-        cy={cy}
-        endAngle={endAngle}
-        fill={fill}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius}
-        startAngle={startAngle}
-      />
-      <Sector
-        cx={cx}
-        cy={cy}
-        endAngle={endAngle}
-        fill={fill}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius}
-        startAngle={startAngle}
-      />
-    </g>
-  )
-}
 
 // TODO: controlled accordion
 class GoalView extends Component<Props> {
@@ -166,29 +118,16 @@ class GoalView extends Component<Props> {
       return null
     }
 
-    const elapsedDaysTillNow = getElapsedDaysTillNow(goal.started)
+    const lastReset = goal.resets && goal.resets[goal.resets.length - 1]
+    const elapsedDaysTillNow = getElapsedDaysTillNow(lastReset || goal.started)
     const finished = elapsedDaysTillNow >= goal.target
-
-    const progressChartData = [
-      {
-        name: 'Target',
-        value:
-          Number(goal.target) - elapsedDaysTillNow >= 0
-            ? Number(goal.target) - elapsedDaysTillNow
-            : 0,
-      },
-      {
-        name: 'Finished',
-        value: elapsedDaysTillNow > Number(goal.target) ? Number(goal.target) : elapsedDaysTillNow,
-      },
-    ]
 
     const momentumChartData = []
 
     if (goal.resets) {
       R.times(n => {
         const resetsOnCurrentDay = goal.resets.filter(
-          reset => moment(reset).diff(moment(goal.created), 'd') - 1 === n,
+          reset => moment(reset).diff(moment(goal.started), 'd') - 1 === n,
         )
 
         const numOfResets = resetsOnCurrentDay.length
@@ -200,7 +139,7 @@ class GoalView extends Component<Props> {
             : 0
 
           momentumChartData.push({
-            name: moment(goal.created)
+            name: moment(goal.started)
               .add(n, 'd')
               .format('DD MMM'),
             points: decreasePoints,
@@ -216,13 +155,13 @@ class GoalView extends Component<Props> {
             ? momentumChartData[n - 1].points + (diff ? 0.5 : 0.25)
             : 0.25
           momentumChartData.push({
-            name: moment(goal.created)
+            name: moment(goal.started)
               .add(n, 'd')
               .format('DD MMM'),
             points: increasePoints,
           })
         }
-      }, getElapsedDaysTillNow(goal.created))
+      }, getElapsedDaysTillNow(goal.started))
     }
 
     return (
@@ -316,58 +255,46 @@ class GoalView extends Component<Props> {
                   )}
               </div>
               <div>
-                <PieChart width={200} height={200}>
-                  <Pie
-                    dataKey="value"
-                    isAnimationActive={false}
-                    activeIndex={1}
-                    activeShape={renderActiveShape}
-                    data={progressChartData}
-                    cx="65%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={65}
-                    fill="#8884d8"
-                    paddingAngle={finished || elapsedDaysTillNow <= 0 ? 0 : 3}
-                  >
-                    {progressChartData.map((entry, index) => (
-                      <Cell key={entry} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
+                <ProgressChart
+                  goal={goal}
+                  elapsedDaysTillNow={elapsedDaysTillNow}
+                  finished={finished}
+                />
               </div>
             </div>
             <div>
-              {goal.resets && (
-                <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={momentumChartData}>
-                    <CartesianGrid strokeDasharray="1 1" />
-                    <Line
-                      dot={false}
-                      type="step"
-                      dataKey="points"
-                      stroke="#8884d8"
-                      isAnimationActive={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
+              {goal.resets &&
+                false && (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <LineChart data={momentumChartData}>
+                      <CartesianGrid strokeDasharray="1 1" />
+                      <Line
+                        dot={false}
+                        type="step"
+                        dataKey="points"
+                        stroke="#8884d8"
+                        isAnimationActive={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
+              <Heatmap goal={goal} className={classes.heatmap} />
             </div>
           </div>
         </ExpansionPanelDetails>
         <Divider />
         {!readOnly && (
           <ExpansionPanelActions>
-            {!goal.draft && (
-              <Button dense onClick={onReset}>
-                Reset
-              </Button>
-            )}
+            {!goal.draft && [
+              <Button key="discardBtn" dense onClick={onDelete}>
+                Remove
+              </Button>,
+              <Button key="failBtn" dense onClick={onReset}>
+                Fail
+              </Button>,
+            ]}
             {goal.draft
               ? [
-                  <Button key="discardBtn" dense onClick={onDelete}>
-                    Remove
-                  </Button>,
                   <Button dense onClick={onToggleDraft} color="primary">
                     Start
                   </Button>,
