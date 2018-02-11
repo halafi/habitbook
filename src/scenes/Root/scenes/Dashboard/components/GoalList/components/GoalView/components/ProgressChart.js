@@ -68,12 +68,12 @@ class ProgressChart extends PureComponent<Props> {
       },
       {
         name: 'Finished',
-        value: elapsedHours * 24 > goalInHours ? goalInHours : elapsedHours,
+        value: elapsedHours > goalInHours ? goalInHours : elapsedHours,
       },
     ]
 
     return (
-      <PieChart width={200} height={200}>
+      <PieChart width={200} height={150}>
         <Pie
           dataKey="value"
           isAnimationActive={false}
@@ -82,7 +82,7 @@ class ProgressChart extends PureComponent<Props> {
           data={progressChartData}
           cx="65%"
           cy="50%"
-          innerRadius={50}
+          innerRadius={55}
           outerRadius={65}
           fill="#8884d8"
           paddingAngle={finished || elapsedHours <= 0 ? 0 : 3}
