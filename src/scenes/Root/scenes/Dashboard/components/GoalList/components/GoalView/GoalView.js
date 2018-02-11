@@ -38,9 +38,11 @@ type Props = {
   onReset: string => void,
   onExtendGoal: string => void,
   onChangeVisibility: string => void,
-  onRenameGoal: any => void, // SyntheticEvent<> TODO flowtyped
+  onRenameGoal: any => void, // SyntheticEvent<>
+  onExpand: any => void, // SyntheticEvent<>
   classes: any,
   readOnly: boolean,
+  expanded: boolean,
 }
 
 const styles = theme => ({
@@ -111,8 +113,10 @@ class GoalView extends Component<Props> {
       onExtendGoal,
       onChangeVisibility,
       onRenameGoal,
+      onExpand,
       classes,
       readOnly,
+      expanded,
     } = this.props
 
     const goalName = goal.visibility === getGoalVisibility(0) ? ' ¯\\_(ツ)_/¯' : goal.name
@@ -126,7 +130,7 @@ class GoalView extends Component<Props> {
     const finished = elapsedDaysTillNow >= goal.target
 
     return (
-      <ExpansionPanel>
+      <ExpansionPanel expanded={expanded} onChange={onExpand}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.heading}>
             {goalName} {goal.draft && '(Draft)'}
@@ -232,35 +236,35 @@ class GoalView extends Component<Props> {
         <Divider />
         {!readOnly && (
           <ExpansionPanelActions>
-            {!goal.draft && [
-              <Button key="discardBtn" dense onClick={onDelete}>
-                Remove
-              </Button>,
-              <Button key="failBtn" dense onClick={onReset}>
+            <Button dense onClick={onDelete}>
+              Remove
+            </Button>
+            {!goal.draft && (
+              <Button dense onClick={onReset}>
                 Reset
-              </Button>,
-            ]}
-            {goal.draft
-              ? [
-                  <Button dense onClick={onToggleDraft} color="primary">
-                    Start
-                  </Button>,
-                ]
-              : finished && [
-                  <Button key="finishBtn" dense onClick={onComplete}>
-                    Finish
-                  </Button>,
-                  <Tooltip
-                    key="ascendBtn"
-                    id="tooltip-extend-bottom"
-                    title="Double your target amount of days"
-                    placement="bottom"
-                  >
-                    <Button dense onClick={onExtendGoal} color="primary">
-                      Ascend
-                    </Button>
-                  </Tooltip>,
-                ]}
+              </Button>
+            )}
+            {goal.draft ? (
+              <Button dense onClick={onToggleDraft} color="primary">
+                Start
+              </Button>
+            ) : (
+              finished && [
+                <Button key="finishBtn" dense onClick={onComplete}>
+                  Finish
+                </Button>,
+                <Tooltip
+                  key="ascendBtn"
+                  id="tooltip-extend-bottom"
+                  title="Double your target amount of days"
+                  placement="bottom"
+                >
+                  <Button dense onClick={onExtendGoal} color="primary">
+                    Ascend
+                  </Button>
+                </Tooltip>,
+              ]
+            )}
           </ExpansionPanelActions>
         )}
       </ExpansionPanel>

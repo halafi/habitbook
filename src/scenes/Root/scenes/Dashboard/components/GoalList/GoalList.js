@@ -16,7 +16,10 @@ import TextField from 'material-ui/TextField'
 import GoalView from './components/GoalView/GoalView'
 import NewGoalForm from './components/NewGoalForm/NewGoalForm'
 import ConfirmationModal from '../../../../../../common/components/ConfirmationModal/ConfirmationModal'
-import { getElapsedDaysTillNow, getElapsedDaysBetween } from '../../../../../../common/services/dateTimeUtils'
+import {
+  getElapsedDaysTillNow,
+  getElapsedDaysBetween,
+} from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
 import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
@@ -47,6 +50,7 @@ type State = {
   modal: ?GoalModal,
   modalGoalId: ?string,
   modalDateTime: ?number,
+  expandedGoalId: ?string,
 }
 
 const styles = theme => ({
@@ -127,6 +131,7 @@ class GoalList extends Component<Props, State> {
     this.setState({
       modal: null,
       modalGoalId: null,
+      expandedGoalId: null,
     })
   }
 
@@ -142,7 +147,7 @@ class GoalList extends Component<Props, State> {
     const { currentUserId, firebase } = this.props
     const { name, target, targetType } = this.state
 
-    firebase.push(`/goals/${currentUserId}`, {
+    const ref = firebase.push(`/goals/${currentUserId}`, {
       ascensionCount: 0,
       created: moment().valueOf(),
       draft: true,
@@ -155,6 +160,7 @@ class GoalList extends Component<Props, State> {
     })
     this.setState({
       name: '',
+      expandedGoalId: ref.key,
     })
   }
 
@@ -199,6 +205,10 @@ class GoalList extends Component<Props, State> {
         ascensionCount: 0,
       })
     }
+
+    this.setState({
+      expandedGoalId: null,
+    })
   }
 
   handleExtendGoal = (goalId: string) => {
@@ -249,9 +259,15 @@ class GoalList extends Component<Props, State> {
     })
   }
 
+  handleExpand = (goalId: string) => {
+    this.setState({
+      expandedGoalId: this.state.expandedGoalId === goalId ? null : goalId,
+    })
+  }
+
   render() {
     const { classes, goals, readOnly, title, profile } = this.props
-    const { name, target, targetType, modal, modalDateTime } = this.state
+    const { name, target, targetType, modal, modalDateTime, expandedGoalId } = this.state
 
     const formValid = name.length > 0 && target > 0
     const sort = profile.sort || 'oldest'
@@ -317,6 +333,8 @@ class GoalList extends Component<Props, State> {
                     onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
                     onRenameGoal={R.partial(this.handleRenameGoal, [goalId])}
                     readOnly={readOnly}
+                    expanded={expandedGoalId === goalId}
+                    onExpand={R.partial(this.handleExpand, [goalId])}
                   />
                 ))}
               {!goals && (
