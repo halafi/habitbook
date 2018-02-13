@@ -16,18 +16,16 @@ import TextField from 'material-ui/TextField'
 import GoalView from './components/GoalView/GoalView'
 import NewGoalForm from './components/NewGoalForm/NewGoalForm'
 import ConfirmationModal from '../../../../../../common/components/ConfirmationModal/ConfirmationModal'
-import {
-  getElapsedDaysTillNow,
-  getElapsedDaysBetween,
-} from '../../../../../../common/services/dateTimeUtils'
+import { getElapsedDaysBetween } from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
-import type { GoalTargetType } from '../../../../../../common/records/GoalTargetType'
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
+import type { Users } from '../../../../../../common/records/Firebase/User'
 import { getAscensionKarma, getFinishKarma, getSortedGoalsIds } from './services/helpers'
 import NoGoalsImg from '../../../../../../../images/nogoals.svg'
 import { GOAL_SORT_TYPES } from './consts/sortTypes'
 import ResetDialog from './components/ResetDialog/ResetDialog'
+import { usersSelector } from '../../../../../../common/selectors/firebaseSelectors'
 
 type Props = {
   classes: Object,
@@ -39,18 +37,19 @@ type Props = {
   firebase: any,
   currentUserId: string,
   readOnly: boolean,
+  users: Users,
 }
 
 type GoalModal = 'delete' | 'reset'
 
 type State = {
   name: string,
-  targetType: GoalTargetType,
   target: number,
   modal: ?GoalModal,
   modalGoalId: ?string,
   modalDateTime: ?number,
   expandedGoalId: ?string,
+  friends: ?any,
 }
 
 const styles = theme => ({
@@ -92,10 +91,10 @@ class GoalList extends Component<Props, State> {
     this.state = {
       name: '',
       target: 30,
-      targetType: 'DAYS',
       modal: null,
       modalGoalId: null,
       modalDateTime: null,
+      friends: null,
     }
   }
 
@@ -141,11 +140,25 @@ class GoalList extends Component<Props, State> {
     })
   }
 
+  handleChangeSelectedFriends = (val: string) => {
+    this.setState({
+      friends: val,
+    })
+    console.log(val)
+  }
+  // handleRemoveFriend = friend => {
+  //   console.log(friend)
+  //   console.log(R.reject(R.equals(friend))(this.state.friends))
+  //   this.setState({
+  //     friends: R.reject(R.equals(friend))(this.state.friends),
+  //   })
+  // }
+
   handleSubmit = (ev: any) => {
     ev.preventDefault()
 
     const { currentUserId, firebase } = this.props
-    const { name, target, targetType } = this.state
+    const { name, target } = this.state
 
     const ref = firebase.push(`/goals/${currentUserId}`, {
       ascensionCount: 0,
@@ -155,7 +168,6 @@ class GoalList extends Component<Props, State> {
       name,
       started: moment().valueOf(),
       target,
-      targetType,
       visibility: getGoalVisibility(2),
     })
     this.setState({
@@ -266,8 +278,8 @@ class GoalList extends Component<Props, State> {
   }
 
   render() {
-    const { classes, goals, readOnly, title, profile } = this.props
-    const { name, target, targetType, modal, modalDateTime, expandedGoalId } = this.state
+    const { classes, goals, readOnly, title, profile, users } = this.props
+    const { name, target, modal, modalDateTime, expandedGoalId, friends } = this.state
 
     const formValid = name.length > 0 && target > 0
     const sort = profile.sort || 'oldest'
@@ -343,16 +355,20 @@ class GoalList extends Component<Props, State> {
                 </div>
               )}
             </div>
-            {!readOnly && (
-              <NewGoalForm
-                onSubmit={this.handleSubmit}
-                name={name}
-                target={target}
-                targetType={targetType}
-                onChange={this.handleChange}
-                formValid={formValid}
-              />
-            )}
+            {!readOnly &&
+              users && (
+                <NewGoalForm
+                  onSubmit={this.handleSubmit}
+                  name={name}
+                  target={target}
+                  onChange={this.handleChange}
+                  formValid={formValid}
+                  users={users}
+                  friendsSelected={friends}
+                  friends={profile.friends}
+                  onChangeSelectedFriends={this.handleChangeSelectedFriends}
+                />
+              )}
           </div>
         </CardContent>
       </Card>
@@ -364,6 +380,7 @@ export default compose(
   firebaseConnect(['goals']),
   connect(state => ({
     profile: state.firebase.profile,
+    users: usersSelector(state),
     currentUserId: state.firebase.auth.uid,
   })),
   withStyles(styles),

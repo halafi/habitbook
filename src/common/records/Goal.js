@@ -1,5 +1,3 @@
-import type { GoalTargetType } from './GoalTargetType'
-
 export type Goal = {
   ascensionCount: number,
   created: number,
@@ -8,7 +6,6 @@ export type Goal = {
   name: string,
   started: number,
   target: number,
-  targetType: GoalTargetType,
   visibility: string,
   resets: Array<number>,
 }
