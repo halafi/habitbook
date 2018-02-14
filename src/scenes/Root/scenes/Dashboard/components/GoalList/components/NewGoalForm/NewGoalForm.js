@@ -14,7 +14,7 @@ import SelectWrapped from './components/SelectWrapped/SelectWrapped'
 
 type Props = {
   onSubmit: any => void,
-  classes: any,
+  classes: Object,
   onChange: (string, string) => void,
   name: string,
   target: number,
@@ -63,9 +63,6 @@ const styles = theme => ({
     alignSelf: 'center',
     marginTop: '16px',
   },
-  chip: {
-    margin: theme.spacing.unit / 4,
-  },
 })
 
 const NewGoalForm = ({
@@ -103,11 +100,10 @@ const NewGoalForm = ({
           fullWidth
           inputComponent={SelectWrapped}
           inputProps={{
-            classes,
             value: friendsSelected,
             multi: true,
             onChange: onChangeSelectedFriends,
-            placeholder: 'Add friends',
+            placeholder: 'Challenge friends',
             instanceId: 'react-select-chip',
             id: 'react-select-chip',
             name: 'react-select-chip',

@@ -24,6 +24,9 @@ type Props = {
 const ITEM_HEIGHT = 48
 
 const styles = theme => ({
+  chip: {
+    margin: theme.spacing.unit / 4,
+  },
   '@global': {
     '.Select-control': {
       display: 'flex',

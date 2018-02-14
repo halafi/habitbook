@@ -49,7 +49,7 @@ type State = {
   modalGoalId: ?string,
   modalDateTime: ?number,
   expandedGoalId: ?string,
-  friends: ?any,
+  friends: ?Array<{ value: string, label: string }>,
 }
 
 const styles = theme => ({
@@ -141,10 +141,12 @@ class GoalList extends Component<Props, State> {
   }
 
   handleChangeSelectedFriends = (val: string) => {
+    if (val.length > 2) {
+      return
+    }
     this.setState({
       friends: val,
     })
-    console.log(val)
   }
   // handleRemoveFriend = friend => {
   //   console.log(friend)
@@ -158,22 +160,40 @@ class GoalList extends Component<Props, State> {
     ev.preventDefault()
 
     const { currentUserId, firebase } = this.props
-    const { name, target } = this.state
+    const { name, target, friends } = this.state
 
-    const ref = firebase.push(`/goals/${currentUserId}`, {
-      ascensionCount: 0,
-      created: moment().valueOf(),
-      draft: true,
-      streak: 0,
-      name,
-      started: moment().valueOf(),
-      target,
-      visibility: getGoalVisibility(2),
-    })
-    this.setState({
-      name: '',
-      expandedGoalId: ref.key,
-    })
+    if (!friends) {
+      const ref = firebase.push(`/goals/${currentUserId}`, {
+        ascensionCount: 0,
+        created: moment().valueOf(),
+        draft: true,
+        streak: 0,
+        name,
+        started: moment().valueOf(),
+        target,
+        visibility: getGoalVisibility(2),
+      })
+      this.setState({
+        name: '',
+        expandedGoalId: ref.key,
+        friends: null,
+      })
+    } else {
+      // const ref = firebase.push(`/goals-multi`, {
+      //   created: moment().valueOf(),
+      //   draft: true,
+      //   streak: 0,
+      //   name,
+      //   started: moment().valueOf(),
+      //   target,
+      //   visibility: getGoalVisibility(2),
+      // })
+      this.setState({
+        name: '',
+        expandedGoalId: null,
+        friends: null,
+      })
+    }
   }
 
   handleChangeDate = (goalId: string, newDate: number) => {
