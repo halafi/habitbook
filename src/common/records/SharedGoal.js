@@ -1,8 +1,12 @@
-export type Goal = {
+export type SharedGoal = {
   created: number,
   draft: boolean,
-  streak: number,
   name: string,
   started: number,
   target: number,
+  users: Array<string>,
+}
+
+export type SharedGoals = {
+  [sharedGoalId: string]: SharedGoal,
 }

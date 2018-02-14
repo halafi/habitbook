@@ -3,7 +3,6 @@
 import React, { Component } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
 import moment from 'moment'
 import * as R from 'ramda'
 import Card, { CardContent } from 'material-ui/Card'
@@ -26,6 +25,7 @@ import NoGoalsImg from '../../../../../../../images/nogoals.svg'
 import { GOAL_SORT_TYPES } from './consts/sortTypes'
 import ResetDialog from './components/ResetDialog/ResetDialog'
 import { usersSelector } from '../../../../../../common/selectors/firebaseSelectors'
+import type { SharedGoals } from '../../../../../../common/records/SharedGoal'
 
 type Props = {
   classes: Object,
@@ -34,10 +34,11 @@ type Props = {
   goals: {
     [userId: string]: Goals,
   },
+  sharedGoals: SharedGoals,
   firebase: any,
   currentUserId: string,
   readOnly: boolean,
-  users: Users,
+  users: ?Users,
 }
 
 type GoalModal = 'delete' | 'reset'
@@ -162,38 +163,33 @@ class GoalList extends Component<Props, State> {
     const { currentUserId, firebase } = this.props
     const { name, target, friends } = this.state
 
-    if (!friends) {
-      const ref = firebase.push(`/goals/${currentUserId}`, {
+    let ref = ''
+    if (!friends || !friends.length) {
+      ref = firebase.push(`/goals/${currentUserId}`, {
         ascensionCount: 0,
         created: moment().valueOf(),
         draft: true,
-        streaks: [],
         name,
         started: moment().valueOf(),
+        streaks: [],
         target,
         visibility: getGoalVisibility(2),
       })
-      this.setState({
-        name: '',
-        expandedGoalId: ref.key,
-        friends: null,
-      })
     } else {
-      // const ref = firebase.push(`/goals-multi`, {
-      //   created: moment().valueOf(),
-      //   draft: true,
-      //   streak: 0,
-      //   name,
-      //   started: moment().valueOf(),
-      //   target,
-      //   visibility: getGoalVisibility(2),
-      // })
-      this.setState({
-        name: '',
-        expandedGoalId: null,
-        friends: null,
+      ref = firebase.push(`/sharedGoals`, {
+        created: moment().valueOf(),
+        draft: true,
+        name,
+        started: moment().valueOf(),
+        target,
+        users: Object.values(friends).map(x => x.value),
       })
     }
+    this.setState({
+      name: '',
+      expandedGoalId: ref.key,
+      friends: null,
+    })
   }
 
   handleChangeDate = (goalId: string, newDate: number) => {
@@ -299,7 +295,7 @@ class GoalList extends Component<Props, State> {
   }
 
   render() {
-    const { classes, goals, readOnly, title, profile, users } = this.props
+    const { classes, goals, sharedGoals, readOnly, title, profile, users } = this.props
     const { name, target, modal, modalDateTime, expandedGoalId, friends } = this.state
 
     const formValid = name.length > 0 && target > 0
@@ -398,7 +394,6 @@ class GoalList extends Component<Props, State> {
 }
 
 export default compose(
-  firebaseConnect(['goals']),
   connect(state => ({
     profile: state.firebase.profile,
     users: usersSelector(state),

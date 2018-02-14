@@ -13,15 +13,22 @@ import Loader from './components/GoalList/components/Loader/Loader'
 
 import type { Goals } from '../../../../common/records/Goal'
 import type { Users } from '../../../../common/records/Firebase/User'
+import type { SharedGoals } from '../../../../common/records/SharedGoal'
 
-import { goalsSelector, usersSelector } from '../../../../common/selectors/firebaseSelectors'
+import {
+  goalsSelector,
+  sharedGoalsSelector,
+  usersSelector,
+  currentUserIdSelector,
+} from '../../../../common/selectors/firebaseSelectors'
 
 type Props = {
   classes: Object,
-  goals: Goals,
-  users: Users,
   currentUserId: string,
+  goals: Goals,
   selectedUserId: ?string,
+  sharedGoals: SharedGoals,
+  users: Users,
 }
 
 const styles = {
@@ -36,7 +43,7 @@ const styles = {
 // TODO: table with history - transparent profile
 class Dashboard extends Component<Props> {
   render() {
-    const { goals, users, selectedUserId, currentUserId, classes } = this.props
+    const { goals, sharedGoals, users, selectedUserId, currentUserId, classes } = this.props
 
     let shownGoals
     if (goals) {
@@ -57,7 +64,12 @@ class Dashboard extends Component<Props> {
     }
     return (
       <div className={classes.contentWrapper}>
-        <GoalList title={title} goals={shownGoals} readOnly={Boolean(selectedUserId)} />
+        <GoalList
+          title={title}
+          sharedGoals={sharedGoals}
+          goals={shownGoals}
+          readOnly={Boolean(selectedUserId)}
+        />
         <FriendsAndStats />
       </div>
     )
@@ -66,11 +78,12 @@ class Dashboard extends Component<Props> {
 
 export default compose(
   withStyles(styles),
-  firebaseConnect(['goals']),
+  firebaseConnect(['sharedGoals', 'goals']),
   connect(state => ({
-    users: usersSelector(state),
+    currentUserId: currentUserIdSelector(state),
     goals: goalsSelector(state),
-    currentUserId: state.firebase.auth.uid,
     selectedUserId: selectedUserIdSelector(state),
+    sharedGoals: sharedGoalsSelector(state),
+    users: usersSelector(state),
   })),
 )(Dashboard)
