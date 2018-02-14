@@ -128,6 +128,7 @@ class GoalView extends Component<Props> {
     const lastReset = goal.resets && goal.resets[goal.resets.length - 1]
     const elapsedDaysTillNow = getElapsedDaysTillNow(lastReset || goal.started)
     const finished = elapsedDaysTillNow >= goal.target
+    const longestStreak = goal.streaks && goal.streaks.length ? Math.max(...goal.streaks) : null
 
     return (
       <ExpansionPanel expanded={expanded} onChange={onExpand}>
@@ -193,8 +194,8 @@ class GoalView extends Component<Props> {
                 <Typography>
                   {goal.target} days required to complete.
                   <br />
-                  {goal.streak
-                    ? `Longest streak: ${goal.streak} ${goal.streak > 1 ? 'days' : 'day'}.`
+                  {longestStreak
+                    ? `Longest streak: ${longestStreak} ${longestStreak > 1 ? 'days' : 'day'}.`
                     : ''}
                 </Typography>
                 {finished &&

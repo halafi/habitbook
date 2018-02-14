@@ -2,7 +2,7 @@ export type Goal = {
   ascensionCount: number,
   created: number,
   draft: boolean,
-  streak: number,
+  streaks: Array<number>,
   name: string,
   started: number,
   target: number,

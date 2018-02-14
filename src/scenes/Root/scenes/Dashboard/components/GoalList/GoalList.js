@@ -167,7 +167,7 @@ class GoalList extends Component<Props, State> {
         ascensionCount: 0,
         created: moment().valueOf(),
         draft: true,
-        streak: 0,
+        streaks: [],
         name,
         started: moment().valueOf(),
         target,
@@ -209,13 +209,14 @@ class GoalList extends Component<Props, State> {
     const { modalGoalId, modalDateTime } = this.state
 
     const newStreak = getElapsedDaysBetween(goals[modalGoalId].started, modalDateTime)
-    const previousStreak = goals[modalGoalId].streak || 0
+    const previousStreaks = goals[modalGoalId].streaks || []
+    previousStreaks.push(newStreak)
     const resets = goals[modalGoalId].resets || []
     resets.push(modalDateTime)
 
     this.updateUserGoal(modalGoalId, {
       ascensionCount: 0,
-      streak: newStreak > previousStreak ? newStreak : previousStreak,
+      streaks: previousStreaks,
       resets,
     })
 
