@@ -40,7 +40,7 @@ type Props = {
   onChangeVisibility: string => void,
   onRenameGoal: any => void, // SyntheticEvent<>
   onExpand: any => void, // SyntheticEvent<>
-  classes: any,
+  classes: Object,
   readOnly: boolean,
   expanded: boolean,
 }
@@ -93,11 +93,6 @@ const styles = theme => ({
     borderColor: '#d1d5da',
     border: '1px #e1e4e8 solid',
   },
-  // descriptionField: {
-  //   marginLeft: '0px',
-  //   marginRight: '16px',
-  //   width: '100%',
-  // },
 })
 
 // TODO: controlled accordion

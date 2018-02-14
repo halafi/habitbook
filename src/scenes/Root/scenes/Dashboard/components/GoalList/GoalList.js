@@ -3,6 +3,7 @@
 import React, { Component } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
+import { firebaseConnect } from 'react-redux-firebase'
 import moment from 'moment'
 import * as R from 'ramda'
 import Card, { CardContent } from 'material-ui/Card'
@@ -26,6 +27,7 @@ import { GOAL_SORT_TYPES } from './consts/sortTypes'
 import ResetDialog from './components/ResetDialog/ResetDialog'
 import { usersSelector } from '../../../../../../common/selectors/firebaseSelectors'
 import type { SharedGoals } from '../../../../../../common/records/SharedGoal'
+import SharedGoalView from './components/SharedGoalView/SharedGoalView'
 
 type Props = {
   classes: Object,
@@ -60,6 +62,9 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+  },
+  goalsPart: {
+    marginBottom: '32px',
   },
   card: {
     width: '100%',
@@ -108,14 +113,22 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleDelete = goalId => {
+  handleDelete = (goalId: string) => {
+    console.log(goalId)
     this.setState({
       modal: 'delete',
       modalGoalId: goalId,
     })
   }
 
-  handleReset = goalId => {
+  handleDeleteShared = (goalId: string) => {
+    this.setState({
+      modal: 'deleteShared',
+      modalGoalId: goalId,
+    })
+  }
+
+  handleReset = (goalId: string) => {
     this.setState({
       modal: 'reset',
       modalGoalId: goalId,
@@ -126,7 +139,22 @@ class GoalList extends Component<Props, State> {
     const { firebase, currentUserId } = this.props
     const { modalGoalId } = this.state
 
+    console.log(firebase)
+    console.log(currentUserId)
     firebase.remove(`/goals/${currentUserId}/${modalGoalId}`)
+
+    this.setState({
+      modal: null,
+      modalGoalId: null,
+      expandedGoalId: null,
+    })
+  }
+
+  handleConfirmDeleteShared = () => {
+    const { firebase } = this.props
+    const { modalGoalId } = this.state
+
+    firebase.remove(`/sharedGoals/${modalGoalId}`)
 
     this.setState({
       modal: null,
@@ -176,13 +204,14 @@ class GoalList extends Component<Props, State> {
         visibility: getGoalVisibility(2),
       })
     } else {
+      const users = [currentUserId].concat(Object.values(friends).map(x => x.value))
       ref = firebase.push(`/sharedGoals`, {
         created: moment().valueOf(),
         draft: true,
         name,
         started: moment().valueOf(),
         target,
-        users: Object.values(friends).map(x => x.value),
+        users,
       })
     }
     this.setState({
@@ -295,12 +324,26 @@ class GoalList extends Component<Props, State> {
   }
 
   render() {
-    const { classes, goals, sharedGoals, readOnly, title, profile, users } = this.props
-    const { name, target, modal, modalDateTime, expandedGoalId, friends } = this.state
+    const {
+      classes,
+      goals,
+      sharedGoals,
+      readOnly,
+      title,
+      profile,
+      users,
+      currentUserId,
+    } = this.props
+    const { name, target, modal, modalDateTime, expandedGoalId, friends, modalGoalId } = this.state
 
     const formValid = name.length > 0 && target > 0
     const sort = profile.sort || 'oldest'
     const sortedGoalIds = getSortedGoalsIds(goals, sort)
+    const sortedSharedGoalIds = sharedGoals && Object.keys(sharedGoals) // TODO: filter by current user, sort
+
+    const willDeleteSharedGoal =
+      modal === 'deleteShared' &&
+      !R.reject(R.equals(currentUserId))(sharedGoals[modalGoalId].users).length > 0 // TODO: put modal names to const
 
     return (
       <Card className={classes.card}>
@@ -311,6 +354,16 @@ class GoalList extends Component<Props, State> {
           onConfirm={this.handleConfirmDelete}
         >
           Are you sure you want to permanently delete this challenge?
+        </ConfirmationModal>
+        <ConfirmationModal
+          title="Abandon challenge"
+          open={modal === 'deleteShared'}
+          onClose={() => this.setState({ modal: null })}
+          onConfirm={this.handleConfirmDeleteShared}
+        >
+          {willDeleteSharedGoal
+            ? 'Are you sure you want to permanently delete this challenge? There are no more participants.'
+            : "There are still other participants in this challenge, if you leave now you won't be able to return, but the challenge will remain visible to the other participants."}
         </ConfirmationModal>
         <ResetDialog
           open={modal === 'reset'}
@@ -348,29 +401,50 @@ class GoalList extends Component<Props, State> {
           </div>
           <div className={classes.goalsContainer}>
             <div>
-              {goals &&
-                sortedGoalIds.map(goalId => (
-                  <GoalView
-                    key={goalId}
-                    goal={goals[goalId]}
-                    onDelete={R.partial(this.handleDelete, [goalId])}
-                    onComplete={R.partial(this.handleCompleteGoal, [goalId])}
-                    onChangeDate={R.partial(this.handleChangeDate, [goalId])}
-                    onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
-                    onReset={R.partial(this.handleReset, [goalId])}
-                    onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
-                    onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
-                    onRenameGoal={R.partial(this.handleRenameGoal, [goalId])}
-                    readOnly={readOnly}
-                    expanded={expandedGoalId === goalId}
-                    onExpand={R.partial(this.handleExpand, [goalId])}
-                  />
-                ))}
-              {!goals && (
-                <div className={classes.imageWrapper}>
-                  <img alt="no-goals" src={NoGoalsImg} />
+              {goals && (
+                <div className={classes.goalsPart}>
+                  {sortedGoalIds.map(goalId => (
+                    <GoalView
+                      key={goalId}
+                      goal={goals[goalId]}
+                      onDelete={R.partial(this.handleDelete, [goalId])}
+                      onComplete={R.partial(this.handleCompleteGoal, [goalId])}
+                      onChangeDate={R.partial(this.handleChangeDate, [goalId])}
+                      onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
+                      onReset={R.partial(this.handleReset, [goalId])}
+                      onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
+                      onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
+                      onRenameGoal={R.partial(this.handleRenameGoal, [goalId])}
+                      readOnly={readOnly}
+                      expanded={expandedGoalId === goalId}
+                      onExpand={R.partial(this.handleExpand, [goalId])}
+                    />
+                  ))}
                 </div>
               )}
+              {sharedGoals && (
+                <div>
+                  {sortedSharedGoalIds.map(goalId => (
+                    <SharedGoalView
+                      key={goalId}
+                      users={users}
+                      currentUserId={currentUserId}
+                      goal={sharedGoals[goalId]}
+                      onDelete={R.partial(this.handleDeleteShared, [goalId])}
+                      readOnly={readOnly}
+                      expanded={expandedGoalId === goalId}
+                      onExpand={R.partial(this.handleExpand, [goalId])}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {!goals &&
+                !sharedGoals && (
+                  <div className={classes.imageWrapper}>
+                    <img alt="no-goals" src={NoGoalsImg} />
+                  </div>
+                )}
             </div>
             {!readOnly &&
               users && (
@@ -394,6 +468,7 @@ class GoalList extends Component<Props, State> {
 }
 
 export default compose(
+  firebaseConnect(),
   connect(state => ({
     profile: state.firebase.profile,
     users: usersSelector(state),
