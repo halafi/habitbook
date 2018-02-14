@@ -119,8 +119,16 @@ class GoalList extends Component<Props, State> {
     })
   }
 
+  updateSharedGoal = (goalId, update) => {
+    const { firebase, sharedGoals } = this.props
+
+    firebase.set(`/sharedGoals/${goalId}`, {
+      ...sharedGoals[goalId],
+      ...update,
+    })
+  }
+
   handleDelete = (goalId: string) => {
-    console.log(goalId)
     this.setState({
       modal: 'delete',
       modalGoalId: goalId,
@@ -145,8 +153,6 @@ class GoalList extends Component<Props, State> {
     const { firebase, currentUserId } = this.props
     const { modalGoalId } = this.state
 
-    console.log(firebase)
-    console.log(currentUserId)
     firebase.remove(`/goals/${currentUserId}/${modalGoalId}`)
 
     this.setState({
@@ -230,6 +236,11 @@ class GoalList extends Component<Props, State> {
   handleChangeDate = (goalId: string, newDate: number) => {
     const newDateTimeMillis = newDate || moment().valueOf()
     this.updateUserGoal(goalId, { started: newDateTimeMillis })
+  }
+
+  handleChangeDateShared = (goalId: string, newDate: number) => {
+    const newDateTimeMillis = newDate || moment().valueOf()
+    this.updateSharedGoal(goalId, { started: newDateTimeMillis })
   }
 
   handleChangeVisibility = (goalId: string, ev: any) =>
@@ -319,6 +330,12 @@ class GoalList extends Component<Props, State> {
 
   handleRenameGoal = (goalId: string, ev: any) => {
     this.updateUserGoal(goalId, {
+      name: ev.target.value,
+    })
+  }
+
+  handleRenameGoalShared = (goalId: string, ev: any) => {
+    this.updateSharedGoal(goalId, {
       name: ev.target.value,
     })
   }
@@ -441,6 +458,8 @@ class GoalList extends Component<Props, State> {
                       currentUserId={currentUserId}
                       goal={sharedGoals[goalId]}
                       onDelete={R.partial(this.handleDeleteShared, [goalId])}
+                      onChangeDate={R.partial(this.handleChangeDateShared, [goalId])}
+                      onRenameGoal={R.partial(this.handleRenameGoalShared, [goalId])}
                       readOnly={readOnly}
                       expanded={expandedGoalId === goalId}
                       onExpand={R.partial(this.handleExpand, [goalId])}
