@@ -133,7 +133,7 @@ function SelectWrapped(props: Props) {
       clearRenderer={() => <ClearIcon />}
       valueComponent={valueProps => {
         const { value, children, onRemove } = valueProps
-        const user = getUserByEmail(props.users, value.value)
+        const user = props.users[value.value]
 
         const onDelete = event => {
           event.preventDefault()
@@ -144,7 +144,7 @@ function SelectWrapped(props: Props) {
         if (onRemove) {
           return (
             <Chip
-              key={user.email}
+              key={value.value}
               tabIndex={-1}
               label={children}
               className={classes.chip}

@@ -15,3 +15,13 @@ export type Users = {
 
 export const getUserByEmail = (users: Users, email: string): User =>
   R.compose(R.head, R.values, R.pickBy(R.propEq('email', email)), R.values)(users)
+
+export const getUserIdByEmail = (users: Users, email: string): ?string =>
+  R.compose(
+    R.defaultTo(null),
+    R.head,
+    R.keys,
+    R.fromPairs,
+    R.filter(R.compose(R.propEq('email', email), R.last)),
+    R.toPairs,
+  )(users)

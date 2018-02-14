@@ -114,7 +114,7 @@ const NewGoalForm = ({
             simpleValue: false,
             options: friends.map(x => ({
               value: x,
-              label: getUserByEmail(users, x).displayName.split(' ')[0],
+              label: users[x].displayName.split(' ')[0],
             })),
             users,
           }}

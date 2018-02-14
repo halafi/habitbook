@@ -5,7 +5,6 @@ import { connect } from 'react-redux'
 import { compose, bindActionCreators } from 'redux'
 
 import { firebaseConnect } from 'react-redux-firebase'
-import * as R from 'ramda'
 
 import Card, { CardContent, CardActions } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
@@ -25,22 +24,16 @@ import {
 import { selectedUserIdSelector } from '../../../../../../../common/selectors/dashboardSelectors'
 import type { Profile } from '../../../../../../../common/records/Firebase/Profile'
 import type { Users, User } from '../../../../../../../common/records/Firebase/User'
-import type { Goals } from '../../../../../../../common/records/Goal'
+import { getUserIdByEmail } from '../../../../../../../common/records/Firebase/User'
 import { selectUser } from '../../../../../../../common/actions/dashboardActions'
 import { getRank, getRankId } from '../../../../../../../common/records/Rank'
-import { getGoalVisibility } from '../../../../../../../common/records/GoalVisibility'
 import { emailValid } from '../../../../../../../common/services/validators'
-import { getAscensionKarma } from '../../GoalList/services/helpers'
 
 type Props = {
   classes: Object,
   users: Users,
   userEmails: Array<string>,
-  // created: string,
   profile: Profile,
-  // goals: {
-  //   [userId: string]: GoalList,
-  // },
   firebase: any,
   currentUserId: string,
   selectUserAction: string => void,
@@ -112,7 +105,8 @@ class Friends extends Component<Props, State> {
       if (newFriendList.includes(email)) {
         alert('user is already your friend')
       } else {
-        newFriendList.push(email)
+        const friendId = getUserIdByEmail(users, email)
+        newFriendList.push(friendId)
 
         // TODO: put friend count to stats
         firebase.updateProfile({
@@ -151,7 +145,7 @@ class Friends extends Component<Props, State> {
   }
 
   render() {
-    const { classes, users, selectedUserId, currentUserId, profile } = this.props
+    const { classes, users, currentUserId, profile } = this.props
     const { email } = this.state
 
     return (
@@ -170,7 +164,7 @@ class Friends extends Component<Props, State> {
                 Object.keys(users).map(userId => {
                   const user: User = users[userId]
 
-                  if (!profile.friends || !profile.friends.includes(user.email)) {
+                  if (!profile.friends || !profile.friends.includes(userId)) {
                     return null
                   }
 
