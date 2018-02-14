@@ -68,6 +68,7 @@ class Dashboard extends Component<Props> {
           title={title}
           sharedGoals={sharedGoals}
           goals={shownGoals}
+          selectedUserId={selectedUserId}
           readOnly={Boolean(selectedUserId)}
         />
         <FriendsAndStats />

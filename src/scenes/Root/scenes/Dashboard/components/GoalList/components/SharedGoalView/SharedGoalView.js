@@ -83,11 +83,12 @@ class SharedGoalView extends PureComponent<Props> {
             <div className={classes.panelContainer}>
               <div>
                 <Typography>
-                  {/*{goal.target} days required to complete.*/}
+                  {goal.target} days required to complete. If you fail you are out.
+                  <br />
                   <br />
                   <List>
                     {participants.map(x => (
-                      <ListItem key={x.email} dense button className={classes.listItem}>
+                      <ListItem key={x.email} dense className={classes.listItem}>
                         <Avatar src={x.avatarUrl} />
                         <ListItemText primary={x.displayName} />
                       </ListItem>

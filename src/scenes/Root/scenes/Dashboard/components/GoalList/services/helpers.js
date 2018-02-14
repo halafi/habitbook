@@ -4,10 +4,24 @@ import * as R from 'ramda'
 import type { Goal, Goals } from '../../../../../../../common/records/Goal'
 import type SortType from '../consts/sortTypes'
 import { getElapsedDaysTillNow } from '../../../../../../../common/services/dateTimeUtils'
+import type { SharedGoals } from '../../../../../../../common/records/SharedGoal'
 
 export const getAscensionKarma = (goal: Goal): number =>
   Math.round(goal.target * (goal.ascensionCount + 1) / 2)
 export const getFinishKarma = (goal: Goal): number => Number(goal.target)
+
+// TODO: test
+export const getSortedSharedGoalsIds = (
+  goals: SharedGoals,
+  currentUserId: string,
+): ?Array<string> =>
+  R.compose(
+    R.defaultTo(null),
+    R.keys,
+    R.fromPairs,
+    R.filter(pair => pair[1].users.includes(currentUserId)),
+    R.toPairs,
+  )(goals)
 
 export const getSortedGoalsIds = (goals: Goals, sortType: SortType): Array<string> => {
   let sortFn = R.identity // do not sort by default

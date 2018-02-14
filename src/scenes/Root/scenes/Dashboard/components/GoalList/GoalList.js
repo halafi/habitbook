@@ -21,7 +21,12 @@ import { getGoalVisibility } from '../../../../../../common/records/GoalVisibili
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 import type { Users } from '../../../../../../common/records/Firebase/User'
-import { getAscensionKarma, getFinishKarma, getSortedGoalsIds } from './services/helpers'
+import {
+  getAscensionKarma,
+  getFinishKarma,
+  getSortedGoalsIds,
+  getSortedSharedGoalsIds,
+} from './services/helpers'
 import NoGoalsImg from '../../../../../../../images/nogoals.svg'
 import { GOAL_SORT_TYPES } from './consts/sortTypes'
 import ResetDialog from './components/ResetDialog/ResetDialog'
@@ -39,6 +44,7 @@ type Props = {
   sharedGoals: SharedGoals,
   firebase: any,
   currentUserId: string,
+  selectedUserId: string,
   readOnly: boolean,
   users: ?Users,
 }
@@ -333,13 +339,17 @@ class GoalList extends Component<Props, State> {
       profile,
       users,
       currentUserId,
+      selectedUserId,
     } = this.props
     const { name, target, modal, modalDateTime, expandedGoalId, friends, modalGoalId } = this.state
 
     const formValid = name.length > 0 && target > 0
     const sort = profile.sort || 'oldest'
     const sortedGoalIds = getSortedGoalsIds(goals, sort)
-    const sortedSharedGoalIds = sharedGoals && Object.keys(sharedGoals) // TODO: filter by current user, sort
+    const sortedSharedGoalIds = getSortedSharedGoalsIds(
+      sharedGoals,
+      selectedUserId || currentUserId,
+    )
 
     const willDeleteSharedGoal =
       modal === 'deleteShared' &&
@@ -422,7 +432,7 @@ class GoalList extends Component<Props, State> {
                   ))}
                 </div>
               )}
-              {sharedGoals && (
+              {sortedSharedGoalIds && (
                 <div>
                   {sortedSharedGoalIds.map(goalId => (
                     <SharedGoalView
@@ -440,7 +450,7 @@ class GoalList extends Component<Props, State> {
               )}
 
               {!goals &&
-                !sharedGoals && (
+                !sortedSharedGoalIds && (
                   <div className={classes.imageWrapper}>
                     <img alt="no-goals" src={NoGoalsImg} />
                   </div>
