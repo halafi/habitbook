@@ -120,53 +120,55 @@ class SharedGoalView extends PureComponent<Props> {
           <div>
             <div className={classes.panelContainer}>
               <div>
-                <form className={classes.form}>
-                  <TextField
-                    id="name"
-                    label="Name"
-                    value={goal.name}
-                    onChange={onRenameGoal}
-                    className={classes.textField}
-                    disabled={readOnly}
-                  />
-                  <DateTimePicker
-                    id="start-date"
-                    label={goal.draft ? 'Challenge starting' : 'Challenge started'}
-                    value={goal.started}
-                    onChange={onChangeDate}
-                    className={classes.dateTimePicker}
-                    disabled={readOnly || !goal.draft}
-                  />
-                  <DateTimePicker
-                    id="end-date"
-                    label="Challenge ending"
-                    value={moment(goal.started).add(goal.target, 'd')}
-                    className={classes.dateTimePicker}
-                    disabled
-                  />
-                </form>
-                <br />
+                {goal.draft && (
+                  <form className={classes.form}>
+                    <TextField
+                      id="name"
+                      label="Name"
+                      value={goal.name}
+                      onChange={onRenameGoal}
+                      className={classes.textField}
+                      disabled={readOnly || !goal.draft}
+                    />
+                    <DateTimePicker
+                      id="start-date"
+                      label={goal.draft ? 'Challenge starting' : 'Challenge started'}
+                      value={goal.started}
+                      onChange={onChangeDate}
+                      className={classes.dateTimePicker}
+                      disabled={readOnly || !goal.draft}
+                    />
+                    <DateTimePicker
+                      id="end-date"
+                      label="Challenge ending"
+                      value={moment(goal.started).add(goal.target, 'd')}
+                      className={classes.dateTimePicker}
+                      disabled
+                    />
+                  </form>
+                )}
                 <Typography>
+                  <br />
                   {goal.target} days required to complete. If you fail you are out.
                   <br />
                   <br />
                   {!R.all(x => x.accepted)(participants) && (
-                    <span>Everyone has to agree to terms for the challenge to start.</span>
+                    <div>Everyone has to agree to terms for the challenge to start.<br/><br/></div>
                   )}
-                  <br />
-                  <br />
                   <List>
                     {participants.map(x => (
                       <ListItem key={x.email} dense className={classes.listItem}>
                         <Avatar src={x.avatarUrl} />
                         <ListItemText primary={x.displayName} />
-                        <ListItemSecondaryAction>
-                          <Checkbox
-                            onChange={onAcceptSharedGoal}
-                            checked={x.accepted}
-                            disabled={x.id !== currentUserId || x.accepted}
-                          />
-                        </ListItemSecondaryAction>
+                        {goal.draft && (
+                          <ListItemSecondaryAction>
+                            <Checkbox
+                              onChange={onAcceptSharedGoal}
+                              checked={x.accepted}
+                              disabled={x.id !== currentUserId || x.accepted}
+                            />
+                          </ListItemSecondaryAction>
+                        )}
                       </ListItem>
                     ))}
                   </List>

@@ -163,10 +163,30 @@ class GoalList extends Component<Props, State> {
   }
 
   handleConfirmDeleteShared = () => {
-    const { firebase } = this.props
+    const { firebase, sharedGoals, currentUserId } = this.props
     const { modalGoalId } = this.state
 
-    firebase.remove(`/sharedGoals/${modalGoalId}`)
+    const goal = sharedGoals[modalGoalId]
+
+    if (goal.draft) {
+      if (goal.users.length > 1) {
+        this.updateSharedGoal(modalGoalId, {
+          users: goal.users.filter(x => x.id !== currentUserId),
+        })
+      } else if (goal.users.length <= 1) {
+        firebase.remove(`/sharedGoals/${modalGoalId}`)
+      }
+    } else {
+      if (goal.users.length > 1) {
+        alert('not yet implemented')
+        // this.updateSharedGoal(modalGoalId, {
+        //   users: goal.users.filter(x => x.id !== currentUserId),
+        // })
+        // TODO: update state to abandoned, or force player to fail first
+      } else if (goal.users.length <= 1) {
+        firebase.remove(`/sharedGoals/${modalGoalId}`)
+      }
+    }
 
     this.setState({
       modal: null,
@@ -358,9 +378,7 @@ class GoalList extends Component<Props, State> {
     const newUsers = sharedGoals[goalId].users.map(
       x => (x.id === userId ? { ...x, accepted: true } : x),
     )
-    const everyoneAccepted = R.all(R.propEq('accepted', true))(sharedGoals[goalId].users)
-    console.log(sharedGoals[goalId].draft)
-    console.log(everyoneAccepted)
+    const everyoneAccepted = R.all(R.propEq('accepted', true))(newUsers)
 
     this.updateSharedGoal(goalId, {
       users: newUsers,
@@ -397,8 +415,7 @@ class GoalList extends Component<Props, State> {
     )
 
     const willDeleteSharedGoal =
-      modal === 'deleteShared' &&
-      !R.reject(R.equals(currentUserId))(sharedGoals[modalGoalId].users).length > 0 // TODO: put modal names to const
+      modal === 'deleteShared' && sharedGoals[modalGoalId].users.length > 0 // TODO: put modal names to const
 
     return (
       <Card className={classes.card}>
