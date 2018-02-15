@@ -18,9 +18,9 @@ import Avatar from 'material-ui/Avatar'
 import Checkbox from 'material-ui/Checkbox'
 import TextField from 'material-ui/TextField'
 import { FormControlLabel } from 'material-ui/Form'
-import type { SharedGoal } from '../../../../../../../../common/records/SharedGoal'
+import type { SharedGoal, SharedGoalUser } from '../../../../../../../../common/records/SharedGoal'
 import { getElapsedDaysTillNow } from '../../../../../../../../common/services/dateTimeUtils'
-import type { Users } from '../../../../../../../../common/records/Firebase/User'
+import type { User, Users } from '../../../../../../../../common/records/Firebase/User'
 import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
 
 type Props = {
@@ -31,6 +31,7 @@ type Props = {
   onChangeDate: (string, number) => void,
   onRenameGoal: any => void,
   onExpand: any => void, // SyntheticEvent<>
+  onAcceptSharedGoal: () => void,
   classes: Object,
   readOnly: boolean,
   expanded: boolean,
@@ -66,6 +67,8 @@ const styles = theme => ({
   },
 })
 
+type Participant = SharedGoalUser & User
+
 class SharedGoalView extends PureComponent<Props> {
   render() {
     const {
@@ -76,6 +79,7 @@ class SharedGoalView extends PureComponent<Props> {
       onChangeDate,
       onRenameGoal,
       onExpand,
+      onAcceptSharedGoal,
       classes,
       readOnly,
       expanded,
@@ -88,14 +92,15 @@ class SharedGoalView extends PureComponent<Props> {
       return null
     }
 
-    const participants = goal.users
-      .sort((a, b) => {
-        if (a === currentUserId) {
-          return -1
-        }
-        return a.localeCompare(b)
-      })
-      .map(uid => users[uid])
+    const participants: Array<Participant> = goal.users
+      .sort((a, b) => (a.id === currentUserId ? -1 : a.id.localeCompare(b.id)))
+      .map(x => ({ ...x, ...users[x.id] }))
+
+    const currentParticipant: ?Participant = R.compose(
+      R.defaultTo(null),
+      R.head,
+      R.filter(R.propEq('id', currentUserId)),
+    )(participants)
 
     // TODO: last man standing checkbox
     // TODO: make public
@@ -133,7 +138,7 @@ class SharedGoalView extends PureComponent<Props> {
                     disabled={readOnly || !goal.draft}
                   />
                   <DateTimePicker
-                    id="start-date"
+                    id="end-date"
                     label="Challenge ending"
                     value={moment(goal.started).add(goal.target, 'd')}
                     className={classes.dateTimePicker}
@@ -145,7 +150,9 @@ class SharedGoalView extends PureComponent<Props> {
                   {goal.target} days required to complete. If you fail you are out.
                   <br />
                   <br />
-                  Awaiting participants to accept challenge.
+                  {!R.all(x => x.accepted)(participants) && (
+                    <span>Everyone has to agree to terms for the challenge to start.</span>
+                  )}
                   <br />
                   <br />
                   <List>
@@ -154,15 +161,10 @@ class SharedGoalView extends PureComponent<Props> {
                         <Avatar src={x.avatarUrl} />
                         <ListItemText primary={x.displayName} />
                         <ListItemSecondaryAction>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                // onChange={this.handleToggle(value)}
-                                // checked={this.state.checked.indexOf(value) !== -1}
-                                checked={false}
-                              />
-                            }
-                            label="Accept"
+                          <Checkbox
+                            onChange={onAcceptSharedGoal}
+                            checked={x.accepted}
+                            disabled={x.id !== currentUserId || x.accepted}
                           />
                         </ListItemSecondaryAction>
                       </ListItem>
@@ -179,9 +181,11 @@ class SharedGoalView extends PureComponent<Props> {
             <Button dense onClick={onDelete}>
               Abandon
             </Button>
-            {/*<Button color="primary" dense onClick={null} disabled>*/}
-            {/*Accept*/}
-            {/*</Button>*/}
+            {!currentParticipant.accepted && (
+              <Button color="primary" dense onClick={onAcceptSharedGoal}>
+                Accept
+              </Button>
+            )}
             {/*<Button dense onClick={null} disabled>*/}
             {/*Fail*/}
             {/*</Button>*/}

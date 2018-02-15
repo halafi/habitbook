@@ -122,11 +122,11 @@ class Friends extends Component<Props, State> {
     })
   }
 
-  handleDeleteFriend = (email: string) => {
+  handleDeleteFriend = (id: string) => {
     const { profile, firebase, selectUserAction } = this.props
 
     const oldFriendList = profile.friends || []
-    const newFriendList = oldFriendList.filter(e => e !== email)
+    const newFriendList = oldFriendList.filter(e => e !== id)
 
     firebase.updateProfile({
       friends: newFriendList,
@@ -186,7 +186,7 @@ class Friends extends Component<Props, State> {
                       <ListItemSecondaryAction>
                         {userId !== currentUserId && (
                           <IconButton
-                            onClick={() => this.handleDeleteFriend(user.email)}
+                            onClick={() => this.handleDeleteFriend(userId)}
                             aria-label="Delete"
                           >
                             <DeleteIcon />

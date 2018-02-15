@@ -216,7 +216,12 @@ class GoalList extends Component<Props, State> {
         visibility: getGoalVisibility(2),
       })
     } else {
-      const users = [currentUserId].concat(Object.values(friends).map(x => x.value))
+      const users = [currentUserId].concat(Object.values(friends).map(x => x.value)).map(x => ({
+        id: x,
+        accepted: false,
+        failed: null,
+      }))
+
       ref = firebase.push(`/sharedGoals`, {
         created: moment().valueOf(),
         draft: true,
@@ -239,8 +244,16 @@ class GoalList extends Component<Props, State> {
   }
 
   handleChangeDateShared = (goalId: string, newDate: number) => {
+    const { sharedGoals } = this.props
     const newDateTimeMillis = newDate || moment().valueOf()
-    this.updateSharedGoal(goalId, { started: newDateTimeMillis })
+
+    // deaccept users
+    const newUsers = sharedGoals[goalId].users.map(x => ({ ...x, accepted: false }))
+
+    this.updateSharedGoal(goalId, {
+      started: newDateTimeMillis,
+      users: newUsers,
+    })
   }
 
   handleChangeVisibility = (goalId: string, ev: any) =>
@@ -337,6 +350,21 @@ class GoalList extends Component<Props, State> {
   handleRenameGoalShared = (goalId: string, ev: any) => {
     this.updateSharedGoal(goalId, {
       name: ev.target.value,
+    })
+  }
+
+  handleAcceptGoalShared = (goalId: string, userId: string) => {
+    const { sharedGoals } = this.props
+    const newUsers = sharedGoals[goalId].users.map(
+      x => (x.id === userId ? { ...x, accepted: true } : x),
+    )
+    const everyoneAccepted = R.all(R.propEq('accepted', true))(sharedGoals[goalId].users)
+    console.log(sharedGoals[goalId].draft)
+    console.log(everyoneAccepted)
+
+    this.updateSharedGoal(goalId, {
+      users: newUsers,
+      draft: !everyoneAccepted,
     })
   }
 
@@ -463,6 +491,10 @@ class GoalList extends Component<Props, State> {
                       readOnly={readOnly}
                       expanded={expandedGoalId === goalId}
                       onExpand={R.partial(this.handleExpand, [goalId])}
+                      onAcceptSharedGoal={R.partial(this.handleAcceptGoalShared, [
+                        goalId,
+                        currentUserId,
+                      ])}
                     />
                   ))}
                 </div>

@@ -9,7 +9,6 @@ import { withStyles } from 'material-ui/styles'
 import Input from 'material-ui/Input'
 
 import type { Users } from '../../../../../../../../common/records/Firebase/User'
-import { getUserByEmail } from '../../../../../../../../common/records/Firebase/User'
 import SelectWrapped from './components/SelectWrapped/SelectWrapped'
 
 type Props = {
@@ -108,10 +107,12 @@ const NewGoalForm = ({
             id: 'react-select-chip',
             name: 'react-select-chip',
             simpleValue: false,
-            options: friends.map(x => ({
-              value: x,
-              label: users[x].displayName.split(' ')[0],
-            })),
+            options: friends
+              ? friends.map(x => ({
+                  value: x,
+                  label: users[x].displayName.split(' ')[0],
+                }))
+              : [],
             users,
           }}
           className={

@@ -19,7 +19,7 @@ export const getSortedSharedGoalsIds = (
     R.defaultTo(null),
     R.keys,
     R.fromPairs,
-    R.filter(pair => pair[1].users.includes(currentUserId)),
+    R.filter(R.compose(R.any(R.propEq('id', currentUserId)), R.prop('users'), R.last)),
     R.toPairs,
   )(goals)
 
