@@ -24,6 +24,7 @@ import {
 import { selectedUserIdSelector } from '../../../../../../../common/selectors/dashboardSelectors'
 import { getRank } from '../../../../../../../common/records/Rank'
 
+// TODO: days without reset
 type Props = {
   classes: Object,
   goals: {

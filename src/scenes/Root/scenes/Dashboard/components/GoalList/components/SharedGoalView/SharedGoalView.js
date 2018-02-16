@@ -17,11 +17,16 @@ import Divider from 'material-ui/Divider'
 import Avatar from 'material-ui/Avatar'
 import Checkbox from 'material-ui/Checkbox'
 import TextField from 'material-ui/TextField'
-import { FormControlLabel } from 'material-ui/Form'
 import type { SharedGoal, SharedGoalUser } from '../../../../../../../../common/records/SharedGoal'
-import { getElapsedDaysTillNow } from '../../../../../../../../common/services/dateTimeUtils'
+import {
+  getElapsedMinutesBetween,
+  getElapsedDaysTillNow,
+  getElapsedDaysBetween,
+} from '../../../../../../../../common/services/dateTimeUtils'
 import type { User, Users } from '../../../../../../../../common/records/Firebase/User'
-import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
+import DateTimePicker, {
+  DATE_TIME_FORMAT,
+} from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
 
 type Props = {
   goal: SharedGoal,
@@ -32,12 +37,16 @@ type Props = {
   onRenameGoal: any => void,
   onExpand: any => void, // SyntheticEvent<>
   onAcceptSharedGoal: () => void,
+  onFail: () => void,
   classes: Object,
   readOnly: boolean,
   expanded: boolean,
 }
 
 const styles = theme => ({
+  formWrapper: {
+    width: '100%',
+  },
   form: {
     padding: '0',
   },
@@ -80,6 +89,7 @@ class SharedGoalView extends PureComponent<Props> {
       onRenameGoal,
       onExpand,
       onAcceptSharedGoal,
+      onFail,
       classes,
       readOnly,
       expanded,
@@ -102,6 +112,13 @@ class SharedGoalView extends PureComponent<Props> {
       R.filter(R.propEq('id', currentUserId)),
     )(participants)
 
+    const goalInMinutes = getElapsedMinutesBetween(
+      goal.started,
+      moment(goal.started)
+        .add(goal.target, 'd')
+        .valueOf(),
+    )
+
     // TODO: last man standing checkbox
     // TODO: make public
     // TODO: add friends you dont have
@@ -117,60 +134,85 @@ class SharedGoalView extends PureComponent<Props> {
           </Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <div>
+          <div className={classes.formWrapper}>
             <div className={classes.panelContainer}>
-              <div>
-                {goal.draft && (
-                  <form className={classes.form}>
-                    <TextField
-                      id="name"
-                      label="Name"
-                      value={goal.name}
-                      onChange={onRenameGoal}
-                      className={classes.textField}
-                      disabled={readOnly || !goal.draft}
-                    />
-                    <DateTimePicker
-                      id="start-date"
-                      label={goal.draft ? 'Challenge starting' : 'Challenge started'}
-                      value={goal.started}
-                      onChange={onChangeDate}
-                      className={classes.dateTimePicker}
-                      disabled={readOnly || !goal.draft}
-                    />
-                    <DateTimePicker
-                      id="end-date"
-                      label="Challenge ending"
-                      value={moment(goal.started).add(goal.target, 'd')}
-                      className={classes.dateTimePicker}
-                      disabled
-                    />
-                  </form>
-                )}
+              <div className={classes.formWrapper}>
+                <form className={classes.form}>
+                  <TextField
+                    id="name"
+                    label="Name"
+                    value={goal.name}
+                    onChange={onRenameGoal}
+                    className={classes.textField}
+                    disabled={readOnly || !goal.draft}
+                  />
+                  <DateTimePicker
+                    id="start-date"
+                    label={goal.draft ? 'Challenge starting' : 'Challenge started'}
+                    value={goal.started}
+                    onChange={onChangeDate}
+                    className={classes.dateTimePicker}
+                    disabled={readOnly || !goal.draft}
+                  />
+                </form>
                 <Typography>
                   <br />
                   {goal.target} days required to complete. If you fail you are out.
                   <br />
                   <br />
                   {!R.all(x => x.accepted)(participants) && (
-                    <div>Everyone has to agree to terms for the challenge to start.<br/><br/></div>
+                    <div>
+                      Everyone has to agree to terms for the challenge to start.<br />
+                      <br />
+                    </div>
                   )}
-                  <List>
-                    {participants.map(x => (
-                      <ListItem key={x.email} dense className={classes.listItem}>
-                        <Avatar src={x.avatarUrl} />
-                        <ListItemText primary={x.displayName} />
-                        {goal.draft && (
-                          <ListItemSecondaryAction>
-                            <Checkbox
-                              onChange={onAcceptSharedGoal}
-                              checked={x.accepted}
-                              disabled={x.id !== currentUserId || x.accepted}
-                            />
-                          </ListItemSecondaryAction>
-                        )}
-                      </ListItem>
-                    ))}
+                  <List dense>
+                    {participants.map(x => {
+                      const completedMinutes = x.failed
+                        ? getElapsedMinutesBetween(goal.started, x.failed)
+                        : null
+
+                      const elapsedDaysBetweenStartedFailed = getElapsedDaysBetween(
+                        goal.started,
+                        x.failed,
+                      )
+                      const completedDays =
+                        elapsedDaysBetweenStartedFailed > goal.target
+                          ? goal.target
+                          : elapsedDaysBetweenStartedFailed
+
+                      const percentDone =
+                        (completedMinutes >= goalInMinutes ? goalInMinutes : completedMinutes) /
+                        goalInMinutes *
+                        100
+
+                      let status = 'Game is on ✊'
+
+                      if (x.failed) {
+                        if (completedDays === 0) {
+                          status = 'Failed challenge on the first day 🍤'
+                        } else {
+                          status = `Failed challenge after ${completedDays} ${completedDays === 1
+                            ? 'day'
+                            : 'days'} (${percentDone.toFixed(0)}%)`
+                        }
+                      }
+                      return (
+                        <ListItem key={x.email} dense className={classes.listItem}>
+                          <Avatar src={x.avatarUrl} />
+                          <ListItemText primary={x.displayName} secondary={status} dense />
+                          {goal.draft && (
+                            <ListItemSecondaryAction>
+                              <Checkbox
+                                onChange={onAcceptSharedGoal}
+                                checked={x.accepted}
+                                disabled={x.id !== currentUserId || x.accepted}
+                              />
+                            </ListItemSecondaryAction>
+                          )}
+                        </ListItem>
+                      )
+                    })}
                   </List>
                 </Typography>
               </div>
@@ -180,9 +222,18 @@ class SharedGoalView extends PureComponent<Props> {
         <Divider />
         {!readOnly && (
           <ExpansionPanelActions>
-            <Button dense onClick={onDelete}>
-              Abandon
-            </Button>
+            {((currentParticipant.accepted && currentParticipant.failed) || goal.draft) && (
+              <Button dense onClick={onDelete}>
+                Abandon
+              </Button>
+            )}
+            {currentParticipant.accepted &&
+              !currentParticipant.failed &&
+              !goal.draft && (
+                <Button dense onClick={onFail}>
+                  Admit Defeat
+                </Button>
+              )}
             {!currentParticipant.accepted && (
               <Button color="primary" dense onClick={onAcceptSharedGoal}>
                 Accept
@@ -200,5 +251,4 @@ class SharedGoalView extends PureComponent<Props> {
     )
   }
 }
-
 export default withStyles(styles)(SharedGoalView)

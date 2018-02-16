@@ -1,6 +1,7 @@
 export type SharedGoalUser = {
   id: string,
   accepted: boolean,
+  abandoned: boolean,
   failed: ?number,
 }
 

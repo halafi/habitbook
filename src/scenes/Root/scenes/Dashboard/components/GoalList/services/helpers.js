@@ -19,6 +19,15 @@ export const getSortedSharedGoalsIds = (
     R.defaultTo(null),
     R.keys,
     R.fromPairs,
+    // TODO: filter goals that you abandoned
+    // R.filter(
+    //   R.compose(
+    //     R.propEq('abandoned', true),
+    //     R.propEq('id', currentUserId),
+    //     R.prop('users'),
+    //     R.last,
+    //   ),
+    // ),
     R.filter(R.compose(R.any(R.propEq('id', currentUserId)), R.prop('users'), R.last)),
     R.toPairs,
   )(goals)

@@ -49,7 +49,7 @@ type Props = {
   users: ?Users,
 }
 
-type GoalModal = 'delete' | 'reset'
+type GoalModal = 'delete' | 'reset' | 'deleteShared' | 'resetShared'
 
 type State = {
   name: string,
@@ -149,6 +149,13 @@ class GoalList extends Component<Props, State> {
     })
   }
 
+  handleFailShared = (goalId: string) => {
+    this.setState({
+      modal: 'resetShared',
+      modalGoalId: goalId,
+    })
+  }
+
   handleConfirmDelete = () => {
     const { firebase, currentUserId } = this.props
     const { modalGoalId } = this.state
@@ -177,12 +184,11 @@ class GoalList extends Component<Props, State> {
         firebase.remove(`/sharedGoals/${modalGoalId}`)
       }
     } else {
+      // eslint-disable-next-line no-lonely-if
       if (goal.users.length > 1) {
-        alert('not yet implemented')
-        // this.updateSharedGoal(modalGoalId, {
-        //   users: goal.users.filter(x => x.id !== currentUserId),
-        // })
-        // TODO: update state to abandoned, or force player to fail first
+        this.updateSharedGoal(modalGoalId, {
+          users: goal.users.map(x => (x.id === currentUserId ? { ...x, abandoned: true } : x)),
+        })
       } else if (goal.users.length <= 1) {
         firebase.remove(`/sharedGoals/${modalGoalId}`)
       }
@@ -239,6 +245,7 @@ class GoalList extends Component<Props, State> {
       const users = [currentUserId].concat(Object.values(friends).map(x => x.value)).map(x => ({
         id: x,
         accepted: false,
+        abandoned: false,
         failed: null,
       }))
 
@@ -293,6 +300,22 @@ class GoalList extends Component<Props, State> {
       ascensionCount: 0,
       streaks: previousStreaks,
       resets,
+    })
+
+    this.setState({
+      modal: null,
+      modalGoalId: null,
+    })
+  }
+
+  handleConfirmFailShared = () => {
+    const { sharedGoals, currentUserId } = this.props
+    const { modalGoalId, modalDateTime } = this.state
+
+    const goal = sharedGoals[modalGoalId]
+
+    this.updateSharedGoal(modalGoalId, {
+      users: goal.users.map(x => (x.id === currentUserId ? { ...x, failed: modalDateTime } : x)),
     })
 
     this.setState({
@@ -414,8 +437,14 @@ class GoalList extends Component<Props, State> {
       selectedUserId || currentUserId,
     )
 
+    const sharedGoal = sharedGoals[modalGoalId]
+
     const willDeleteSharedGoal =
-      modal === 'deleteShared' && sharedGoals[modalGoalId].users.length > 0 // TODO: put modal names to const
+      modal === 'deleteShared' &&
+      ((!sharedGoal.draft && sharedGoal.users.filter(x => !x.abandoned).length === 0) ||
+        (sharedGoal.draft && sharedGoal.users.length <= 1))
+
+    // TODO: put modal names to const
 
     return (
       <Card className={classes.card}>
@@ -441,6 +470,13 @@ class GoalList extends Component<Props, State> {
           open={modal === 'reset'}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmReset}
+          dateTime={modalDateTime}
+          onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
+        />
+        <ResetDialog
+          open={modal === 'resetShared'}
+          onClose={() => this.setState({ modal: null })}
+          onConfirm={this.handleConfirmFailShared}
           dateTime={modalDateTime}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
@@ -512,6 +548,7 @@ class GoalList extends Component<Props, State> {
                         goalId,
                         currentUserId,
                       ])}
+                      onFail={R.partial(this.handleFailShared, [goalId, currentUserId])}
                     />
                   ))}
                 </div>
