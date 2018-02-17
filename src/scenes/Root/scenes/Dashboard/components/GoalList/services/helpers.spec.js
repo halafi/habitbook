@@ -1,6 +1,6 @@
 // @flow
 import moment from 'moment'
-import { getSortedGoalsIds } from './helpers'
+import { getSortedGoalsIds, getSortedSharedGoalsIds } from './helpers'
 
 describe('helpers', () => {
   const dateNow = Date.now
@@ -52,5 +52,77 @@ describe('helpers', () => {
     expect(getSortedGoalsIds(input, 'name')).toEqual(['2', '4', '1', '3', 'five'])
     expect(getSortedGoalsIds(input, 'progress')).toEqual(['4', 'five', '2', '3', '1'])
     expect(getSortedGoalsIds(input, 'oldest')).toEqual(['4', 'five', '2', '3', '1'])
+  })
+
+  test('#getSortedSharedGoalsIds', () => {
+    const uid1 = 'abcd'
+    const uid2 = 'efgh'
+    const uid3 = 'abgh'
+    const u1 = {
+      id: uid1,
+      accepted: true,
+      failed: null,
+      abandoned: false,
+    }
+    const u2 = {
+      id: uid2,
+      accepted: true,
+      failed: null,
+      abandoned: false,
+    }
+    const u3 = {
+      id: uid3,
+      accepted: true,
+      failed: null,
+      abandoned: false,
+    }
+    const user12 = [u1, u2]
+    const user13 = [u1, u3]
+    const user23 = [u2, u3]
+    const input = {
+      '1': {
+        name: 'delta',
+        target: 365,
+        started: moment().subtract(1, 'd'),
+        created: moment().subtract(1, 'd'),
+        draft: false,
+        users: user12,
+      },
+      '2': {
+        name: 'alpha',
+        target: 60,
+        started: moment().subtract(10, 'd'),
+        created: moment().subtract(10, 'd'),
+        draft: false,
+        users: user12,
+      },
+      '3': {
+        name: 'gamma',
+        target: 120,
+        started: moment().subtract(5, 'd'),
+        created: moment().subtract(5, 'd'),
+        draft: false,
+        users: user13,
+      },
+      '4': {
+        name: 'beta',
+        target: 15,
+        started: moment().subtract(30, 'd'),
+        created: moment().subtract(30, 'd'),
+        draft: false,
+        users: user23,
+      },
+      five: {
+        name: 'penta',
+        target: 7,
+        started: moment().subtract(15, 'd'),
+        created: moment().subtract(15, 'd'),
+        draft: false,
+        users: user13,
+      },
+    }
+    expect(getSortedSharedGoalsIds(input, uid1)).toEqual(['1', '2', '3', 'five'])
+    expect(getSortedSharedGoalsIds(input, uid2)).toEqual(['1', '2', '4'])
+    expect(getSortedSharedGoalsIds(input, uid3)).toEqual(['3', '4', 'five'])
   })
 })
