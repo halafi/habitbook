@@ -49,7 +49,14 @@ type Props = {
   users: ?Users,
 }
 
-type GoalModal = 'delete' | 'reset' | 'deleteShared' | 'resetShared'
+const GOAL_MODALS = {
+  DELETE: 'delete',
+  RESET: 'reset',
+  DELETE_SHARED: 'deleteShared',
+  RESET_SHARED: 'resetShared',
+}
+
+type GoalModal = $Values<typeof GOAL_MODALS> // eslint-disable-line no-undef
 
 type State = {
   name: string,
@@ -130,28 +137,28 @@ class GoalList extends Component<Props, State> {
 
   handleDelete = (goalId: string) => {
     this.setState({
-      modal: 'delete',
+      modal: GOAL_MODALS.DELETE,
       modalGoalId: goalId,
     })
   }
 
   handleDeleteShared = (goalId: string) => {
     this.setState({
-      modal: 'deleteShared',
+      modal: GOAL_MODALS.DELETE_SHARED,
       modalGoalId: goalId,
     })
   }
 
   handleReset = (goalId: string) => {
     this.setState({
-      modal: 'reset',
+      modal: GOAL_MODALS.RESET,
       modalGoalId: goalId,
     })
   }
 
   handleFailShared = (goalId: string) => {
     this.setState({
-      modal: 'resetShared',
+      modal: GOAL_MODALS.RESET_SHARED,
       modalGoalId: goalId,
     })
   }
@@ -432,25 +439,27 @@ class GoalList extends Component<Props, State> {
     const formValid = name.length > 0 && target > 0
     const sort = profile.sort || 'oldest'
     const sortedGoalIds = getSortedGoalsIds(goals, sort)
-    const sortedSharedGoalIds = getSortedSharedGoalsIds(
-      sharedGoals,
-      selectedUserId || currentUserId,
-    )
+    const sortedSharedGoalIds = sharedGoals
+      ? getSortedSharedGoalsIds(sharedGoals, selectedUserId || currentUserId)
+      : []
 
-    const sharedGoal = sharedGoals[modalGoalId]
+    const sharedGoal =
+      modalGoalId && modal === GOAL_MODALS.DELETE_SHARED ? sharedGoals[modalGoalId] : null
+
+    if (modalGoalId && modal === GOAL_MODALS.DELETE_SHARED) {
+      console.log(sharedGoal.users.filter(x => !x.abandoned))
+    }
 
     const willDeleteSharedGoal =
-      modal === 'deleteShared' &&
-      ((!sharedGoal.draft && sharedGoal.users.filter(x => !x.abandoned).length === 0) ||
+      modal === GOAL_MODALS.DELETE_SHARED &&
+      ((!sharedGoal.draft && sharedGoal.users.filter(x => !x.abandoned).length <= 1) ||
         (sharedGoal.draft && sharedGoal.users.length <= 1))
-
-    // TODO: put modal names to const
 
     return (
       <Card className={classes.card}>
         <ConfirmationModal
           title="Remove challenge"
-          open={modal === 'delete'}
+          open={modal === GOAL_MODALS.DELETE}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmDelete}
         >
@@ -458,23 +467,23 @@ class GoalList extends Component<Props, State> {
         </ConfirmationModal>
         <ConfirmationModal
           title="Abandon challenge"
-          open={modal === 'deleteShared'}
+          open={modal === GOAL_MODALS.DELETE_SHARED}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmDeleteShared}
         >
           {willDeleteSharedGoal
-            ? 'Are you sure you want to permanently delete this challenge? There are no more participants.'
+            ? 'Are you sure you want to permanently delete this challenge? There are no more active participants.'
             : "There are still other participants in this challenge, if you leave now you won't be able to return, but the challenge will remain visible to the other participants."}
         </ConfirmationModal>
         <ResetDialog
-          open={modal === 'reset'}
+          open={modal === GOAL_MODALS.RESET}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmReset}
           dateTime={modalDateTime}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <ResetDialog
-          open={modal === 'resetShared'}
+          open={modal === GOAL_MODALS.RESET_SHARED}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmFailShared}
           dateTime={modalDateTime}

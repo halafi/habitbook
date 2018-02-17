@@ -119,6 +119,9 @@ class SharedGoalView extends PureComponent<Props> {
         .valueOf(),
     )
 
+    // TODO: when last user abandons - > delete goal
+    // TODO: able to finish goal which would award every player that did not fail
+
     // TODO: last man standing checkbox
     // TODO: make public
     // TODO: add friends you dont have
@@ -186,9 +189,17 @@ class SharedGoalView extends PureComponent<Props> {
                         goalInMinutes *
                         100
 
-                      let status = 'Game is on ✊'
+                      let status = ''
 
-                      if (x.failed) {
+                      if (goal.draft && x.accepted) {
+                        status = 'Accepted challenge'
+                      } else if (goal.draft && !x.accepted) {
+                        status = 'Waiting for response'
+                      } else if (!goal.draft && x.accepted) {
+                        status = 'Game is on ✊'
+                      }
+
+                      if (!goal.draft && x.failed) {
                         if (completedDays === 0) {
                           status = 'Failed challenge on the first day 🍤'
                         } else {
