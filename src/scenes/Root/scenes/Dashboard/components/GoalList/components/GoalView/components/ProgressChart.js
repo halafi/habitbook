@@ -87,8 +87,8 @@ class ProgressChart extends PureComponent<Props> {
           fill="#8884d8"
           paddingAngle={finished || elapsedMinutes <= 0 ? 0 : 3}
         >
-          {progressChartData.map((entry, index) => (
-            <Cell key={entry} fill={COLORS[index % COLORS.length]} />
+          {progressChartData.map((entry: Object, index: number) => (
+            <Cell key={entry.value} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
       </PieChart>

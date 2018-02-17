@@ -95,7 +95,6 @@ const styles = theme => ({
   },
 })
 
-// TODO: controlled accordion
 class GoalView extends Component<Props> {
   render() {
     const {
@@ -216,12 +215,7 @@ class GoalView extends Component<Props> {
                   )}
               </div>
               <div>
-                <ProgressChart
-                  goal={goal}
-                  // elapsedDaysTillNow={elapsedDaysTillNow}
-                  finished={finished}
-                  lastReset={lastReset}
-                />
+                <ProgressChart goal={goal} finished={finished} lastReset={lastReset} />
               </div>
             </div>
             <div>
