@@ -3,6 +3,7 @@ export type SharedGoalUser = {
   accepted: boolean,
   abandoned: boolean,
   failed: ?number,
+  finished: boolean,
 }
 
 export type SharedGoal = {

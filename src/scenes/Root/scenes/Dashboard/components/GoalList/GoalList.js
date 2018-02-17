@@ -24,6 +24,7 @@ import type { Users } from '../../../../../../common/records/Firebase/User'
 import {
   getAscensionKarma,
   getFinishKarma,
+  getSharedGoalFinishKarma,
   getSortedGoalsIds,
   getSortedSharedGoalsIds,
 } from './services/helpers'
@@ -142,6 +143,7 @@ class GoalList extends Component<Props, State> {
     })
   }
 
+  // TODO: rewrite to one function openModal
   handleDeleteShared = (goalId: string) => {
     this.setState({
       modal: GOAL_MODALS.DELETE_SHARED,
@@ -163,11 +165,30 @@ class GoalList extends Component<Props, State> {
     })
   }
 
+  handleFinishShared = (goalId: string, userId: string) => {
+    const { sharedGoals, firebase, profile } = this.props
+
+    const goal = sharedGoals[goalId]
+
+    this.updateSharedGoal(goalId, {
+      users: goal.users.map(x => (x.id === userId ? { ...x, finished: true } : x)),
+    })
+
+    firebase.updateProfile({
+      goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
+      karma: profile.karma
+        ? Number(profile.karma) + getSharedGoalFinishKarma(goal)
+        : getSharedGoalFinishKarma(goal),
+    })
+  }
+
   handleConfirmDelete = () => {
     const { firebase, currentUserId } = this.props
     const { modalGoalId } = this.state
 
-    firebase.remove(`/goals/${currentUserId}/${modalGoalId}`)
+    if (modalGoalId) {
+      firebase.remove(`/goals/${currentUserId}/${modalGoalId}`)
+    }
 
     this.setState({
       modal: null,
@@ -193,9 +214,17 @@ class GoalList extends Component<Props, State> {
     } else {
       // eslint-disable-next-line no-lonely-if
       if (goal.users.length > 1) {
-        this.updateSharedGoal(modalGoalId, {
-          users: goal.users.map(x => (x.id === currentUserId ? { ...x, abandoned: true } : x)),
-        })
+        const newUsers = goal.users.map(
+          x => (x.id === currentUserId ? { ...x, abandoned: true } : x),
+        )
+        const everyoneLeft = newUsers.every(x => x.abandoned)
+        if (everyoneLeft) {
+          firebase.remove(`/sharedGoals/${modalGoalId}`)
+        } else {
+          this.updateSharedGoal(modalGoalId, {
+            users: goal.users.map(x => (x.id === currentUserId ? { ...x, abandoned: true } : x)),
+          })
+        }
       } else if (goal.users.length <= 1) {
         firebase.remove(`/sharedGoals/${modalGoalId}`)
       }
@@ -254,6 +283,7 @@ class GoalList extends Component<Props, State> {
         accepted: false,
         abandoned: false,
         failed: null,
+        finished: false,
       }))
 
       ref = firebase.push(`/sharedGoals`, {
@@ -566,6 +596,7 @@ class GoalList extends Component<Props, State> {
                         currentUserId,
                       ])}
                       onFail={R.partial(this.handleFailShared, [goalId, currentUserId])}
+                      onComplete={R.partial(this.handleFinishShared, [goalId, currentUserId])}
                     />
                   ))}
                 </div>

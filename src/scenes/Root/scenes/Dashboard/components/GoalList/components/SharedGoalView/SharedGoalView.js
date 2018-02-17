@@ -24,9 +24,7 @@ import {
   getElapsedDaysBetween,
 } from '../../../../../../../../common/services/dateTimeUtils'
 import type { User, Users } from '../../../../../../../../common/records/Firebase/User'
-import DateTimePicker, {
-  DATE_TIME_FORMAT,
-} from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
+import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
 
 type Props = {
   goal: SharedGoal,
@@ -38,6 +36,7 @@ type Props = {
   onExpand: any => void, // SyntheticEvent<>
   onAcceptSharedGoal: () => void,
   onFail: () => void,
+  onComplete: () => void,
   classes: Object,
   readOnly: boolean,
   expanded: boolean,
@@ -90,13 +89,14 @@ class SharedGoalView extends PureComponent<Props> {
       onExpand,
       onAcceptSharedGoal,
       onFail,
+      onComplete,
       classes,
       readOnly,
       expanded,
     } = this.props
 
     const elapsedDaysTillNow = getElapsedDaysTillNow(goal.started)
-    // const finished = elapsedDaysTillNow >= goal.target
+    const finished = elapsedDaysTillNow >= goal.target
 
     if (!users) {
       return null
@@ -191,22 +191,19 @@ class SharedGoalView extends PureComponent<Props> {
 
                       let status = ''
 
-                      if (goal.draft && x.accepted) {
-                        status = 'Accepted challenge'
-                      } else if (goal.draft && !x.accepted) {
-                        status = 'Waiting for response'
-                      } else if (!goal.draft && x.accepted) {
-                        status = 'Game is on ✊'
-                      }
-
-                      if (!goal.draft && x.failed) {
-                        if (completedDays === 0) {
-                          status = 'Failed challenge on the first day 🍤'
-                        } else {
-                          status = `Failed challenge after ${completedDays} ${completedDays === 1
-                            ? 'day'
-                            : 'days'} (${percentDone.toFixed(0)}%)`
+                      if (goal.draft) {
+                        if (x.accepted) status = 'Accepted challenge'
+                        else status = 'Waiting for response'
+                      } else {
+                        if (x.accepted) status = '👊 The Game is Afoot.'
+                        if (x.failed) {
+                          if (completedDays === 0) status = 'Failed challenge on the first day 🍤'
+                          else
+                            status = `Failed challenge after ${completedDays} ${completedDays === 1
+                              ? 'day'
+                              : 'days'} (${percentDone.toFixed(0)}%)`
                         }
+                        if (x.finished) status = 'Completed challenge 🍭🐐'
                       }
                       return (
                         <ListItem key={x.email} dense className={classes.listItem}>
@@ -231,33 +228,39 @@ class SharedGoalView extends PureComponent<Props> {
           </div>
         </ExpansionPanelDetails>
         <Divider />
-        {!readOnly && (
-          <ExpansionPanelActions>
-            {((currentParticipant.accepted && currentParticipant.failed) || goal.draft) && (
-              <Button dense onClick={onDelete}>
-                Abandon
-              </Button>
-            )}
-            {currentParticipant.accepted &&
-              !currentParticipant.failed &&
-              !goal.draft && (
-                <Button dense onClick={onFail}>
-                  Admit Defeat
+        {!readOnly &&
+          currentParticipant && (
+            <ExpansionPanelActions>
+              {((currentParticipant.accepted && currentParticipant.failed) ||
+                goal.draft ||
+                currentParticipant.finished) && (
+                <Button dense onClick={onDelete}>
+                  Abandon
                 </Button>
               )}
-            {!currentParticipant.accepted && (
-              <Button color="primary" dense onClick={onAcceptSharedGoal}>
-                Accept
-              </Button>
-            )}
-            {/*<Button dense onClick={null} disabled>*/}
-            {/*Fail*/}
-            {/*</Button>*/}
-            {/*<Button color="primary" dense onClick={null} disabled>*/}
-            {/*Finish*/}
-            {/*</Button>*/}
-          </ExpansionPanelActions>
-        )}
+              {currentParticipant.accepted &&
+                !currentParticipant.failed &&
+                !currentParticipant.finished &&
+                !goal.draft && (
+                  <Button dense onClick={onFail}>
+                    Log Defeat
+                  </Button>
+                )}
+              {!currentParticipant.accepted && (
+                <Button color="primary" dense onClick={onAcceptSharedGoal}>
+                  Accept
+                </Button>
+              )}
+              {!goal.draft &&
+                !currentParticipant.finished &&
+                !currentParticipant.failed &&
+                finished && (
+                  <Button color="primary" key="finishBtn" dense onClick={onComplete}>
+                    Finish
+                  </Button>
+                )}
+            </ExpansionPanelActions>
+          )}
       </ExpansionPanel>
     )
   }
