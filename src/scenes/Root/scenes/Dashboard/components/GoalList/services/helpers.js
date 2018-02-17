@@ -10,25 +10,19 @@ export const getAscensionKarma = (goal: Goal): number =>
   Math.round(goal.target * (goal.ascensionCount + 1) / 2)
 export const getFinishKarma = (goal: Goal): number => Number(goal.target)
 
-// TODO: test
-export const getSortedSharedGoalsIds = (
-  goals: SharedGoals,
-  currentUserId: string,
-): ?Array<string> =>
+export const getSortedSharedGoalsIds = (goals: SharedGoals, uid: string): ?Array<string> =>
   R.compose(
     R.defaultTo(null),
     R.keys,
     R.fromPairs,
-    // TODO: filter goals that you abandoned
-    // R.filter(
-    //   R.compose(
-    //     R.propEq('abandoned', true),
-    //     R.propEq('id', currentUserId),
-    //     R.prop('users'),
-    //     R.last,
-    //   ),
-    // ),
-    R.filter(R.compose(R.any(R.propEq('id', currentUserId)), R.prop('users'), R.last)),
+    R.filter(
+      R.compose(
+        R.any(R.compose(R.both(R.propEq('id', uid), R.propEq('abandoned', false)))),
+        R.prop('users'),
+        R.last,
+      ),
+    ),
+    R.filter(R.compose(R.any(R.propEq('id', uid)), R.prop('users'), R.last)), // only goals which contain uid in users
     R.toPairs,
   )(goals)
 

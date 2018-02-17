@@ -64,6 +64,10 @@ describe('helpers', () => {
       failed: null,
       abandoned: false,
     }
+    const u1Abandoned = {
+      ...u1,
+      abandoned: true,
+    }
     const u2 = {
       id: uid2,
       accepted: true,
@@ -77,7 +81,7 @@ describe('helpers', () => {
       abandoned: false,
     }
     const user12 = [u1, u2]
-    const user13 = [u1, u3]
+    const user13 = [u1Abandoned, u3]
     const user23 = [u2, u3]
     const input = {
       '1': {
@@ -121,7 +125,8 @@ describe('helpers', () => {
         users: user13,
       },
     }
-    expect(getSortedSharedGoalsIds(input, uid1)).toEqual(['1', '2', '3', 'five'])
+    // user uid1 abandoned goal five
+    expect(getSortedSharedGoalsIds(input, uid1)).toEqual(['1', '2'])
     expect(getSortedSharedGoalsIds(input, uid2)).toEqual(['1', '2', '4'])
     expect(getSortedSharedGoalsIds(input, uid3)).toEqual(['3', '4', 'five'])
   })
