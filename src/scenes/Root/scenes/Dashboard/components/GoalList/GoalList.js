@@ -297,7 +297,15 @@ class GoalList extends Component<Props, State> {
     const { goals } = this.props
     const { modalGoalId, modalDateTime } = this.state
 
-    const newStreak = getElapsedDaysBetween(goals[modalGoalId].started, modalDateTime)
+    const previousResets = goals[modalGoalId].resets
+
+    let newStreak
+    if (previousResets && previousResets.length) {
+      newStreak = getElapsedDaysBetween(previousResets[previousResets.length - 1], modalDateTime)
+    } else {
+      newStreak = getElapsedDaysBetween(goals[modalGoalId].started, modalDateTime)
+    }
+
     const previousStreaks = goals[modalGoalId].streaks || []
     previousStreaks.push(newStreak)
     const resets = goals[modalGoalId].resets || []
