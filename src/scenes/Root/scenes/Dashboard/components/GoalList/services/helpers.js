@@ -2,7 +2,7 @@
 
 import * as R from 'ramda'
 import type { Goal, Goals } from '../../../../../../../common/records/Goal'
-import type SortType from '../consts/sortTypes'
+import type { SortType } from '../consts/sortTypes'
 import { getElapsedDaysTillNow } from '../../../../../../../common/services/dateTimeUtils'
 import type { SharedGoal, SharedGoals } from '../../../../../../../common/records/SharedGoal'
 

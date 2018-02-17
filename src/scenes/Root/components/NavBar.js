@@ -24,8 +24,8 @@ type Props = {
   classes: any,
   firebase: any,
   profile: Profile,
-  selectUserAction: string => void,
-  selectedUserId: string, // uid
+  selectUserAction: (?string) => void,
+  selectedUserId: string,
 }
 
 class NavBar extends React.Component<Props> {
@@ -38,7 +38,7 @@ class NavBar extends React.Component<Props> {
   }
 
   render() {
-    const { classes, firebase, profile, selectUserAction, selectedUserId } = this.props
+    const { classes, firebase, profile } = this.props
 
     return (
       <AppBar position="static" color="default">

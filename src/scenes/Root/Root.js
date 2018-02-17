@@ -3,7 +3,6 @@
 import React, { Component } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import type { Dispatch } from 'redux'
 import { withStyles } from 'material-ui/styles'
 
 import NavBar from './components/NavBar'
@@ -22,7 +21,6 @@ const styles = {
 
 type Props = {
   profile: Profile,
-  dispatch: Dispatch<*>,
   classes: Object,
 }
 

@@ -24,13 +24,11 @@ import {
 import { selectedUserIdSelector } from '../../../../../../../common/selectors/dashboardSelectors'
 import { getRank } from '../../../../../../../common/records/Rank'
 
-// TODO: days without reset
 type Props = {
   classes: Object,
   goals: {
     [userId: string]: Goals,
   },
-  firebase: any,
   currentUserId: string,
   selectedUserId: string,
   users: Users,
@@ -52,7 +50,6 @@ const styles = theme => ({
   },
 })
 
-// TODO: player data
 class Stats extends Component<Props> {
   render() {
     const { users, classes, goals, currentUserId, selectedUserId } = this.props
@@ -79,6 +76,7 @@ class Stats extends Component<Props> {
     const percentDone = totalDaysCompleted / (totalTarget / 100)
     const percentDoneFormatted = Number.isNaN(percentDone) ? 0 : percentDone.toFixed(0)
 
+    // TODO: days without reset
     return (
       <Card className={classes.card}>
         <CardContent>

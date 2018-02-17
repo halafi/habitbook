@@ -36,7 +36,7 @@ type Props = {
   profile: Profile,
   firebase: any,
   currentUserId: string,
-  selectUserAction: string => void,
+  selectUserAction: (?string) => void,
   selectedUserId: string, // uid
 }
 

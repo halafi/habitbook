@@ -59,14 +59,16 @@ const GOAL_MODALS = {
 
 type GoalModal = $Values<typeof GOAL_MODALS> // eslint-disable-line no-undef
 
+type Friends = Array<{ value: string, label: string }>
+
 type State = {
+  expandedGoalId: ?string,
+  friends: ?Friends,
+  modal: ?GoalModal,
+  modalDateTime: ?number,
+  modalGoalId: ?string,
   name: string,
   target: number,
-  modal: ?GoalModal,
-  modalGoalId: ?string,
-  modalDateTime: ?number,
-  expandedGoalId: ?string,
-  friends: ?Array<{ value: string, label: string }>,
 }
 
 const styles = theme => ({
@@ -109,16 +111,17 @@ class GoalList extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
+      expandedGoalId: null,
+      friends: null,
+      modal: null,
+      modalDateTime: null,
+      modalGoalId: null,
       name: '',
       target: 30,
-      modal: null,
-      modalGoalId: null,
-      modalDateTime: null,
-      friends: null,
     }
   }
 
-  updateUserGoal = (goalId, update) => {
+  updateUserGoal = (goalId: string, update: Object) => {
     const { firebase, currentUserId, goals } = this.props
 
     firebase.set(`/goals/${currentUserId}/${goalId}`, {
@@ -127,7 +130,7 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  updateSharedGoal = (goalId, update) => {
+  updateSharedGoal = (goalId: string, update: Object) => {
     const { firebase, sharedGoals } = this.props
 
     firebase.set(`/sharedGoals/${goalId}`, {
@@ -136,33 +139,8 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleDelete = (goalId: string) => {
-    this.setState({
-      modal: GOAL_MODALS.DELETE,
-      modalGoalId: goalId,
-    })
-  }
-
-  // TODO: rewrite to one function openModal
-  handleDeleteShared = (goalId: string) => {
-    this.setState({
-      modal: GOAL_MODALS.DELETE_SHARED,
-      modalGoalId: goalId,
-    })
-  }
-
-  handleReset = (goalId: string) => {
-    this.setState({
-      modal: GOAL_MODALS.RESET,
-      modalGoalId: goalId,
-    })
-  }
-
-  handleFailShared = (goalId: string) => {
-    this.setState({
-      modal: GOAL_MODALS.RESET_SHARED,
-      modalGoalId: goalId,
-    })
+  openModal = (modal: GoalModal, modalGoalId: string) => {
+    this.setState({ modal, modalGoalId })
   }
 
   handleFinishShared = (goalId: string, userId: string) => {
@@ -243,21 +221,15 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleChangeSelectedFriends = (val: string) => {
+  handleChangeSelectedFriends = (val: Friends) => {
     if (val.length > 2) {
       return
     }
+
     this.setState({
       friends: val,
     })
   }
-  // handleRemoveFriend = friend => {
-  //   console.log(friend)
-  //   console.log(R.reject(R.equals(friend))(this.state.friends))
-  //   this.setState({
-  //     friends: R.reject(R.equals(friend))(this.state.friends),
-  //   })
-  // }
 
   handleSubmit = (ev: any) => {
     ev.preventDefault()
@@ -416,7 +388,7 @@ class GoalList extends Component<Props, State> {
   }
 
   handleCompleteGoal = (goalId: string) => {
-    const { firebase, profile, goals } = this.props
+    const { firebase, profile, goals, currentUserId } = this.props
 
     const updatedGoal = goals[goalId]
 
@@ -426,7 +398,8 @@ class GoalList extends Component<Props, State> {
         ? Number(profile.karma) + getFinishKarma(updatedGoal)
         : getFinishKarma(updatedGoal),
     })
-    this.handleDelete(goalId)
+
+    firebase.remove(`/goals/${currentUserId}/${goalId}`)
   }
 
   handleRenameGoal = (goalId: string, ev: any) => {
@@ -562,11 +535,11 @@ class GoalList extends Component<Props, State> {
                     <GoalView
                       key={goalId}
                       goal={goals[goalId]}
-                      onDelete={R.partial(this.handleDelete, [goalId])}
+                      onDelete={R.partial(this.openModal, [GOAL_MODALS.DELETE, goalId])}
                       onComplete={R.partial(this.handleCompleteGoal, [goalId])}
                       onChangeDate={R.partial(this.handleChangeDate, [goalId])}
                       onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
-                      onReset={R.partial(this.handleReset, [goalId])}
+                      onReset={R.partial(this.openModal, [GOAL_MODALS.RESET, goalId])}
                       onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
                       onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
                       onRenameGoal={R.partial(this.handleRenameGoal, [goalId])}
@@ -585,7 +558,7 @@ class GoalList extends Component<Props, State> {
                       users={users}
                       currentUserId={currentUserId}
                       goal={sharedGoals[goalId]}
-                      onDelete={R.partial(this.handleDeleteShared, [goalId])}
+                      onDelete={R.partial(this.openModal, [GOAL_MODALS.DELETE_SHARED, goalId])}
                       onChangeDate={R.partial(this.handleChangeDateShared, [goalId])}
                       onRenameGoal={R.partial(this.handleRenameGoalShared, [goalId])}
                       readOnly={readOnly}
@@ -595,7 +568,7 @@ class GoalList extends Component<Props, State> {
                         goalId,
                         currentUserId,
                       ])}
-                      onFail={R.partial(this.handleFailShared, [goalId, currentUserId])}
+                      onFail={R.partial(this.openModal, [GOAL_MODALS.RESET_SHARED, goalId])}
                       onComplete={R.partial(this.handleFinishShared, [goalId, currentUserId])}
                     />
                   ))}

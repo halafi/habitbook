@@ -40,7 +40,6 @@ const styles = {
   },
 }
 
-// TODO: table with history - transparent profile
 class Dashboard extends Component<Props> {
   render() {
     const { goals, sharedGoals, users, selectedUserId, currentUserId, classes } = this.props

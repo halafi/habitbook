@@ -1,3 +1,5 @@
+// @flow
+
 export const GOAL_SORT_TYPES = [
   {
     value: 'name',
