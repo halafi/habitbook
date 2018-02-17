@@ -6,9 +6,9 @@ import TextField from 'material-ui/TextField'
 
 type Props = {
   id: string,
-  className: ?string,
-  disabled: ?boolean,
-  label: ?string,
+  className?: string,
+  disabled?: boolean,
+  label: string,
   onChange: any => void,
   value: number,
 }

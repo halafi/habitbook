@@ -45,8 +45,8 @@ class ResetDialog extends React.Component<Props> {
             <br />
             <br />
             <DateTimePicker
-              label="Failed on"
               id="reset"
+              label="Failed on"
               value={dateTime}
               onChange={onDateTimeChange}
             />

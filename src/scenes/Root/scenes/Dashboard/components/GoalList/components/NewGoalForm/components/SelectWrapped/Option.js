@@ -6,7 +6,7 @@ import { MenuItem } from 'material-ui/Menu'
 type Props = any
 
 export default class Option extends React.Component<Props> {
-  handleClick = event => {
+  handleClick = (event: any) => {
     this.props.onSelect(this.props.option, event)
   }
 
