@@ -121,6 +121,21 @@ class GoalList extends Component<Props, State> {
     }
   }
 
+  openModal = (modal: GoalModal, modalGoalId: string) => this.setState({ modal, modalGoalId })
+
+  handleChangeSort = (ev: any) => this.props.firebase.updateProfile({ sort: ev.target.value })
+
+  handleChangeFormField = (fieldName: string, value: string) =>
+    this.setState({ [fieldName]: value })
+
+  handleExpand = (goalId: string) =>
+    this.setState({ expandedGoalId: this.state.expandedGoalId === goalId ? null : goalId })
+
+  handleChangeSelectedFriends = (val: Friends) =>
+    this.setState(state => (val.length > 2 ? state : { friends: val }))
+
+  handleStartGoal = (goalId: string) => this.updateUserGoal(goalId, { draft: false })
+
   updateUserGoal = (goalId: string, update: Object) => {
     const { firebase, currentUserId, goals } = this.props
 
@@ -139,25 +154,32 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  openModal = (modal: GoalModal, modalGoalId: string) => {
-    this.setState({ modal, modalGoalId })
-  }
+  handleCompleteGoal = (goalId: string, shared: boolean) => {
+    const { firebase, profile, currentUserId, goals, sharedGoals } = this.props
 
-  handleFinishShared = (goalId: string, userId: string) => {
-    const { sharedGoals, firebase, profile } = this.props
+    if (shared) {
+      const goal = sharedGoals[goalId]
 
-    const goal = sharedGoals[goalId]
+      this.updateSharedGoal(goalId, {
+        users: goal.users.map(x => (x.id === currentUserId ? { ...x, finished: true } : x)),
+      })
 
-    this.updateSharedGoal(goalId, {
-      users: goal.users.map(x => (x.id === userId ? { ...x, finished: true } : x)),
-    })
+      firebase.updateProfile({
+        goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
+        karma: profile.karma
+          ? Number(profile.karma) + getSharedGoalFinishKarma(goal)
+          : getSharedGoalFinishKarma(goal),
+      })
+    } else {
+      const goal = goals[goalId]
 
-    firebase.updateProfile({
-      goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
-      karma: profile.karma
-        ? Number(profile.karma) + getSharedGoalFinishKarma(goal)
-        : getSharedGoalFinishKarma(goal),
-    })
+      firebase.updateProfile({
+        goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
+        karma: profile.karma ? Number(profile.karma) + getFinishKarma(goal) : getFinishKarma(goal),
+      })
+
+      firebase.remove(`/goals/${currentUserId}/${goalId}`)
+    }
   }
 
   handleConfirmDelete = () => {
@@ -219,22 +241,6 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleChange = (fieldName: string, value: string) => {
-    this.setState({
-      [fieldName]: value,
-    })
-  }
-
-  handleChangeSelectedFriends = (val: Friends) => {
-    if (val.length > 2) {
-      return
-    }
-
-    this.setState({
-      friends: val,
-    })
-  }
-
   handleSubmit = (ev: any) => {
     ev.preventDefault()
 
@@ -279,42 +285,38 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleChangeDate = (goalId: string, newDate: number) => {
+  handleChangeDate = (goalId: string, shared: boolean, newDate: number) => {
     const newDateTimeMillis = newDate || moment().valueOf()
-    this.updateUserGoal(goalId, { started: newDateTimeMillis })
+
+    if (shared) {
+      const { sharedGoals } = this.props
+
+      const newUsers = sharedGoals[goalId].users.map(x => ({ ...x, accepted: false }))
+
+      this.updateSharedGoal(goalId, {
+        started: newDateTimeMillis,
+        users: newUsers,
+      })
+    } else {
+      this.updateUserGoal(goalId, { started: newDateTimeMillis })
+    }
   }
 
-  handleChangeTarget = (goalId: string, ev: any) => {
+  handleGoalFieldChange = (goalId: string, field: 'target' | 'visibility', ev: any) => {
     const { value } = ev.target
 
-    if (Number.isNaN(Number(value))) {
+    if (field === 'target' && Number.isNaN(Number(value))) {
       return
     }
 
-    this.updateUserGoal(goalId, { target: value })
+    this.updateUserGoal(goalId, { [field]: value })
   }
-
-  handleChangeDateShared = (goalId: string, newDate: number) => {
-    const { sharedGoals } = this.props
-    const newDateTimeMillis = newDate || moment().valueOf()
-
-    // deaccept users
-    const newUsers = sharedGoals[goalId].users.map(x => ({ ...x, accepted: false }))
-
-    this.updateSharedGoal(goalId, {
-      started: newDateTimeMillis,
-      users: newUsers,
-    })
-  }
-
-  handleChangeVisibility = (goalId: string, ev: any) =>
-    this.updateUserGoal(goalId, { visibility: ev.target.value })
 
   handleConfirmReset = () => {
     const { goals } = this.props
     const { modalGoalId, modalDateTime } = this.state
 
-    if (!modalGoalId) {
+    if (!modalGoalId || !modalDateTime) {
       return
     }
 
@@ -364,24 +366,6 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleToggleDraft = (goalId: string) => {
-    const { goals } = this.props
-
-    if (goals[goalId]) {
-      this.updateUserGoal(goalId, { draft: false, ascensionCount: 0 })
-    } else {
-      this.updateUserGoal(goalId, {
-        started: moment().valueOf(),
-        draft: true,
-        ascensionCount: 0,
-      })
-    }
-
-    this.setState({
-      expandedGoalId: null,
-    })
-  }
-
   handleExtendGoal = (goalId: string) => {
     const { goals, firebase, profile } = this.props
 
@@ -402,57 +386,29 @@ class GoalList extends Component<Props, State> {
     })
   }
 
-  handleChangeSort = (ev: any) => {
-    const { firebase } = this.props
-
-    firebase.updateProfile({
-      sort: ev.target.value,
-    })
+  handleRenameGoal = (goalId: string, shared: boolean, ev: any) => {
+    if (shared) {
+      this.updateSharedGoal(goalId, {
+        name: ev.target.value,
+      })
+    } else {
+      this.updateUserGoal(goalId, {
+        name: ev.target.value,
+      })
+    }
   }
 
-  handleCompleteGoal = (goalId: string) => {
-    const { firebase, profile, goals, currentUserId } = this.props
+  handleAcceptSharedGoal = (goalId: string) => {
+    const { sharedGoals, currentUserId } = this.props
 
-    const updatedGoal = goals[goalId]
-
-    firebase.updateProfile({
-      goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
-      karma: profile.karma
-        ? Number(profile.karma) + getFinishKarma(updatedGoal)
-        : getFinishKarma(updatedGoal),
-    })
-
-    firebase.remove(`/goals/${currentUserId}/${goalId}`)
-  }
-
-  handleRenameGoal = (goalId: string, ev: any) => {
-    this.updateUserGoal(goalId, {
-      name: ev.target.value,
-    })
-  }
-
-  handleRenameGoalShared = (goalId: string, ev: any) => {
-    this.updateSharedGoal(goalId, {
-      name: ev.target.value,
-    })
-  }
-
-  handleAcceptGoalShared = (goalId: string, userId: string) => {
-    const { sharedGoals } = this.props
     const newUsers = sharedGoals[goalId].users.map(
-      x => (x.id === userId ? { ...x, accepted: true } : x),
+      x => (x.id === currentUserId ? { ...x, accepted: true } : x),
     )
     const everyoneAccepted = R.all(R.propEq('accepted', true))(newUsers)
 
     this.updateSharedGoal(goalId, {
       users: newUsers,
       draft: !everyoneAccepted,
-    })
-  }
-
-  handleExpand = (goalId: string) => {
-    this.setState({
-      expandedGoalId: this.state.expandedGoalId === goalId ? null : goalId,
     })
   }
 
@@ -510,14 +466,14 @@ class GoalList extends Component<Props, State> {
           open={modal === GOAL_MODALS.RESET}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmReset}
-          dateTime={modalDateTime || moment().valueOf()}
+          dateTime={modalDateTime}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <ResetDialog
           open={modal === GOAL_MODALS.RESET_SHARED}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmFailShared}
-          dateTime={modalDateTime || moment().valueOf()}
+          dateTime={modalDateTime}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <CardContent>
@@ -555,18 +511,21 @@ class GoalList extends Component<Props, State> {
                     <GoalView
                       key={goalId}
                       goal={goals[goalId]}
-                      onDelete={R.partial(this.openModal, [GOAL_MODALS.DELETE, goalId])}
-                      onComplete={R.partial(this.handleCompleteGoal, [goalId])}
-                      onChangeDate={R.partial(this.handleChangeDate, [goalId])}
-                      onChangeTarget={R.partial(this.handleChangeTarget, [goalId])}
-                      onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
-                      onReset={R.partial(this.openModal, [GOAL_MODALS.RESET, goalId])}
-                      onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
-                      onChangeVisibility={R.partial(this.handleChangeVisibility, [goalId])}
-                      onRenameGoal={R.partial(this.handleRenameGoal, [goalId])}
                       readOnly={readOnly}
                       expanded={expandedGoalId === goalId}
                       onExpand={R.partial(this.handleExpand, [goalId])}
+                      onDelete={R.partial(this.openModal, [GOAL_MODALS.DELETE, goalId])}
+                      onComplete={R.partial(this.handleCompleteGoal, [goalId, false])}
+                      onRenameGoal={R.partial(this.handleRenameGoal, [goalId, false])}
+                      onChangeDate={R.partial(this.handleChangeDate, [goalId, false])}
+                      onChangeTarget={R.partial(this.handleGoalFieldChange, [goalId, 'target'])}
+                      onChangeVisibility={R.partial(this.handleGoalFieldChange, [
+                        goalId,
+                        'visibility',
+                      ])}
+                      onToggleDraft={R.partial(this.handleStartGoal, [goalId])}
+                      onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}
+                      onFail={R.partial(this.openModal, [GOAL_MODALS.RESET, goalId])}
                     />
                   ))}
                 </div>
@@ -576,21 +535,18 @@ class GoalList extends Component<Props, State> {
                   {sortedSharedGoalIds.map(goalId => (
                     <SharedGoalView
                       key={goalId}
-                      users={users}
-                      currentUserId={currentUserId}
                       goal={sharedGoals[goalId]}
-                      onDelete={R.partial(this.openModal, [GOAL_MODALS.DELETE_SHARED, goalId])}
-                      onChangeDate={R.partial(this.handleChangeDateShared, [goalId])}
-                      onRenameGoal={R.partial(this.handleRenameGoalShared, [goalId])}
                       readOnly={readOnly}
                       expanded={expandedGoalId === goalId}
                       onExpand={R.partial(this.handleExpand, [goalId])}
-                      onAcceptSharedGoal={R.partial(this.handleAcceptGoalShared, [
-                        goalId,
-                        currentUserId,
-                      ])}
+                      onDelete={R.partial(this.openModal, [GOAL_MODALS.DELETE_SHARED, goalId])}
+                      users={users}
+                      currentUserId={currentUserId}
+                      onComplete={R.partial(this.handleCompleteGoal, [goalId, true])}
+                      onRenameGoal={R.partial(this.handleRenameGoal, [goalId, true])}
+                      onChangeDate={R.partial(this.handleChangeDate, [goalId, true])}
+                      onAcceptSharedGoal={R.partial(this.handleAcceptSharedGoal, [goalId])}
                       onFail={R.partial(this.openModal, [GOAL_MODALS.RESET_SHARED, goalId])}
-                      onComplete={R.partial(this.handleFinishShared, [goalId, currentUserId])}
                     />
                   ))}
                 </div>
@@ -608,7 +564,7 @@ class GoalList extends Component<Props, State> {
                 <NewGoalForm
                   onSubmit={this.handleSubmit}
                   name={name}
-                  onChange={this.handleChange}
+                  onChange={this.handleChangeFormField}
                   formValid={formValid}
                   users={users}
                   friendsSelected={friends}

@@ -36,7 +36,7 @@ type Props = {
   onChangeDate: (string, any) => void,
   onChangeTarget: any => void,
   onToggleDraft: string => void,
-  onReset: string => void,
+  onFail: string => void,
   onExtendGoal: string => void,
   onChangeVisibility: string => void,
   onRenameGoal: any => void, // SyntheticEvent<>
@@ -110,7 +110,7 @@ class GoalView extends Component<Props> {
       onChangeDate,
       onChangeTarget,
       onToggleDraft,
-      onReset,
+      onFail,
       onExtendGoal,
       onChangeVisibility,
       onRenameGoal,
@@ -252,7 +252,7 @@ class GoalView extends Component<Props> {
               Remove
             </Button>
             {!goal.draft && (
-              <Button dense onClick={onReset}>
+              <Button dense onClick={onFail}>
                 Reset
               </Button>
             )}

@@ -17,7 +17,7 @@ type Props = {
   open: boolean,
   onClose: () => void,
   onConfirm: () => void,
-  dateTime: number,
+  dateTime: ?number,
   onDateTimeChange: any => void,
 }
 
@@ -44,12 +44,14 @@ class ResetDialog extends React.Component<Props> {
             Are you sure you want to reset your progress?
             <br />
             <br />
-            <DateTimePicker
-              id="reset"
-              label="Failed on"
-              value={dateTime}
-              onChange={onDateTimeChange}
-            />
+            {dateTime && (
+              <DateTimePicker
+                id="reset"
+                label="Failed on"
+                value={dateTime}
+                onChange={onDateTimeChange}
+              />
+            )}
             <br />
             <Typography variant="Caption" gutterBottom>
               <strong>Bruce Wayne</strong>: <em>I wanted to save Gotham. I failed.</em>
