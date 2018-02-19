@@ -1,4 +1,5 @@
 import type { ProviderData } from './ProviderData'
+import { SortType } from '../../../scenes/Root/scenes/Dashboard/components/GoalList/consts/sortTypes'
 
 type Email = string
 
@@ -13,4 +14,5 @@ export type Profile = {
   ascensions?: number,
   karma?: number,
   friends?: Array<Email>,
+  sort?: SortType,
 }

@@ -68,7 +68,6 @@ type State = {
   modalDateTime: ?number,
   modalGoalId: ?string,
   name: string,
-  target: number,
 }
 
 const styles = theme => ({
@@ -107,6 +106,8 @@ const styles = theme => ({
   },
 })
 
+const DEFAULT_GOAL_TARGET = 30
+
 class GoalList extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -117,7 +118,6 @@ class GoalList extends Component<Props, State> {
       modalDateTime: null,
       modalGoalId: null,
       name: '',
-      target: 30,
     }
   }
 
@@ -179,6 +179,10 @@ class GoalList extends Component<Props, State> {
     const { firebase, sharedGoals, currentUserId } = this.props
     const { modalGoalId } = this.state
 
+    if (!modalGoalId) {
+      return
+    }
+
     const goal = sharedGoals[modalGoalId]
 
     if (goal.draft) {
@@ -235,7 +239,7 @@ class GoalList extends Component<Props, State> {
     ev.preventDefault()
 
     const { currentUserId, firebase } = this.props
-    const { name, target, friends } = this.state
+    const { name, friends } = this.state
 
     let ref = ''
     if (!friends || !friends.length) {
@@ -246,10 +250,11 @@ class GoalList extends Component<Props, State> {
         name,
         started: moment().valueOf(),
         streaks: [],
-        target,
+        target: DEFAULT_GOAL_TARGET,
         visibility: getGoalVisibility(2),
       })
     } else {
+      // $FlowFixMe https://github.com/facebook/flow/issues/2221
       const users = [currentUserId].concat(Object.values(friends).map(x => x.value)).map(x => ({
         id: x,
         accepted: false,
@@ -263,7 +268,7 @@ class GoalList extends Component<Props, State> {
         draft: true,
         name,
         started: moment().valueOf(),
-        target,
+        target: DEFAULT_GOAL_TARGET,
         users,
       })
     }
@@ -309,6 +314,10 @@ class GoalList extends Component<Props, State> {
     const { goals } = this.props
     const { modalGoalId, modalDateTime } = this.state
 
+    if (!modalGoalId) {
+      return
+    }
+
     const previousResets = goals[modalGoalId].resets
 
     let newStreak
@@ -338,6 +347,10 @@ class GoalList extends Component<Props, State> {
   handleConfirmFailShared = () => {
     const { sharedGoals, currentUserId } = this.props
     const { modalGoalId, modalDateTime } = this.state
+
+    if (!modalGoalId) {
+      return
+    }
 
     const goal = sharedGoals[modalGoalId]
 
@@ -455,10 +468,10 @@ class GoalList extends Component<Props, State> {
       currentUserId,
       selectedUserId,
     } = this.props
-    const { name, target, modal, modalDateTime, expandedGoalId, friends, modalGoalId } = this.state
+    const { name, modal, modalDateTime, expandedGoalId, friends, modalGoalId } = this.state
 
-    const formValid = name.length > 0 && target > 0
-    const sort = profile.sort || 'oldest'
+    const formValid = name.length > 0
+    const sort = profile.sort || 'oldestFirst'
     const sortedGoalIds = getSortedGoalsIds(goals, sort)
     const sortedSharedGoalIds = sharedGoals
       ? getSortedSharedGoalsIds(sharedGoals, selectedUserId || currentUserId)
@@ -467,12 +480,9 @@ class GoalList extends Component<Props, State> {
     const sharedGoal =
       modalGoalId && modal === GOAL_MODALS.DELETE_SHARED ? sharedGoals[modalGoalId] : null
 
-    if (modalGoalId && modal === GOAL_MODALS.DELETE_SHARED) {
-      console.log(sharedGoal.users.filter(x => !x.abandoned))
-    }
-
     const willDeleteSharedGoal =
       modal === GOAL_MODALS.DELETE_SHARED &&
+      sharedGoal &&
       ((!sharedGoal.draft && sharedGoal.users.filter(x => !x.abandoned).length <= 1) ||
         (sharedGoal.draft && sharedGoal.users.length <= 1))
 
@@ -500,14 +510,14 @@ class GoalList extends Component<Props, State> {
           open={modal === GOAL_MODALS.RESET}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmReset}
-          dateTime={modalDateTime}
+          dateTime={modalDateTime || moment().valueOf()}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <ResetDialog
           open={modal === GOAL_MODALS.RESET_SHARED}
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmFailShared}
-          dateTime={modalDateTime}
+          dateTime={modalDateTime || moment().valueOf()}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <CardContent>
@@ -598,7 +608,6 @@ class GoalList extends Component<Props, State> {
                 <NewGoalForm
                   onSubmit={this.handleSubmit}
                   name={name}
-                  target={target}
                   onChange={this.handleChange}
                   formValid={formValid}
                   users={users}

@@ -16,7 +16,6 @@ type Props = {
   classes: Object,
   onChange: (string, string) => void,
   name: string,
-  target: number,
   formValid: boolean,
   friendsSelected: ?any,
   friends: Array<String>,
@@ -31,17 +30,12 @@ const styles = theme => ({
   textField: {
     marginLeft: '8px',
     marginRight: '8px',
-    width: '200px',
-  },
-  numberField: {
-    marginLeft: '8px',
-    marginRight: '8px',
-    width: '100px',
+    width: '250px',
   },
   selectField: {
     marginLeft: '8px',
     marginRight: '8px',
-    width: '350px',
+    width: '400px',
     height: '27px', // !disabled 33px
   },
   selectFieldValues: {
@@ -70,7 +64,6 @@ const NewGoalForm = ({
   classes,
   onChange,
   name,
-  target,
   formValid,
   friendsSelected,
   users,
@@ -87,14 +80,6 @@ const NewGoalForm = ({
           margin="normal"
           className={classes.textField}
         />
-        <TextField
-          id="target"
-          label="Days"
-          value={target}
-          onChange={ev => onChange('target', ev.target.value)}
-          margin="normal"
-          className={classes.numberField}
-        />
         <Input
           disabled
           fullWidth
@@ -103,7 +88,7 @@ const NewGoalForm = ({
             value: friendsSelected,
             multi: true,
             onChange: onChangeSelectedFriends,
-            placeholder: 'Challenge friends',
+            placeholder: 'Invite friends',
             instanceId: 'react-select-chip',
             id: 'react-select-chip',
             name: 'react-select-chip',
