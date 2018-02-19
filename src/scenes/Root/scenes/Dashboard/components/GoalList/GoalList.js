@@ -279,6 +279,16 @@ class GoalList extends Component<Props, State> {
     this.updateUserGoal(goalId, { started: newDateTimeMillis })
   }
 
+  handleChangeTarget = (goalId: string, ev: any) => {
+    const { value } = ev.target
+
+    if (Number.isNaN(Number(value))) {
+      return
+    }
+
+    this.updateUserGoal(goalId, { target: value })
+  }
+
   handleChangeDateShared = (goalId: string, newDate: number) => {
     const { sharedGoals } = this.props
     const newDateTimeMillis = newDate || moment().valueOf()
@@ -538,6 +548,7 @@ class GoalList extends Component<Props, State> {
                       onDelete={R.partial(this.openModal, [GOAL_MODALS.DELETE, goalId])}
                       onComplete={R.partial(this.handleCompleteGoal, [goalId])}
                       onChangeDate={R.partial(this.handleChangeDate, [goalId])}
+                      onChangeTarget={R.partial(this.handleChangeTarget, [goalId])}
                       onToggleDraft={R.partial(this.handleToggleDraft, [goalId])}
                       onReset={R.partial(this.openModal, [GOAL_MODALS.RESET, goalId])}
                       onExtendGoal={R.partial(this.handleExtendGoal, [goalId])}

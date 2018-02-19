@@ -42,7 +42,7 @@ const styles = theme => ({
     marginLeft: '8px',
     marginRight: '8px',
     width: '350px',
-    height: '33px',
+    height: '27px', // !disabled 33px
   },
   selectFieldValues: {
     marginLeft: '8px',
@@ -96,6 +96,7 @@ const NewGoalForm = ({
           className={classes.numberField}
         />
         <Input
+          disabled
           fullWidth
           inputComponent={SelectWrapped}
           inputProps={{

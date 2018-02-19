@@ -34,6 +34,7 @@ type Props = {
   onDelete: () => void,
   onComplete: () => void,
   onChangeDate: (string, any) => void,
+  onChangeTarget: any => void,
   onToggleDraft: string => void,
   onReset: string => void,
   onExtendGoal: string => void,
@@ -78,7 +79,7 @@ const styles = theme => ({
   dateTimePicker: {
     display: 'inline-block',
     marginLeft: '0px',
-    marginRight: '16px',
+    marginRight: '8px',
     width: '255px',
   },
   panelContainer: {
@@ -93,6 +94,11 @@ const styles = theme => ({
     borderColor: '#d1d5da',
     border: '1px #e1e4e8 solid',
   },
+  numberField: {
+    marginLeft: '0px',
+    marginRight: '16px',
+    width: '100px',
+  },
 })
 
 class GoalView extends Component<Props> {
@@ -102,6 +108,7 @@ class GoalView extends Component<Props> {
       onDelete,
       onComplete,
       onChangeDate,
+      onChangeTarget,
       onToggleDraft,
       onReset,
       onExtendGoal,
@@ -165,6 +172,16 @@ class GoalView extends Component<Props> {
                     className={classes.dateTimePicker}
                     disabled={readOnly || !goal.draft}
                   />
+                  {goal.draft && (
+                    <TextField
+                      id="target"
+                      label="Days"
+                      value={goal.target}
+                      onChange={onChangeTarget}
+                      margin="normal"
+                      className={classes.numberField}
+                    />
+                  )}
                   <TextField
                     id="select-target-type"
                     select
@@ -214,14 +231,18 @@ class GoalView extends Component<Props> {
                     </Typography>
                   )}
               </div>
+              {!goal.draft && (
+                <div>
+                  <ProgressChart goal={goal} finished={finished} lastReset={lastReset} />
+                </div>
+              )}
+            </div>
+            {!goal.draft && (
               <div>
-                <ProgressChart goal={goal} finished={finished} lastReset={lastReset} />
+                {/*{goal.resets && <MomentumChart goal={goal} />}*/}
+                <Heatmap goal={goal} className={classes.heatmap} />
               </div>
-            </div>
-            <div>
-              {/*{goal.resets && <MomentumChart goal={goal} />}*/}
-              <Heatmap goal={goal} className={classes.heatmap} />
-            </div>
+            )}
           </div>
         </ExpansionPanelDetails>
         <Divider />
@@ -236,7 +257,7 @@ class GoalView extends Component<Props> {
               </Button>
             )}
             {goal.draft ? (
-              <Button dense onClick={onToggleDraft} color="primary">
+              <Button disabled={goal.target <= 0} dense onClick={onToggleDraft} color="primary">
                 Start
               </Button>
             ) : (
