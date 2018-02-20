@@ -31,7 +31,9 @@ type Props = {
   users: Users,
   currentUserId: string,
   onDelete: () => void,
-  onChangeDate: (string, number) => void,
+  onChangeDate: (?number) => void,
+  onChangeTarget: any => void,
+  onChangeType: string => void,
   onRenameGoal: any => void,
   onExpand: any => void, // SyntheticEvent<>
   onAcceptSharedGoal: () => void,
@@ -54,10 +56,15 @@ const styles = theme => ({
     marginRight: '16px',
     width: '150px',
   },
+  numberField: {
+    marginLeft: '0px',
+    marginRight: '16px',
+    width: '100px',
+  },
   dateTimePicker: {
     display: 'inline-block',
     marginLeft: '0px',
-    marginRight: '16px',
+    marginRight: '8px',
     width: '255px',
   },
   heading: {
@@ -73,9 +80,17 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  paddedText: {
+    margin: '16px 0',
+  },
 })
 
 type Participant = SharedGoalUser & User
+
+const GOAL_TYPES = {
+  ELIMINIATION: 'elimination',
+  DURATION: 'duration',
+}
 
 class SharedGoalView extends PureComponent<Props> {
   render() {
@@ -85,6 +100,8 @@ class SharedGoalView extends PureComponent<Props> {
       currentUserId,
       onDelete,
       onChangeDate,
+      onChangeTarget,
+      onChangeType,
       onRenameGoal,
       onExpand,
       onAcceptSharedGoal,
@@ -102,6 +119,7 @@ class SharedGoalView extends PureComponent<Props> {
       return null
     }
 
+    // FIXME
     const participants: Array<Participant> = goal.users
       .sort((a, b) => (a.id === currentUserId ? -1 : a.id.localeCompare(b.id)))
       .map(x => ({ ...x, ...users[x.id] }))
@@ -112,14 +130,14 @@ class SharedGoalView extends PureComponent<Props> {
       R.filter(R.propEq('id', currentUserId)),
     )(participants)
 
-    const goalInMinutes = getElapsedMinutesBetween(
+    const goalInMinutes: number = getElapsedMinutesBetween(
       goal.started,
       moment(goal.started)
         .add(goal.target, 'd')
         .valueOf(),
     )
+    const everyoneAccepted = R.all(x => x.accepted)(participants)
 
-    // TODO: last man standing checkbox
     // TODO: add friends you dont have
     return (
       <ExpansionPanel expanded={expanded} onChange={onExpand}>
@@ -127,9 +145,11 @@ class SharedGoalView extends PureComponent<Props> {
           <Typography className={classes.heading}>
             {goal.name} {goal.draft && '(Draft)'}
           </Typography>
-          <Typography className={classes.secondaryHeading}>
-            {elapsedDaysTillNow} / {goal.target}
-          </Typography>
+          {!goal.draft && (
+            <Typography className={classes.secondaryHeading}>
+              {elapsedDaysTillNow} / {goal.target}
+            </Typography>
+          )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <div className={classes.formWrapper}>
@@ -152,23 +172,56 @@ class SharedGoalView extends PureComponent<Props> {
                     className={classes.dateTimePicker}
                     disabled={readOnly || !goal.draft}
                   />
+                  <TextField
+                    id="select-challenge-type"
+                    select
+                    label="Type"
+                    value={goal.type}
+                    onChange={onChangeType}
+                    SelectProps={{
+                      native: true,
+                    }}
+                    margin="normal"
+                    disabled={readOnly || !goal.draft}
+                    className={classes.textField}
+                  >
+                    <option key={GOAL_TYPES.DURATION} value={GOAL_TYPES.DURATION}>
+                      Fixed duration
+                    </option>
+                    {/*<option key={GOAL_TYPES.ELIMINIATION} value={GOAL_TYPES.ELIMINIATION}>*/}
+                      {/*Elimination*/}
+                    {/*</option>*/}
+                  </TextField>
+                  {goal.type === GOAL_TYPES.DURATION && (
+                    <TextField
+                      id="target"
+                      label="Days"
+                      value={goal.target}
+                      onChange={onChangeTarget}
+                      margin="normal"
+                      className={classes.numberField}
+                      disabled={readOnly || !goal.draft}
+                    />
+                  )}
                 </form>
                 <Typography>
-                  <br />
-                  {goal.target} days required to complete. If you fail you are out.
-                  <br />
-                  <br />
-                  {!R.all(x => x.accepted)(participants) && (
-                    <div>
-                      Everyone has to agree to terms for the challenge to start.<br />
-                      <br />
+                  <div className={classes.paddedText}>
+                    {goal.type === GOAL_TYPES.DURATION ? (
+                      <span>{goal.target} days required to complete. If you fail you are out.</span>
+                    ) : (
+                      <span>Last man standing wins. No second chances.</span>
+                    )}
+                  </div>
+                  {!everyoneAccepted && (
+                    <div className={classes.paddedText}>
+                      Everyone has to agree to terms for the challenge to start.
                     </div>
                   )}
                   <List dense>
                     {participants.map(x => {
                       const completedMinutes = x.failed
                         ? getElapsedMinutesBetween(goal.started, x.failed)
-                        : null
+                        : getElapsedMinutesBetween(goal.started, moment().valueOf())
 
                       const elapsedDaysBetweenStartedFailed = getElapsedDaysBetween(
                         goal.started,

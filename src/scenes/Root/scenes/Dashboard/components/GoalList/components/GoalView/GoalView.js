@@ -33,7 +33,7 @@ type Props = {
   goal: Goal,
   onDelete: () => void,
   onComplete: () => void,
-  onChangeDate: (string, any) => void,
+  onChangeDate: (?number) => void,
   onChangeTarget: any => void,
   onToggleDraft: string => void,
   onFail: string => void,
@@ -76,6 +76,11 @@ const styles = theme => ({
     marginRight: '16px',
     width: '150px',
   },
+  numberField: {
+    marginLeft: '0px',
+    marginRight: '16px',
+    width: '100px',
+  },
   dateTimePicker: {
     display: 'inline-block',
     marginLeft: '0px',
@@ -93,11 +98,6 @@ const styles = theme => ({
     borderRadius: '3px',
     borderColor: '#d1d5da',
     border: '1px #e1e4e8 solid',
-  },
-  numberField: {
-    marginLeft: '0px',
-    marginRight: '16px',
-    width: '100px',
   },
 })
 

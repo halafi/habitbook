@@ -13,6 +13,7 @@ export type SharedGoal = {
   started: number,
   target: number,
   users: Array<SharedGoalUser>,
+  type: 'duration' | 'elimination',
 }
 
 export type SharedGoals = {

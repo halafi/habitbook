@@ -276,6 +276,7 @@ class GoalList extends Component<Props, State> {
         started: moment().valueOf(),
         target: DEFAULT_GOAL_TARGET,
         users,
+        type: 'duration',
       })
     }
     this.setState({
@@ -310,6 +311,26 @@ class GoalList extends Component<Props, State> {
     }
 
     this.updateUserGoal(goalId, { [field]: value })
+  }
+
+  handleChangeTargetShared = (goalId: string, ev: any) => {
+    const { sharedGoals } = this.props
+    const { value } = ev.target
+
+    if (Number.isNaN(Number(value))) {
+      return
+    }
+
+    const newUsers = sharedGoals[goalId].users.map(x => ({ ...x, accepted: false }))
+
+    this.updateSharedGoal(goalId, { target: value, users: newUsers })
+  }
+
+  handleChangeTypeShared = (goalId: string, ev: any) => {
+    const { sharedGoals } = this.props
+    const newUsers = sharedGoals[goalId].users.map(x => ({ ...x, accepted: false }))
+
+    this.updateSharedGoal(goalId, { type: ev.target.value, users: newUsers })
   }
 
   handleConfirmReset = () => {
@@ -387,9 +408,14 @@ class GoalList extends Component<Props, State> {
   }
 
   handleRenameGoal = (goalId: string, shared: boolean, ev: any) => {
+    const { sharedGoals } = this.props
+
     if (shared) {
+      const newUsers = sharedGoals[goalId].users.map(x => ({ ...x, accepted: false }))
+
       this.updateSharedGoal(goalId, {
         name: ev.target.value,
+        users: newUsers,
       })
     } else {
       this.updateUserGoal(goalId, {
@@ -545,6 +571,8 @@ class GoalList extends Component<Props, State> {
                       onComplete={R.partial(this.handleCompleteGoal, [goalId, true])}
                       onRenameGoal={R.partial(this.handleRenameGoal, [goalId, true])}
                       onChangeDate={R.partial(this.handleChangeDate, [goalId, true])}
+                      onChangeTarget={R.partial(this.handleChangeTargetShared, [goalId])}
+                      onChangeType={R.partial(this.handleChangeTypeShared, [goalId])}
                       onAcceptSharedGoal={R.partial(this.handleAcceptSharedGoal, [goalId])}
                       onFail={R.partial(this.openModal, [GOAL_MODALS.RESET_SHARED, goalId])}
                     />

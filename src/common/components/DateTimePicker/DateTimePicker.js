@@ -9,7 +9,7 @@ type Props = {
   className?: string,
   disabled?: boolean,
   label: string,
-  onChange: any => void,
+  onChange: (?number) => void,
   value: number,
 }
 

@@ -36,7 +36,7 @@ const styles = theme => ({
     marginLeft: '8px',
     marginRight: '8px',
     width: '400px',
-    height: '33px',
+    height: '27px', // 33
   },
   selectFieldValues: {
     marginLeft: '8px',
@@ -81,13 +81,14 @@ const NewGoalForm = ({
           className={classes.textField}
         />
         <Input
+          disabled
           fullWidth
           inputComponent={SelectWrapped}
           inputProps={{
             value: friendsSelected,
             multi: true,
             onChange: onChangeSelectedFriends,
-            placeholder: 'Invite friends',
+            placeholder: 'Add friends (coming soon)',
             instanceId: 'react-select-chip',
             id: 'react-select-chip',
             name: 'react-select-chip',
