@@ -44,7 +44,7 @@ class NavBar extends React.Component<Props> {
       <AppBar position="static" color="default">
         <Toolbar>
           <Typography type="title" className={classes.flex}>
-            <Button onClick={this.handleReload}>Droid</Button>
+            <Button onClick={this.handleReload}>Habitbook</Button>
           </Typography>
           <div>
             {isLoaded(profile) &&

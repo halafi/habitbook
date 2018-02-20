@@ -119,13 +119,8 @@ class SharedGoalView extends PureComponent<Props> {
         .valueOf(),
     )
 
-    // TODO: when last user abandons - > delete goal
-    // TODO: able to finish goal which would award every player that did not fail
-
     // TODO: last man standing checkbox
-    // TODO: make public
     // TODO: add friends you dont have
-    // TODO: last man standing
     return (
       <ExpansionPanel expanded={expanded} onChange={onExpand}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -151,7 +146,7 @@ class SharedGoalView extends PureComponent<Props> {
                   />
                   <DateTimePicker
                     id="start-date"
-                    label={goal.draft ? 'Challenge starting' : 'Challenge started'}
+                    label={goal.draft ? 'Start from' : 'Started'}
                     value={goal.started}
                     onChange={onChangeDate}
                     className={classes.dateTimePicker}

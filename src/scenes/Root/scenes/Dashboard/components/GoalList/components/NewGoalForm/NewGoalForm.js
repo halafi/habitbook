@@ -74,7 +74,7 @@ const NewGoalForm = ({
       <div>
         <TextField
           id="name"
-          label="New goal"
+          label="New challenge"
           value={name}
           onChange={ev => onChange('name', ev.target.value)}
           margin="normal"
