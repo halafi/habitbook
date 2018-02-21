@@ -564,6 +564,7 @@ class GoalList extends Component<Props, State> {
                       goal={sharedGoals[goalId]}
                       readOnly={readOnly}
                       expanded={expandedGoalId === goalId}
+                      friends={profile.friends}
                       onExpand={R.partial(this.handleExpand, [goalId])}
                       onDelete={R.partial(this.openModal, [GOAL_MODALS.DELETE_SHARED, goalId])}
                       users={users}

@@ -1,7 +1,9 @@
 // @flow
 
 import React, { PureComponent } from 'react'
+import { compose } from 'redux'
 import * as R from 'ramda'
+import { withFirebase } from 'react-redux-firebase'
 import moment from 'moment'
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -17,6 +19,8 @@ import Divider from 'material-ui/Divider'
 import Avatar from 'material-ui/Avatar'
 import Checkbox from 'material-ui/Checkbox'
 import TextField from 'material-ui/TextField'
+import IconButton from 'material-ui/IconButton'
+import PersonAddIcon from 'material-ui-icons/PersonAdd'
 import type { SharedGoal, SharedGoalUser } from '../../../../../../../../common/records/SharedGoal'
 import {
   getElapsedMinutesBetween,
@@ -27,9 +31,11 @@ import type { User, Users } from '../../../../../../../../common/records/Firebas
 import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
 
 type Props = {
+  firebase: any,
   goal: SharedGoal,
   users: Users,
   currentUserId: string,
+  friends: Array<String>,
   onDelete: () => void,
   onChangeDate: (?number) => void,
   onChangeTarget: any => void,
@@ -95,9 +101,11 @@ const GOAL_TYPES = {
 class SharedGoalView extends PureComponent<Props> {
   render() {
     const {
+      firebase,
       goal,
       users,
       currentUserId,
+      friends,
       onDelete,
       onChangeDate,
       onChangeTarget,
@@ -138,7 +146,6 @@ class SharedGoalView extends PureComponent<Props> {
     )
     const everyoneAccepted = R.all(x => x.accepted)(participants)
 
-    // TODO: add friends you dont have
     return (
       <ExpansionPanel expanded={expanded} onChange={onExpand}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -189,7 +196,7 @@ class SharedGoalView extends PureComponent<Props> {
                       Fixed duration
                     </option>
                     {/*<option key={GOAL_TYPES.ELIMINIATION} value={GOAL_TYPES.ELIMINIATION}>*/}
-                      {/*Elimination*/}
+                    {/*Elimination*/}
                     {/*</option>*/}
                   </TextField>
                   {goal.type === GOAL_TYPES.DURATION && (
@@ -240,32 +247,43 @@ class SharedGoalView extends PureComponent<Props> {
                       let status = ''
 
                       if (goal.draft) {
-                        if (x.accepted) status = 'Accepted challenge'
+                        if (x.accepted) status = 'Accepted'
                         else status = 'Waiting for response'
                       } else {
-                        if (x.accepted) status = '👊 The Game is Afoot.'
+                        if (x.accepted) status = 'Active'
                         if (x.failed) {
-                          if (completedDays === 0) status = 'Failed challenge on the first day 🍤'
+                          if (completedDays === 0) status = 'Failed on the first day'
                           else
-                            status = `Failed challenge after ${completedDays} ${completedDays === 1
+                            status = `Failed after ${completedDays} ${completedDays === 1
                               ? 'day'
-                              : 'days'} (${percentDone.toFixed(0)}%)`
+                              : 'days'} (${percentDone.toFixed(0)}% done)`
                         }
-                        if (x.finished) status = 'Completed challenge 🍭🐐'
+                        if (x.finished) status = 'Finished'
                       }
                       return (
                         <ListItem key={x.email} dense className={classes.listItem}>
                           <Avatar src={x.avatarUrl} />
                           <ListItemText primary={x.displayName} secondary={status} dense />
-                          {goal.draft && (
-                            <ListItemSecondaryAction>
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              disabled={
+                                currentParticipant &&
+                                (currentParticipant.id === x.id || friends.includes(x.id))
+                              }
+                              onClick={() =>
+                                firebase.updateProfile({ friends: friends.concat(x.id) })}
+                              aria-label="AddFriend"
+                            >
+                              <PersonAddIcon />
+                            </IconButton>
+                            {goal.draft && (
                               <Checkbox
                                 onChange={onAcceptSharedGoal}
                                 checked={x.accepted}
                                 disabled={x.id !== currentUserId || x.accepted}
                               />
-                            </ListItemSecondaryAction>
-                          )}
+                            )}
+                          </ListItemSecondaryAction>
                         </ListItem>
                       )
                     })}
@@ -291,7 +309,7 @@ class SharedGoalView extends PureComponent<Props> {
                 !currentParticipant.finished &&
                 !goal.draft && (
                   <Button dense onClick={onFail}>
-                    Log Defeat
+                    Fail
                   </Button>
                 )}
               {!currentParticipant.accepted && (
@@ -313,4 +331,4 @@ class SharedGoalView extends PureComponent<Props> {
     )
   }
 }
-export default withStyles(styles)(SharedGoalView)
+export default compose(withFirebase, withStyles(styles))(SharedGoalView)
