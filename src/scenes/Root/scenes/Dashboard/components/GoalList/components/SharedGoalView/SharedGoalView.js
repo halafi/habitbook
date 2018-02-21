@@ -21,6 +21,7 @@ import Checkbox from 'material-ui/Checkbox'
 import TextField from 'material-ui/TextField'
 import IconButton from 'material-ui/IconButton'
 import PersonAddIcon from 'material-ui-icons/PersonAdd'
+import GroupIcon from 'material-ui-icons/Group'
 import type { SharedGoal, SharedGoalUser } from '../../../../../../../../common/records/SharedGoal'
 import {
   getElapsedMinutesBetween,
@@ -57,6 +58,9 @@ const styles = theme => ({
   form: {
     padding: '0',
   },
+  marginLeft: {
+    marginLeft: '8px',
+  },
   textField: {
     marginLeft: '0px',
     marginRight: '16px',
@@ -77,6 +81,8 @@ const styles = theme => ({
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
@@ -150,7 +156,10 @@ class SharedGoalView extends PureComponent<Props> {
       <ExpansionPanel expanded={expanded} onChange={onExpand}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.heading}>
-            {goal.name} {goal.draft && '(Draft)'}
+            <GroupIcon fontSize color="action" />
+            <span className={classes.marginLeft}>
+              {goal.name} {goal.draft && '(Draft)'}
+            </span>
           </Typography>
           {!goal.draft && (
             <Typography className={classes.secondaryHeading}>
