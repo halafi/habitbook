@@ -272,7 +272,7 @@ class SharedGoalView extends PureComponent<Props> {
                       return (
                         <ListItem key={x.email} dense className={classes.listItem}>
                           <Avatar src={x.photoURL || x.avatarUrl} />
-                          <ListItemText primary={x.displayName} secondary={status} dense />
+                          <ListItemText primary={x.userName || x.displayName} secondary={status} dense />
                           <ListItemSecondaryAction>
                             <IconButton
                               disabled={

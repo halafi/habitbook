@@ -3,7 +3,9 @@ import type { ProviderData } from './ProviderData'
 
 export type User = {
   avatarUrl: string,
-  displayName: string,
+  photoURL?: string, // custom
+  displayName?: string, // provider
+  userName?: string, // custom
   email: string,
   friends: Array<string>,
   providerData: ProviderData,

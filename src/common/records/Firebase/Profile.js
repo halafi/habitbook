@@ -9,6 +9,7 @@ export type Profile = {
   avatarUrl?: string, // provider
   photoURL?: string, // custom
   displayName?: string, // provider
+  userName?: string, // custom
   email?: Email,
   providerData?: ProviderData,
   goalsCompleted?: number,

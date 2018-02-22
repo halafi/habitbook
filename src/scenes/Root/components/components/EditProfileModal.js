@@ -27,7 +27,7 @@ class EditProfileModal extends React.Component<Props, State> {
     super(props)
 
     this.state = {
-      name: props.profile.displayName,
+      name: props.profile.userName || props.profile.displayName,
       url: props.profile.photoURL || '',
     }
   }
@@ -50,7 +50,7 @@ class EditProfileModal extends React.Component<Props, State> {
     }
 
     firebase.updateProfile({
-      displayName: name,
+      userName: name,
       photoURL: url,
     })
 
@@ -61,7 +61,7 @@ class EditProfileModal extends React.Component<Props, State> {
     const { onClose, profile } = this.props
 
     this.setState({
-      name: profile.displayName,
+      name: profile.userName || '',
       url: profile.photoURL || '',
     })
 

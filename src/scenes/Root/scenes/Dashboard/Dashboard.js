@@ -49,10 +49,10 @@ class Dashboard extends Component<Props> {
       shownGoals = selectedUserId ? goals[selectedUserId] : goals[currentUserId]
     }
 
-    const title =
-      users && selectedUserId
-        ? `${users[selectedUserId].displayName.split(' ')[0]}'s Challenges`
-        : 'Your Challenges'
+    const user = users && selectedUserId && users[selectedUserId]
+    const name = user && (user.userName || user.displayName)
+    // TODO: do not split userName
+    const title = user && name ? `${name.split(' ')[0]}'s Challenges` : 'Your Challenges'
 
     if (!goals) {
       return (

@@ -176,12 +176,15 @@ class Friends extends Component<Props, State> {
                       button
                       className={classes.listItem}
                     >
-                      <Avatar alt={user.displayName} src={user.photoURL || user.avatarUrl} />
+                      <Avatar
+                        alt={user.userName || user.displayName}
+                        src={user.photoURL || user.avatarUrl}
+                      />
                       <ListItemText
                         secondary={`Rank ${getRankId(getRank(user.karma))} - ${getRank(
                           user.karma,
                         )}`}
-                        primary={user.displayName}
+                        primary={user.userName || user.displayName}
                       />
                       <ListItemSecondaryAction>
                         {userId !== currentUserId && (

@@ -95,7 +95,7 @@ const NewGoalForm = ({
             options: friends
               ? friends.map(x => ({
                   value: x,
-                  label: users[x].displayName.split(' ')[0],
+                  label: users[x].userName || users[x].displayName.split(' ')[0],
                 }))
               : [],
             users,
