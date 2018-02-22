@@ -28,15 +28,15 @@ class EditProfileModal extends React.Component<Props, State> {
 
     this.state = {
       name: props.profile.displayName,
-      url: props.profile.avatarUrl,
+      url: props.profile.photoURL || '',
     }
   }
 
   formValid = (): boolean => {
-    const { name, url } = this.state
+    const { name } = this.state
 
     // TODO validate, file upload
-    return url.length > 10 && name.length >= 1
+    return name.length >= 1
   }
 
   handleSubmit = (ev: any): void => {
@@ -51,7 +51,7 @@ class EditProfileModal extends React.Component<Props, State> {
 
     firebase.updateProfile({
       displayName: name,
-      avatarUrl: url,
+      photoURL: url,
     })
 
     onClose()
@@ -62,7 +62,7 @@ class EditProfileModal extends React.Component<Props, State> {
 
     this.setState({
       name: profile.displayName,
-      url: profile.avatarUrl,
+      url: profile.photoURL || '',
     })
 
     onClose()
@@ -92,7 +92,7 @@ class EditProfileModal extends React.Component<Props, State> {
               fullWidth
             />
             <TextField
-              id="avatarUrl"
+              id="photourl"
               label="Avatar Url"
               value={url}
               onChange={ev => this.setState({ url: ev.target.value })}

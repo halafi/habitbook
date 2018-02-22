@@ -6,8 +6,9 @@ type Email = string
 export type Profile = {
   isLoaded: boolean,
   isEmpty: boolean,
-  avatarUrl?: string,
-  displayName?: string,
+  avatarUrl?: string, // provider
+  photoURL?: string, // custom
+  displayName?: string, // provider
   email?: Email,
   providerData?: ProviderData,
   goalsCompleted?: number,

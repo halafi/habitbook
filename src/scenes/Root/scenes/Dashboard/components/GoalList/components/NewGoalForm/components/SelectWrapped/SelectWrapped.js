@@ -153,7 +153,7 @@ function SelectWrapped(props: Props) {
               className={classes.chip}
               deleteIcon={<CancelIcon onTouchEnd={onDelete} />}
               onDelete={onDelete}
-              avatar={<Avatar src={user.avatarUrl} />}
+              avatar={<Avatar src={user.photoURL || user.avatarUrl} />}
             />
           )
         }

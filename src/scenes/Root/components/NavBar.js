@@ -105,7 +105,7 @@ class NavBar extends React.Component<Props, State> {
                 onClick={this.handleMenu}
                 color="inherit"
               >
-                <Avatar src={profile.avatarUrl} />
+                <Avatar src={profile.photoURL || profile.avatarUrl} />
               </IconButton>
               <Menu
                 id="menu-appbar"
@@ -119,9 +119,7 @@ class NavBar extends React.Component<Props, State> {
                 <MenuItem disabled onClick={this.handleCloseMenu}>
                   My account
                 </MenuItem>
-                <MenuItem onClick={() => firebase.logout()}>
-                  Logout
-                </MenuItem>
+                <MenuItem onClick={() => firebase.logout()}>Logout</MenuItem>
               </Menu>
             </div>
           )}

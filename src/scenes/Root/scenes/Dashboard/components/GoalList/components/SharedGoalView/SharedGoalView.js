@@ -271,16 +271,18 @@ class SharedGoalView extends PureComponent<Props> {
                       }
                       return (
                         <ListItem key={x.email} dense className={classes.listItem}>
-                          <Avatar src={x.avatarUrl} />
+                          <Avatar src={x.photoURL || x.avatarUrl} />
                           <ListItemText primary={x.displayName} secondary={status} dense />
                           <ListItemSecondaryAction>
                             <IconButton
                               disabled={
-                                currentParticipant &&
-                                (currentParticipant.id === x.id || friends.includes(x.id))
+                                (currentParticipant && currentParticipant.id === x.id) ||
+                                (friends && friends.includes(x.id))
                               }
                               onClick={() =>
-                                firebase.updateProfile({ friends: friends.concat(x.id) })}
+                                firebase.updateProfile({
+                                  friends: friends ? friends.concat(x.id) : [x.id],
+                                })}
                               aria-label="AddFriend"
                             >
                               <PersonAddIcon />
