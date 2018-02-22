@@ -26,9 +26,7 @@ const RemoveGoal = ({ open, onClose, onConfirm, title, children }: Props) => (
   >
     <DialogTitle id="alert-dialog-title">{title || 'Confirm'}</DialogTitle>
     <DialogContent>
-      <DialogContentText id="alert-dialog-description">
-        {children}
-      </DialogContentText>
+      <DialogContentText id="alert-dialog-description">{children}</DialogContentText>
     </DialogContent>
     <DialogActions>
       <Button onClick={onConfirm} color="primary" autoFocus>

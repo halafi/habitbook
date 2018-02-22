@@ -16,12 +16,19 @@ import Button from 'material-ui/Button'
 import type { Profile } from '../../../common/records/Firebase/Profile'
 import { selectUser } from '../../../common/actions/dashboardActions'
 import { selectedUserIdSelector } from '../../../common/selectors/dashboardSelectors'
+import EditProfileModal from './components/EditProfileModal'
 
 const styles = {
   flex: {
     flex: 1,
   },
 }
+
+const NAVBAR_MODALS = {
+  PROFILE: 'profile',
+}
+
+type NavbarModal = $Values<typeof NAVBAR_MODALS> // eslint-disable-line no-undef
 
 type Props = {
   classes: any,
@@ -33,11 +40,13 @@ type Props = {
 
 type State = {
   anchorEl: any,
+  modal: ?NavbarModal,
 }
 
 class NavBar extends React.Component<Props, State> {
   state = {
     anchorEl: null,
+    modal: null,
   }
   handleReload = () => {
     const { selectUserAction, selectedUserId } = this.props
@@ -48,11 +57,15 @@ class NavBar extends React.Component<Props, State> {
   }
 
   handleMenu = event => this.setState({ anchorEl: event.currentTarget })
-  handleClose = () => this.setState({ anchorEl: null })
+  handleCloseMenu = () => this.setState({ anchorEl: null })
+  handleOpenModal = (modal: NavbarModal) => {
+    this.setState({ modal, anchorEl: null })
+  }
+  handleCloseModal = () => this.setState({ modal: null })
 
   render() {
     const { classes, firebase, profile } = this.props
-    const { anchorEl } = this.state
+    const { anchorEl, modal } = this.state
 
     const menuOpen = Boolean(anchorEl)
     const loggedIn = isLoaded(profile) && !isEmpty(profile)
@@ -64,8 +77,14 @@ class NavBar extends React.Component<Props, State> {
           <Typography variant="title" className={classes.flex}>
             <Button onClick={this.handleReload}>Habitbook</Button>
           </Typography>
-          <div>
-            {unauthenticated && (
+          {loggedIn && (
+            <EditProfileModal
+              open={modal === NAVBAR_MODALS.PROFILE}
+              onClose={this.handleCloseModal}
+            />
+          )}
+          {unauthenticated && (
+            <div>
               <Button
                 onClick={() => {
                   firebase.login({
@@ -76,8 +95,8 @@ class NavBar extends React.Component<Props, State> {
               >
                 Login
               </Button>
-            )}
-          </div>
+            </div>
+          )}
           {loggedIn && (
             <div>
               <IconButton
@@ -88,10 +107,21 @@ class NavBar extends React.Component<Props, State> {
               >
                 <Avatar src={profile.avatarUrl} />
               </IconButton>
-              <Menu id="menu-appbar" open={menuOpen} onClose={this.handleClose} anchorEl={anchorEl}>
-                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                <MenuItem disabled onClick={this.handleClose}>My account</MenuItem>
-                <MenuItem disabled onClick={() => firebase.logout()}>Logout</MenuItem>
+              <Menu
+                id="menu-appbar"
+                open={menuOpen}
+                onClose={this.handleCloseMenu}
+                anchorEl={anchorEl}
+              >
+                <MenuItem onClick={() => this.handleOpenModal(NAVBAR_MODALS.PROFILE)}>
+                  Profile
+                </MenuItem>
+                <MenuItem disabled onClick={this.handleCloseMenu}>
+                  My account
+                </MenuItem>
+                <MenuItem onClick={() => firebase.logout()}>
+                  Logout
+                </MenuItem>
               </Menu>
             </div>
           )}
