@@ -71,6 +71,9 @@ type State = {
 }
 
 const styles = theme => ({
+  root: {
+    minHeight: '515px',
+  },
   goalsContainer: {
     marginTop: '16px',
     minHeight: '400px',
@@ -80,10 +83,6 @@ const styles = theme => ({
   },
   goalsPart: {
     marginBottom: '32px',
-  },
-  card: {
-    width: '100%',
-    minHeight: '515px',
   },
   primaryAvatar: {
     margin: 10,
@@ -469,7 +468,7 @@ class GoalList extends Component<Props, State> {
         (sharedGoal.draft && sharedGoal.users.length <= 1))
 
     return (
-      <Card className={classes.card}>
+      <Card className={classes.root}>
         <ConfirmationModal
           title="Remove challenge"
           open={modal === GOAL_MODALS.DELETE}

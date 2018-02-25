@@ -3,13 +3,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { firebaseConnect } from 'react-redux-firebase'
 import { withStyles } from 'material-ui/styles'
+import { firebaseConnect } from 'react-redux-firebase'
+import Grid from 'material-ui/Grid'
 
 import GoalList from './components/GoalList/GoalList'
-import FriendsAndStats from './components/FriendsAndStats/FriendsAndStats'
 import { selectedUserIdSelector } from '../../../../common/selectors/dashboardSelectors'
 import Loader from './components/GoalList/components/Loader/Loader'
+import Friends from './components/Friends'
+import Profile from './components/Profile'
 
 import type { Goals } from '../../../../common/records/Goal'
 import type { Users } from '../../../../common/records/Firebase/User'
@@ -23,20 +25,17 @@ import {
 } from '../../../../common/selectors/firebaseSelectors'
 
 type Props = {
-  classes: Object,
   currentUserId: string,
   goals: Goals,
   selectedUserId: ?string,
   sharedGoals: SharedGoals,
   users: Users,
+  classes: Object,
 }
 
 const styles = {
-  contentWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    minHeight: 'calc(100vh - 188px)',
+  root: {
+    flexGrow: 1,
   },
 }
 
@@ -55,22 +54,32 @@ class Dashboard extends Component<Props> {
     const title = user && name ? `${name.split(' ')[0]}'s Challenges` : 'Your Challenges'
 
     if (!goals) {
-      return (
-        <div className={classes.contentWrapper}>
-          <Loader />
-        </div>
-      )
+      return <Loader />
     }
+
     return (
-      <div className={classes.contentWrapper}>
-        <GoalList
-          title={title}
-          sharedGoals={sharedGoals}
-          goals={shownGoals}
-          selectedUserId={selectedUserId}
-          readOnly={Boolean(selectedUserId)}
-        />
-        <FriendsAndStats />
+      <div className={classes.root}>
+        <Grid container direction="row">
+          <Grid item xs={12}>
+            <GoalList
+              title={title}
+              sharedGoals={sharedGoals}
+              goals={shownGoals}
+              selectedUserId={selectedUserId}
+              readOnly={Boolean(selectedUserId)}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container direction="row" alignItems="center" justify="center">
+              <Grid item xs={12} sm={6}>
+                <Profile />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Friends />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
       </div>
     )
   }

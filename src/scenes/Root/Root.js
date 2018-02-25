@@ -11,7 +11,7 @@ import Dashboard from './scenes/Dashboard/Dashboard'
 import type { Profile } from '../../common/records/Firebase/Profile'
 
 const styles = {
-  contentWrapper: {
+  root: {
     margin: '0 auto',
     maxWidth: '900px',
     padding: '24px',
@@ -31,7 +31,7 @@ class Root extends Component<Props> {
     return (
       <div>
         <NavBar profile={profile} />
-        <div className={classes.contentWrapper}>
+        <div className={classes.root}>
           {profile.isLoaded && <div>{profile.isEmpty ? <Intro /> : <Dashboard />}</div>}
         </div>
       </div>

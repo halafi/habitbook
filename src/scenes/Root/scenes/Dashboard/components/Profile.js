@@ -13,16 +13,16 @@ import Avatar from 'material-ui/Avatar'
 import PersonIcon from 'material-ui-icons/Person'
 import List, { ListItem, ListItemText } from 'material-ui/List'
 
-import type { Goals } from '../../../../../../../common/records/Goal'
-import type { Users } from '../../../../../../../common/records/Firebase/User'
+import type { Goals } from '../../../../../common/records/Goal'
+import type { Users } from '../../../../../common/records/Firebase/User'
 
-import { getElapsedDaysTillNow } from '../../../../../../../common/services/dateTimeUtils'
+import { getElapsedDaysTillNow } from '../../../../../common/services/dateTimeUtils'
 import {
   currentUserIdSelector,
   usersSelector,
-} from '../../../../../../../common/selectors/firebaseSelectors'
-import { selectedUserIdSelector } from '../../../../../../../common/selectors/dashboardSelectors'
-import { getRank } from '../../../../../../../common/records/Rank'
+} from '../../../../../common/selectors/firebaseSelectors'
+import { selectedUserIdSelector } from '../../../../../common/selectors/dashboardSelectors'
+import { getRank } from '../../../../../common/records/Rank'
 
 type Props = {
   classes: Object,
@@ -36,8 +36,7 @@ type Props = {
 
 const styles = theme => ({
   card: {
-    width: '48%',
-    marginTop: '24px',
+    height: '400px',
   },
   primaryAvatar: {
     margin: 10,
@@ -50,7 +49,7 @@ const styles = theme => ({
   },
 })
 
-class Stats extends Component<Props> {
+class Profile extends Component<Props> {
   render() {
     const { users, classes, goals, currentUserId, selectedUserId } = this.props
 
@@ -127,4 +126,4 @@ export default compose(
     selectedUserId: selectedUserIdSelector(state),
   })),
   withStyles(styles),
-)(Stats)
+)(Profile)

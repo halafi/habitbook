@@ -7,6 +7,7 @@ import TextField from 'material-ui/TextField'
 import Done from 'material-ui-icons/Done'
 import { withStyles } from 'material-ui/styles'
 import Input from 'material-ui/Input'
+import Grid from 'material-ui/Grid'
 
 import type { Users } from '../../../../../../../../common/records/Firebase/User'
 import SelectWrapped from './components/SelectWrapped/SelectWrapped'
@@ -24,37 +25,26 @@ type Props = {
 }
 
 const styles = theme => ({
+  root: {
+    margin: '8px 4px 0',
+  },
   leftIcon: {
     marginRight: theme.spacing.unit,
   },
   textField: {
-    marginLeft: '8px',
-    marginRight: '8px',
-    width: '250px',
+    width: '100%',
+    marginBottom: '0',
   },
   selectField: {
-    marginLeft: '8px',
-    marginRight: '8px',
-    width: '400px',
+    width: '100%',
     height: '33px',
   },
   selectFieldValues: {
-    marginLeft: '8px',
-    marginRight: '8px',
-    width: '350px',
+    width: '100%',
     height: '51px',
   },
-  form: {
-    marginTop: '16px',
-  },
-  row: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: '16px',
-  },
   button: {
-    alignSelf: 'center',
-    marginTop: '16px',
+    width: '100%',
   },
 })
 
@@ -69,9 +59,9 @@ const NewGoalForm = ({
   users,
   friends,
 }: Props) => (
-  <form className={classes.form} onSubmit={onSubmit} noValidate autoComplete="off">
-    <div className={classes.row}>
-      <div>
+  <form className={classes.root} onSubmit={onSubmit} noValidate autoComplete="off">
+    <Grid container direction="row" alignItems="flex-end">
+      <Grid item xs={12} sm={3}>
         <TextField
           id="name"
           label="New challenge"
@@ -80,6 +70,8 @@ const NewGoalForm = ({
           margin="normal"
           className={classes.textField}
         />
+      </Grid>
+      <Grid item xs={12} sm={7}>
         <Input
           fullWidth
           inputComponent={SelectWrapped}
@@ -106,8 +98,8 @@ const NewGoalForm = ({
               : classes.selectFieldValues
           }
         />
-      </div>
-      <div>
+      </Grid>
+      <Grid item xs={12} sm={2}>
         <Button
           disabled={!formValid}
           type="submit"
@@ -117,8 +109,8 @@ const NewGoalForm = ({
         >
           <Done className={classes.leftIcon} /> Add
         </Button>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   </form>
 )
 
