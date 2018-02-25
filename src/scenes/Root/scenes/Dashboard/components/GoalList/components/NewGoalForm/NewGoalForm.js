@@ -26,7 +26,7 @@ type Props = {
 
 const styles = theme => ({
   root: {
-    margin: '8px 4px 0',
+    margin: '16px 4px 0',
   },
   leftIcon: {
     marginRight: theme.spacing.unit,
