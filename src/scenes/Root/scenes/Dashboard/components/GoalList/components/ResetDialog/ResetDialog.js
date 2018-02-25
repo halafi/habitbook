@@ -53,11 +53,13 @@ class ResetDialog extends React.Component<Props> {
               />
             )}
             <br />
-            <Typography variant="Caption" gutterBottom>
-              <strong>Bruce Wayne</strong>: <em>I wanted to save Gotham. I failed.</em>
-              <br />
-              <strong>Alfred</strong>:{' '}
-              <em>Why do we fall sir? So that we can learn to pick ourselves up.</em>
+            <Typography type="Caption">
+              <small>
+                <strong>Bruce Wayne</strong>: I wanted to save Gotham. I failed.
+                <br />
+                <strong>Alfred</strong>: Why do we fall sir? So that we can learn to pick ourselves
+                up.
+              </small>
             </Typography>
           </DialogContentText>
         </DialogContent>

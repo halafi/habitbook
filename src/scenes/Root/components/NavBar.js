@@ -74,7 +74,7 @@ class NavBar extends React.Component<Props, State> {
     return (
       <AppBar position="static" color="default">
         <Toolbar>
-          <Typography variant="title" className={classes.flex}>
+          <Typography type="title" className={classes.flex}>
             <Button onClick={this.handleReload}>Habitbook</Button>
           </Typography>
           {loggedIn && (

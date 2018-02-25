@@ -167,7 +167,7 @@ class GoalView extends Component<Props> {
                   <DateTimePicker
                     id="start-date"
                     label={goal.draft ? 'Start from' : 'Started'}
-                    value={goal.started}
+                    value={lastReset || goal.started}
                     onChange={onChangeDate}
                     className={classes.dateTimePicker}
                     disabled={readOnly || !goal.draft}
