@@ -1,6 +1,4 @@
-export type Rank = string // FIXME: once ranks are final
-
-const RANKS = {
+export const RANKS = {
   NOVICE: 'Novice',
   RECRUIT: 'Recruit',
   APPRENTICE: 'Apprentice',
@@ -12,6 +10,34 @@ const RANKS = {
   MORPHEUS: 'Morpheus',
   NEO: 'Neo',
 }
+
+export type Rank = $Values<typeof RANKS> // eslint-disable-line no-undef
+
+export const getRankIdFromExp = (exp: number): number => {
+  const val = Math.floor(exp / 1000)
+  if (val >= Object.values(RANKS).length) {
+    return Object.values(RANKS).length - 1
+  }
+  return Math.floor(exp / 1000)
+}
+
+export const getRankFromExp = (exp: number): Rank => {
+  const rankValues = Object.values(RANKS)
+  if (exp < 0) {
+    return undefined
+  }
+  return rankValues[getRankIdFromExp(exp)] || rankValues[rankValues.length - 1]
+}
+
+export const getExpRequiredForNextRank = (exp: number): number =>
+  (getRankIdFromExp(exp) < Object.values(RANKS).length
+    ? getRankIdFromExp(exp) + 1
+    : getRankIdFromExp(exp)) * 1000
+
+export const getFlooredExp = (exp: number): number => exp - getRankIdFromExp(exp) * 1000
+
+export const getNextRankFromExp = (exp: number): ?Rank =>
+  Object.values(RANKS)[getRankIdFromExp(exp) + 1] || null
 
 // TODO: decrease numbers to make more achievable
 // TODO: rank images

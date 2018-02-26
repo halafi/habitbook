@@ -11,18 +11,24 @@ import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles/index'
 import Avatar from 'material-ui/Avatar'
 import PersonIcon from 'material-ui-icons/Person'
+import Tooltip from 'material-ui/Tooltip'
 import List, { ListItem, ListItemText } from 'material-ui/List'
 
-import type { Goals } from '../../../../../common/records/Goal'
-import type { Users } from '../../../../../common/records/Firebase/User'
+import type { Goals } from '../../../../../../common/records/Goal'
+import type { Users } from '../../../../../../common/records/Firebase/User'
 
-import { getElapsedDaysTillNow } from '../../../../../common/services/dateTimeUtils'
+import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
 import {
   currentUserIdSelector,
   usersSelector,
-} from '../../../../../common/selectors/firebaseSelectors'
-import { selectedUserIdSelector } from '../../../../../common/selectors/dashboardSelectors'
-import { getRank } from '../../../../../common/records/Rank'
+} from '../../../../../../common/selectors/firebaseSelectors'
+import { selectedUserIdSelector } from '../../../../../../common/selectors/dashboardSelectors'
+import {
+  getExpRequiredForNextRank,
+  getFlooredExp,
+  getRankFromExp,
+  getRankIdFromExp,
+} from '../../../../../../common/records/Rank'
 
 type Props = {
   classes: Object,
@@ -74,6 +80,8 @@ class Profile extends Component<Props> {
 
     const percentDone = totalDaysCompleted / (totalTarget / 100)
     const percentDoneFormatted = Number.isNaN(percentDone) ? 0 : percentDone.toFixed(0)
+    const experience = (profile && profile.experience) || 0
+    console.log(experience)
 
     // TODO: days without reset
     return (
@@ -83,15 +91,28 @@ class Profile extends Component<Props> {
             <Avatar className={classes.primaryAvatar}>
               <PersonIcon />
             </Avatar>
-            Statistics
+            Profile
           </Typography>
           <Typography component="div" paragraph>
             <List dense={false}>
               <ListItem>
                 {profile && (
                   <ListItemText
-                    primary={`Rank: ${getRank(profile.karma)}`}
-                    secondary={`Karma: ${profile.karma || 0}`}
+                    primary={`Rank ${getRankIdFromExp(experience)}: ${getRankFromExp(experience)}`}
+                    secondary={
+                      getRankIdFromExp(experience) < 9 ? (
+                        <Tooltip
+                          id="tooltip-progress-profile"
+                          title={`${getExpRequiredForNextRank(experience) -
+                            experience} XP required for next rank`}
+                          placement="right"
+                        >
+                          <progress value={getFlooredExp(experience)} max={1000} />
+                        </Tooltip>
+                      ) : (
+                        <progress value={0} max={1000} />
+                      )
+                    }
                   />
                 )}
               </ListItem>

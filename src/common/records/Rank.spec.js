@@ -1,0 +1,43 @@
+import { RANKS, getRankFromExp, getNextRankFromExp, getExpRequiredForNextRank } from './Rank'
+
+describe('Rank', () => {
+  test('getRankFromExp', () => {
+    const rankValues = Object.values(RANKS)
+    expect(getRankFromExp(-5)).toEqual(undefined)
+    expect(getRankFromExp(0)).toEqual(rankValues[0])
+    expect(getRankFromExp(999)).toEqual(rankValues[0])
+    expect(getRankFromExp(1000)).toEqual(rankValues[1])
+    expect(getRankFromExp(1001)).toEqual(rankValues[1])
+    expect(getRankFromExp(1999)).toEqual(rankValues[1])
+    expect(getRankFromExp(2000)).toEqual(rankValues[2])
+    expect(getRankFromExp(3000)).toEqual(rankValues[3])
+    expect(getRankFromExp(3999)).toEqual(rankValues[3])
+    expect(getRankFromExp(7999)).toEqual(rankValues[7])
+    expect(getRankFromExp(10999)).toEqual(rankValues[rankValues.length - 1]) // should return last rank
+  })
+  test('getNextRankFromExp', () => {
+    const rankValues = Object.values(RANKS)
+    expect(getNextRankFromExp(-5)).toEqual(rankValues[0])
+    expect(getNextRankFromExp(0)).toEqual(rankValues[1])
+    expect(getNextRankFromExp(999)).toEqual(rankValues[1])
+    expect(getNextRankFromExp(1000)).toEqual(rankValues[2])
+    expect(getNextRankFromExp(1001)).toEqual(rankValues[2])
+    expect(getNextRankFromExp(1999)).toEqual(rankValues[2])
+    expect(getNextRankFromExp(2000)).toEqual(rankValues[3])
+    expect(getNextRankFromExp(3000)).toEqual(rankValues[4])
+    expect(getNextRankFromExp(3999)).toEqual(rankValues[4])
+    expect(getNextRankFromExp(7999)).toEqual(rankValues[8])
+    expect(getNextRankFromExp(10999)).toEqual(null)
+  })
+  test('getExpRequiredForNextRank', () => {
+    expect(getExpRequiredForNextRank(0)).toEqual(1000)
+    expect(getExpRequiredForNextRank(500)).toEqual(1000)
+    expect(getExpRequiredForNextRank(999)).toEqual(1000)
+    expect(getExpRequiredForNextRank(1000)).toEqual(2000)
+    expect(getExpRequiredForNextRank(1999)).toEqual(2000)
+    expect(getExpRequiredForNextRank(8999)).toEqual(9000)
+    expect(getExpRequiredForNextRank(9999)).toEqual(10000)
+    expect(getExpRequiredForNextRank(10000)).toEqual(10000)
+    expect(getExpRequiredForNextRank(20000)).toEqual(10000)
+  })
+})

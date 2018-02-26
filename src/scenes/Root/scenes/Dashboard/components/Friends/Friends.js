@@ -20,14 +20,14 @@ import {
   currentUserIdSelector,
   usersSelector,
   userEmailsSelector,
-} from '../../../../../common/selectors/firebaseSelectors'
-import { selectedUserIdSelector } from '../../../../../common/selectors/dashboardSelectors'
-import type { Profile } from '../../../../../common/records/Firebase/Profile'
-import type { Users, User } from '../../../../../common/records/Firebase/User'
-import { getUserIdByEmail } from '../../../../../common/records/Firebase/User'
-import { selectUser } from '../../../../../common/actions/dashboardActions'
-import { getRank, getRankId } from '../../../../../common/records/Rank'
-import { emailValid } from '../../../../../common/services/validators'
+} from '../../../../../../common/selectors/firebaseSelectors'
+import { selectedUserIdSelector } from '../../../../../../common/selectors/dashboardSelectors'
+import type { Profile } from '../../../../../../common/records/Firebase/Profile'
+import type { Users, User } from '../../../../../../common/records/Firebase/User'
+import { getUserIdByEmail } from '../../../../../../common/records/Firebase/User'
+import { selectUser } from '../../../../../../common/actions/dashboardActions'
+import { getRank, getRankId } from '../../../../../../common/records/Rank'
+import { emailValid } from '../../../../../../common/services/validators'
 
 type Props = {
   classes: Object,
