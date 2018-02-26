@@ -13,21 +13,17 @@ import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
 import StarBorder from 'material-ui-icons/StarBorder'
 import Button from 'material-ui/Button'
 import Divider from 'material-ui/Divider'
-import TextField from 'material-ui/TextField'
 import Tooltip from 'material-ui/Tooltip'
+import Grid from 'material-ui/Grid'
 import { withStyles } from 'material-ui/styles'
 
 import { getElapsedDaysTillNow } from '../../../../../../../../common/services/dateTimeUtils'
-import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
 import type { Goal } from '../../../../../../../../common/records/Goal'
-import {
-  getGoalVisibility,
-  GOAL_VISIBILITIES,
-} from '../../../../../../../../common/records/GoalVisibility'
-import { getFinishKarma, getAscensionKarma } from '../../services/helpers'
-import ProgressChart from './components/ProgressChart'
-import Heatmap from './components/Heatmap'
-// import MomentumChart from './components/MomentumChart'
+import { getGoalVisibility } from '../../../../../../../../common/records/GoalVisibility'
+import GoalEditForm from './components/GoalEditForm'
+import GoalNotes from './components/GoalNotes'
+import ProgressChart from './components/ProgressChart/ProgressChart'
+import Heatmap from './components/Heatmap/Heatmap'
 
 type Props = {
   goal: Goal,
@@ -67,36 +63,11 @@ const styles = theme => ({
     marginLeft: '10px',
     color: theme.palette.text.secondary,
   },
-  form: {
-    marginTop: '-12px',
-    padding: '0',
-  },
-  textField: {
-    marginLeft: '0px',
-    marginRight: '16px',
-    width: '150px',
-  },
-  numberField: {
-    marginLeft: '0px',
-    marginRight: '16px',
-    width: '100px',
-  },
-  dateTimePicker: {
-    display: 'inline-block',
-    marginLeft: '0px',
-    marginRight: '8px',
-    width: '255px',
-  },
-  panelContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
   heatmap: {
     marginTop: '16px',
     height: '150',
     padding: '16px 16px 14px 16px',
     borderRadius: '3px',
-    borderColor: '#d1d5da',
     border: '1px #e1e4e8 solid',
   },
 })
@@ -152,98 +123,42 @@ class GoalView extends Component<Props> {
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <div>
-            <div className={classes.panelContainer}>
-              <div>
-                <form className={classes.form}>
-                  <TextField
-                    id="name"
-                    label="Name"
-                    value={goal.name}
-                    onChange={onRenameGoal}
-                    className={classes.textField}
-                    disabled={readOnly}
-                  />
-                  <DateTimePicker
-                    id="start-date"
-                    label={goal.draft ? 'Start from' : 'Started'}
-                    value={lastReset || goal.started}
-                    onChange={onChangeDate}
-                    className={classes.dateTimePicker}
-                    disabled={readOnly || !goal.draft}
-                  />
-                  {goal.draft && (
-                    <TextField
-                      id="target"
-                      label="Days"
-                      value={goal.target}
-                      onChange={onChangeTarget}
-                      margin="normal"
-                      className={classes.numberField}
-                    />
+          <Grid container>
+            <Grid item xs={12}>
+              <form>
+                <Grid container justify="space-between">
+                  <Grid item xs={goal.draft ? 12 : 9}>
+                    <Grid container direction="column">
+                      <Grid item xs={12}>
+                        <GoalEditForm
+                          goal={goal}
+                          onRenameGoal={onRenameGoal}
+                          onChangeDate={onChangeDate}
+                          onChangeVisibility={onChangeVisibility}
+                          onChangeTarget={onChangeTarget}
+                          readOnly={readOnly}
+                          lastReset={lastReset}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <GoalNotes goal={goal} longestStreak={longestStreak} finished={finished} />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  {!goal.draft && (
+                    <Grid item xs={3}>
+                      <ProgressChart goal={goal} finished={finished} lastReset={lastReset} />
+                    </Grid>
                   )}
-                  <TextField
-                    id="select-target-type"
-                    select
-                    label="Visible to"
-                    value={goal.visibility}
-                    onChange={onChangeVisibility}
-                    SelectProps={{
-                      native: true,
-                    }}
-                    margin="normal"
-                    disabled={readOnly}
-                  >
-                    {GOAL_VISIBILITIES.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </TextField>
-                </form>
-                <br />
-                <Typography>
-                  {goal.target} days required to complete.
-                  <br />
-                  {longestStreak
-                    ? `Longest streak: ${longestStreak} ${longestStreak > 1 ? 'days' : 'day'}.`
-                    : ''}
-                </Typography>
-                {finished &&
-                  !goal.draft && (
-                    <Typography component="div">
-                      <br />
-                      Make a choice:
-                      <ul>
-                        <li>
-                          Collect {getFinishKarma(goal)} Karma and be done with this challenge
-                        </li>
-                        <li>
-                          Collect {getAscensionKarma(goal)} Karma and double the challenge duration
-                          (
-                          {getAscensionKarma({
-                            ...goal,
-                            ascensionCount: goal.ascensionCount + 1,
-                          })}{' '}
-                          next time)
-                        </li>
-                      </ul>
-                    </Typography>
-                  )}
-              </div>
-              {!goal.draft && (
-                <div>
-                  <ProgressChart goal={goal} finished={finished} lastReset={lastReset} />
-                </div>
-              )}
-            </div>
+                </Grid>
+              </form>
+            </Grid>
             {!goal.draft && (
-              <div>
-                {/*{goal.resets && <MomentumChart goal={goal} />}*/}
+              <Grid item xs={12}>
                 <Heatmap goal={goal} className={classes.heatmap} />
-              </div>
+              </Grid>
             )}
-          </div>
+          </Grid>
         </ExpansionPanelDetails>
         <Divider />
         {!readOnly && (

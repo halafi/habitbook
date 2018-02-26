@@ -6,8 +6,8 @@ import moment from 'moment/moment'
 import { withStyles } from 'material-ui/styles'
 import CalendarHeatmap from 'react-calendar-heatmap'
 
-import { getElapsedDaysTillNow } from '../../../../../../../../../common/services/dateTimeUtils'
-import type { Goal } from '../../../../../../../../../common/records/Goal'
+import { getElapsedDaysTillNow } from '../../../../../../../../../../common/services/dateTimeUtils'
+import type { Goal } from '../../../../../../../../../../common/records/Goal'
 
 type Props = {
   goal: Goal,

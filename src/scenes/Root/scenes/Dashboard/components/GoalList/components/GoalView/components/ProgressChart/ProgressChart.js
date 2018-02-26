@@ -1,9 +1,9 @@
 // @flow
 
 import React, { PureComponent } from 'react'
-import { PieChart, Pie, Cell, Sector } from 'recharts'
-import type { Goal } from '../../../../../../../../../common/records/Goal'
-import { getElapsedMinutesTillNow } from '../../../../../../../../../common/services/dateTimeUtils'
+import { PieChart, Pie, Cell, Sector, ResponsiveContainer } from 'recharts'
+import type { Goal } from '../../../../../../../../../../common/records/Goal'
+import { getElapsedMinutesTillNow } from '../../../../../../../../../../common/services/dateTimeUtils'
 
 type Props = {
   goal: Goal,
@@ -73,25 +73,27 @@ class ProgressChart extends PureComponent<Props> {
     ]
 
     return (
-      <PieChart width={200} height={150}>
-        <Pie
-          dataKey="value"
-          isAnimationActive={false}
-          activeIndex={1}
-          activeShape={renderActiveShape}
-          data={progressChartData}
-          cx="65%"
-          cy="50%"
-          innerRadius={55}
-          outerRadius={65}
-          fill="#8884d8"
-          paddingAngle={finished || elapsedMinutes <= 0 ? 0 : 3}
-        >
-          {progressChartData.map((entry: Object, index: number) => (
-            <Cell key={entry.value} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-      </PieChart>
+      <ResponsiveContainer height={150} minWidth={100}>
+        <PieChart>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            activeIndex={1}
+            activeShape={renderActiveShape}
+            data={progressChartData}
+            cx="50%"
+            cy="50%"
+            innerRadius="85%"
+            outerRadius="95%"
+            fill="#8884d8"
+            paddingAngle={finished || elapsedMinutes <= 0 ? 0 : 3}
+          >
+            {progressChartData.map((entry: Object, index: number) => (
+              <Cell key={entry.value} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
     )
   }
 }

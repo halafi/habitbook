@@ -5,8 +5,8 @@ import * as R from 'ramda'
 import moment from 'moment/moment'
 import { ResponsiveContainer, Line, LineChart, CartesianGrid } from 'recharts'
 
-import { getElapsedDaysTillNow } from '../../../../../../../../../common/services/dateTimeUtils'
-import type { Goal } from '../../../../../../../../../common/records/Goal'
+import { getElapsedDaysTillNow } from '../../../../../../../../../../common/services/dateTimeUtils'
+import type { Goal } from '../../../../../../../../../../common/records/Goal'
 
 type Props = {
   goal: Goal,
