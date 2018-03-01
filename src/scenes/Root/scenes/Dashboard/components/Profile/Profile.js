@@ -28,6 +28,7 @@ import {
   getFlooredExp,
   getRankFromExp,
   getRankIdFromExp,
+  getAvatarFromExp,
 } from '../../../../../../common/records/Rank'
 
 type Props = {
@@ -80,9 +81,11 @@ class Profile extends Component<Props> {
 
     const percentDone = totalDaysCompleted / (totalTarget / 100)
     const percentDoneFormatted = Number.isNaN(percentDone) ? 0 : percentDone.toFixed(0)
-    const experience = (profile && profile.experience) || 0
-    console.log(experience)
 
+    // exp
+    const experience = (profile && profile.experience) || 0
+    const expRequiredForNextRank = getExpRequiredForNextRank(experience)
+    // TODO: level percent done show (33.33%)
     // TODO: days without reset
     return (
       <Card className={classes.card}>
@@ -96,25 +99,23 @@ class Profile extends Component<Props> {
           <Typography component="div" paragraph>
             <List dense={false}>
               <ListItem>
-                {profile && (
+                {profile && [
+                  <Avatar key="avatar" src={getAvatarFromExp(experience)} />,
                   <ListItemText
+                    key="ranktext"
                     primary={`Rank ${getRankIdFromExp(experience)}: ${getRankFromExp(experience)}`}
                     secondary={
-                      getRankIdFromExp(experience) < 9 ? (
-                        <Tooltip
-                          id="tooltip-progress-profile"
-                          title={`${getExpRequiredForNextRank(experience) -
-                            experience} XP required for next rank`}
-                          placement="right"
-                        >
-                          <progress value={getFlooredExp(experience)} max={1000} />
-                        </Tooltip>
-                      ) : (
-                        <progress value={0} max={1000} />
-                      )
+                      <Tooltip
+                        id="tooltip-progress-profile"
+                        title={`${expRequiredForNextRank -
+                          getFlooredExp(experience)} XP required for next rank`}
+                        placement="right"
+                      >
+                        <progress value={getFlooredExp(experience)} max={expRequiredForNextRank} />
+                      </Tooltip>
                     }
-                  />
-                )}
+                  />,
+                ]}
               </ListItem>
               <ListItem>
                 {profile && (

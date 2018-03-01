@@ -1,67 +1,74 @@
+import * as R from 'ramda'
+import neoImage from '../../../images/avatar-neo.jpg'
+import paesantImage from '../../../images/avatar-paesant.png'
+import morpheusImage from '../../../images/avatar-morpheus.jpeg'
+import mageImage from '../../../images/avatar-mage.png'
+import dogeImage from '../../../images/avatar-doge.png'
+
 export const RANKS = {
-  NOVICE: 'Novice',
-  RECRUIT: 'Recruit',
-  APPRENTICE: 'Apprentice',
-  INITIATE: 'Initiate',
-  MASTER: 'Master',
-  GRANDMASTER: 'Grandmaster',
-  ELDER: 'Elder',
-  SAGE: 'Sage',
-  MORPHEUS: 'Morpheus',
-  NEO: 'Neo',
+  PAESANT: {
+    name: 'Paesant',
+    img: paesantImage,
+    expRequired: 0,
+  },
+  MAGE: {
+    name: 'Mage',
+    img: mageImage,
+    expRequired: 500,
+  },
+  DOGE: {
+    name: 'Doge',
+    img: dogeImage,
+    expRequired: 1500,
+  },
+  MORPHEUS: {
+    name: 'Morpheus',
+    img: morpheusImage,
+    expRequired: 3000,
+  },
+  NEO: {
+    name: 'Neo',
+    img: neoImage,
+    expRequired: 5000,
+  },
 }
 
-export type Rank = $Values<typeof RANKS> // eslint-disable-line no-undef
+export type Rank = 'Paesant' | 'Mage' | 'Neo'
 
 export const getRankIdFromExp = (exp: number): number => {
-  const val = Math.floor(exp / 1000)
-  if (val >= Object.values(RANKS).length) {
-    return Object.values(RANKS).length - 1
-  }
-  return Math.floor(exp / 1000)
+  if (!exp) return 0
+  const rank = R.compose(R.head, R.last, R.filter(pair => pair[1].expRequired <= exp), R.toPairs)(
+    RANKS,
+  )
+  return Object.keys(RANKS).indexOf(rank)
 }
 
 export const getRankFromExp = (exp: number): Rank => {
   const rankValues = Object.values(RANKS)
-  if (exp < 0) {
-    return undefined
-  }
-  return rankValues[getRankIdFromExp(exp)] || rankValues[rankValues.length - 1]
+  if (!exp || exp < 0) return RANKS.PAESANT.name
+  return rankValues[getRankIdFromExp(exp)].name
 }
 
-export const getExpRequiredForNextRank = (exp: number): number =>
-  (getRankIdFromExp(exp) < Object.values(RANKS).length
-    ? getRankIdFromExp(exp) + 1
-    : getRankIdFromExp(exp)) * 1000
+export const getExpRequiredForNextRank = (exp: number): number => {
+  const currRank: number = getRankIdFromExp(exp)
+  const nextRank = Object.values(RANKS)[currRank + 1]
+  if (!nextRank) {
+    return 666666
+  }
+  return nextRank.expRequired - Object.values(RANKS)[currRank].expRequired
+}
 
-export const getFlooredExp = (exp: number): number => exp - getRankIdFromExp(exp) * 1000
+export const getFlooredExp = (exp: number): number => {
+  const currRank: number = getRankIdFromExp(exp)
+  const prevRank = Object.values(RANKS)[currRank - 1]
+  if (!prevRank) {
+    return exp
+  }
+  return 0 + exp - Object.values(RANKS)[currRank].expRequired
+}
 
 export const getNextRankFromExp = (exp: number): ?Rank =>
   Object.values(RANKS)[getRankIdFromExp(exp) + 1] || null
 
-// TODO: decrease numbers to make more achievable
-// TODO: rank images
-export const getRank = (karma: number): Rank => {
-  if (!karma || karma < 10) {
-    return RANKS.NOVICE
-  } else if (karma < 30) {
-    return RANKS.RECRUIT
-  } else if (karma < 100) {
-    return RANKS.APPRENTICE
-  } else if (karma < 200) {
-    return RANKS.INITIATE
-  } else if (karma < 350) {
-    return RANKS.MASTER
-  } else if (karma < 500) {
-    return RANKS.GRANDMASTER
-  } else if (karma < 750) {
-    return RANKS.ELDER
-  } else if (karma < 1000) {
-    return RANKS.SAGE
-  } else if (karma < 2000) {
-    return RANKS.MORPHEUS
-  }
-  return RANKS.NEO
-}
-
-export const getRankId = (rank: Rank): number => Object.values(RANKS).indexOf(rank) + 1
+export const getAvatarFromExp = (exp: number): string =>
+  Object.values(RANKS)[getRankIdFromExp(exp)].img

@@ -26,7 +26,7 @@ import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 import type { Users, User } from '../../../../../../common/records/Firebase/User'
 import { getUserIdByEmail } from '../../../../../../common/records/Firebase/User'
 import { selectUser } from '../../../../../../common/actions/dashboardActions'
-import { getRank, getRankId } from '../../../../../../common/records/Rank'
+import { getRankFromExp, getRankIdFromExp } from '../../../../../../common/records/Rank'
 import { emailValid } from '../../../../../../common/services/validators'
 
 type Props = {
@@ -180,8 +180,8 @@ class Friends extends Component<Props, State> {
                         src={user.photoURL || user.avatarUrl}
                       />
                       <ListItemText
-                        secondary={`Rank ${getRankId(getRank(user.karma))} - ${getRank(
-                          user.karma,
+                        secondary={`Rank ${getRankIdFromExp(user.experience)} - ${getRankFromExp(
+                          user.experience,
                         )}`}
                         primary={user.userName || user.displayName}
                       />
