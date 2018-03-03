@@ -20,7 +20,7 @@ const GOALS_ENUM = {
 const GOALS = {
   [GOALS_ENUM.EDIT_PROFILE_NAME]: {
     title: 'Change name',
-    checked: profile => profile.displayName && profile.displayName !== profile.userName,
+    checked: profile => profile.userName,
     reward: 50,
     onChange: (firebase, profile) => {
       const oldTasks = profile.tasks
@@ -40,7 +40,7 @@ const GOALS = {
   },
   [GOALS_ENUM.EDIT_PROFILE_PIC]: {
     title: 'Change avatar',
-    checked: profile => profile.displayName && profile.displayName !== profile.userName,
+    checked: profile => profile.photoURL,
     reward: 50,
     onChange: (firebase, profile) => {
       const oldTasks = profile.tasks
@@ -76,6 +76,7 @@ const Tasks = ({ profile, firebase }: Props) => (
             key={key}
             dense
             button
+            disabled={!goal.checked(profile)}
             onClick={() => goal.onChange(firebase, profile)}
           >
             <ListItemText

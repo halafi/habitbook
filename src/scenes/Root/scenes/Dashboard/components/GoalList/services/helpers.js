@@ -7,11 +7,11 @@ import { getElapsedDaysTillNow } from '../../../../../../../common/services/date
 import type { SharedGoal, SharedGoals } from '../../../../../../../common/records/SharedGoal'
 
 export const getFinishExpReward = (exp: ?number, goal: Goal): number =>
-  !exp ? Number(goal.target) : Number(exp) + Number(goal.target)
+  !exp ? Number(goal.target) : Number(exp) + Number(goal.target) * 2
 export const getResetExpReward = (exp: ?number, streak: number): number =>
   !exp ? streak : Number(exp) + streak
 export const getSharedGoalFinishExpReward = (exp: ?number, goal: SharedGoal): number =>
-  !exp ? Number(goal.target) : Number(exp) + Number(goal.target)
+  !exp ? Number(goal.target) : Number(exp) + Number(goal.target) * 3
 
 export const getSortedSharedGoalsIds = (goals: SharedGoals, uid: string): ?Array<string> =>
   R.compose(
