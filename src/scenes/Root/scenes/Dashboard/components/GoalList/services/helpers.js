@@ -6,10 +6,12 @@ import type { SortType } from '../consts/sortTypes'
 import { getElapsedDaysTillNow } from '../../../../../../../common/services/dateTimeUtils'
 import type { SharedGoal, SharedGoals } from '../../../../../../../common/records/SharedGoal'
 
-export const getAscensionKarma = (goal: Goal): number =>
-  Math.round(goal.target * (goal.ascensionCount + 1) / 2)
-export const getFinishKarma = (goal: Goal): number => Number(goal.target)
-export const getSharedGoalFinishKarma = (goal: SharedGoal): number => Number(goal.target)
+export const getFinishExpReward = (exp: ?number, goal: Goal): number =>
+  !exp ? Number(goal.target) : Number(exp) + Number(goal.target)
+export const getResetExpReward = (exp: ?number, streak: number): number =>
+  !exp ? streak : Number(exp) + streak
+export const getSharedGoalFinishExpReward = (exp: ?number, goal: SharedGoal): number =>
+  !exp ? Number(goal.target) : Number(exp) + Number(goal.target)
 
 export const getSortedSharedGoalsIds = (goals: SharedGoals, uid: string): ?Array<string> =>
   R.compose(

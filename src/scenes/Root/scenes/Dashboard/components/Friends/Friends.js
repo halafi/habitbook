@@ -180,7 +180,7 @@ class Friends extends Component<Props, State> {
                         src={user.photoURL || user.avatarUrl}
                       />
                       <ListItemText
-                        secondary={`Rank ${getRankIdFromExp(user.experience)} - ${getRankFromExp(
+                        secondary={`Rank ${getRankIdFromExp(user.experience) + 1} - ${getRankFromExp(
                           user.experience,
                         )}`}
                         primary={user.userName || user.displayName}

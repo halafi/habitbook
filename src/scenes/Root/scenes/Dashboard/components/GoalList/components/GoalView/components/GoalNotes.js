@@ -2,7 +2,6 @@
 
 import React from 'react'
 import Typography from 'material-ui/Typography'
-import { getAscensionKarma, getFinishKarma } from '../../../services/helpers'
 import type { Goal } from '../../../../../../../../../common/records/Goal'
 
 type Props = {
@@ -27,15 +26,8 @@ const GoalNotes = ({ goal, longestStreak, finished }: Props) => (
           <br />
           Make a choice:
           <ul>
-            <li>Collect {getFinishKarma(goal)} Karma and be done with this challenge</li>
-            <li>
-              Collect {getAscensionKarma(goal)} Karma and double the challenge duration (
-              {getAscensionKarma({
-                ...goal,
-                ascensionCount: goal.ascensionCount + 1,
-              })}{' '}
-              next time)
-            </li>
+            <li>Complete challenge</li>
+            <li>Double the challenge duration</li>
           </ul>
         </Typography>
       )}

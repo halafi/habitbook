@@ -14,7 +14,7 @@ export type Profile = {
   providerData?: ProviderData,
   goalsCompleted?: number,
   ascensions?: number,
-  karma?: number,
   friends?: Array<Email>,
   sort?: SortType,
+  tasks?: Array<string>, // values of GOALS_ENUM
 }

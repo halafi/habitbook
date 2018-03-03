@@ -22,9 +22,9 @@ import type { Goals } from '../../../../../../common/records/Goal'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 import type { Users } from '../../../../../../common/records/Firebase/User'
 import {
-  getAscensionKarma,
-  getFinishKarma,
-  getSharedGoalFinishKarma,
+  getFinishExpReward,
+  getResetExpReward,
+  getSharedGoalFinishExpReward,
   getSortedGoalsIds,
   getSortedSharedGoalsIds,
 } from './services/helpers'
@@ -165,16 +165,14 @@ class GoalList extends Component<Props, State> {
 
       firebase.updateProfile({
         goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
-        karma: profile.karma
-          ? Number(profile.karma) + getSharedGoalFinishKarma(goal)
-          : getSharedGoalFinishKarma(goal),
+        experience: getSharedGoalFinishExpReward(profile.experience, goal),
       })
     } else {
       const goal = goals[goalId]
 
       firebase.updateProfile({
         goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
-        karma: profile.karma ? Number(profile.karma) + getFinishKarma(goal) : getFinishKarma(goal),
+        experience: getFinishExpReward(profile.experience, goal),
       })
 
       firebase.remove(`/goals/${currentUserId}/${goalId}`)
@@ -333,7 +331,7 @@ class GoalList extends Component<Props, State> {
   }
 
   handleConfirmReset = () => {
-    const { goals } = this.props
+    const { goals, firebase, profile } = this.props
     const { modalGoalId, modalDateTime } = this.state
 
     if (!modalGoalId || !modalDateTime) {
@@ -360,6 +358,10 @@ class GoalList extends Component<Props, State> {
       resets,
     })
 
+    firebase.updateProfile({
+      experience: getResetExpReward(profile.experience, newStreak),
+    })
+
     this.setState({
       modal: null,
       modalGoalId: null,
@@ -380,6 +382,10 @@ class GoalList extends Component<Props, State> {
       users: goal.users.map(x => (x.id === currentUserId ? { ...x, failed: modalDateTime } : x)),
     })
 
+    // firebase.updateProfile({
+    //   experience: getResetExpReward(profile.experience, newStreak),
+    // })
+
     this.setState({
       modal: null,
       modalGoalId: null,
@@ -395,9 +401,6 @@ class GoalList extends Component<Props, State> {
     firebase.updateProfile({
       goalsCompleted: profile.goalsCompleted ? profile.goalsCompleted + 1 : 1,
       ascensions: profile.ascensions ? profile.ascensions + 1 : 1,
-      karma: profile.karma
-        ? Number(profile.karma) + getAscensionKarma(edditedGoal)
-        : getAscensionKarma(edditedGoal),
     })
 
     this.updateUserGoal(goalId, {

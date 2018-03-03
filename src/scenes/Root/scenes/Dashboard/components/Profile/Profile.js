@@ -12,9 +12,9 @@ import { withStyles } from 'material-ui/styles/index'
 import Avatar from 'material-ui/Avatar'
 import PersonIcon from 'material-ui-icons/Person'
 import TrendingUpIcon from 'material-ui-icons/TrendingUp'
-import DoneIcon from 'material-ui-icons/Done'
 import Tooltip from 'material-ui/Tooltip'
 import List, { ListItem, ListItemText } from 'material-ui/List'
+import Tasks from './components/Tasks'
 
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Users } from '../../../../../../common/records/Firebase/User'
@@ -34,6 +34,7 @@ import {
 } from '../../../../../../common/records/Rank'
 
 type Props = {
+  firebase: any,
   classes: Object,
   goals: {
     [userId: string]: Goals,
@@ -45,7 +46,7 @@ type Props = {
 
 const styles = theme => ({
   root: {
-    height: '400px',
+    minHeight: '400px',
   },
   primaryAvatar: {
     margin: 10,
@@ -60,7 +61,7 @@ const styles = theme => ({
 
 class Profile extends Component<Props> {
   render() {
-    const { users, classes, goals, currentUserId, selectedUserId } = this.props
+    const { users, classes, goals, currentUserId, selectedUserId, firebase } = this.props
 
     const shownUserId = selectedUserId || currentUserId
     const profile = users && users[shownUserId]
@@ -92,7 +93,7 @@ class Profile extends Component<Props> {
                   <Avatar key="avatar" src={getAvatarFromExp(experience)} />,
                   <ListItemText
                     key="ranktext"
-                    primary={`Rank ${getRankIdFromExp(experience)}: ${getRankFromExp(experience)}`}
+                    primary={`Rank ${getRankIdFromExp(experience) + 1}: ${getRankFromExp(experience)}`}
                     secondary={
                       <Tooltip
                         id="tooltip-progress-profile"
@@ -118,18 +119,8 @@ class Profile extends Component<Props> {
                   />
                 )}
               </ListItem>
-              <ListItem>
-                <Avatar>
-                  <DoneIcon />
-                </Avatar>
-                {profile && (
-                  <ListItemText
-                    primary={`Completed: ${profile.goalsCompleted || 0}`}
-                    secondary="Finished challenges"
-                  />
-                )}
-              </ListItem>
             </List>
+            {!selectedUserId && profile && <Tasks profile={profile} firebase={firebase} />}
           </Typography>
         </CardContent>
       </Card>
