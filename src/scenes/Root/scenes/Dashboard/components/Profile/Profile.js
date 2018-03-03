@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import { firebaseConnect } from 'react-redux-firebase'
+import moment from 'moment'
 import * as R from 'ramda'
 
 import Card, { CardContent } from 'material-ui/Card'
@@ -11,12 +12,14 @@ import Typography from 'material-ui/Typography'
 import { withStyles } from 'material-ui/styles/index'
 import Avatar from 'material-ui/Avatar'
 import PersonIcon from 'material-ui-icons/Person'
+import TrendingUpIcon from 'material-ui-icons/TrendingUp'
 import Tooltip from 'material-ui/Tooltip'
 import List, { ListItem, ListItemText } from 'material-ui/List'
 
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { Users } from '../../../../../../common/records/Firebase/User'
 
+import { getFirstGoalStarted, getLastGoalReset } from './services/utils'
 import { getElapsedDaysTillNow } from '../../../../../../common/services/dateTimeUtils'
 import {
   currentUserIdSelector,
@@ -85,8 +88,13 @@ class Profile extends Component<Props> {
     // exp
     const experience = (profile && profile.experience) || 0
     const expRequiredForNextRank = getExpRequiredForNextRank(experience)
-    // TODO: level percent done show (33.33%)
     // TODO: days without reset
+    const firstGoalStarted = getFirstGoalStarted(currUserGoals)
+    const lastGoalReset = getLastGoalReset(currUserGoals)
+
+    const countFrom = lastGoalReset || firstGoalStarted
+    const currentStreak = moment().diff(countFrom, 'd')
+
     return (
       <Card className={classes.card}>
         <CardContent>
@@ -108,7 +116,8 @@ class Profile extends Component<Props> {
                       <Tooltip
                         id="tooltip-progress-profile"
                         title={`${expRequiredForNextRank -
-                          getFlooredExp(experience)} XP required for next rank`}
+                          getFlooredExp(experience)} XP required for next rank (${experience /
+                          (expRequiredForNextRank / 100)}% complete)`}
                         placement="right"
                       >
                         <progress value={getFlooredExp(experience)} max={expRequiredForNextRank} />
@@ -116,6 +125,17 @@ class Profile extends Component<Props> {
                     }
                   />,
                 ]}
+              </ListItem>
+              <ListItem>
+                <Avatar>
+                  <TrendingUpIcon />
+                </Avatar>
+                {profile && (
+                  <ListItemText
+                    primary={`Current streak: ${currentStreak} days`}
+                    secondary="Days without reset"
+                  />
+                )}
               </ListItem>
               <ListItem>
                 {profile && (
