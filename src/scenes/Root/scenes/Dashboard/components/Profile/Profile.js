@@ -76,6 +76,7 @@ class Profile extends Component<Props> {
       getLastGoalReset(currUserGoals) || getFirstGoalStarted(currUserGoals),
       'd',
     )
+    const percentOfLevelDone = (getFlooredExp(experience) / (expRequiredForNextRank / 100)).toFixed(2)
 
     return (
       <Card className={classes.root}>
@@ -93,13 +94,16 @@ class Profile extends Component<Props> {
                   <Avatar key="avatar" src={getAvatarFromExp(experience)} />,
                   <ListItemText
                     key="ranktext"
-                    primary={`Rank ${getRankIdFromExp(experience) + 1}: ${getRankFromExp(experience)}`}
+                    primary={`Rank ${getRankIdFromExp(experience) + 1}: ${getRankFromExp(
+                      experience,
+                    )}`}
                     secondary={
                       <Tooltip
                         id="tooltip-progress-profile"
                         title={`${expRequiredForNextRank -
-                          getFlooredExp(experience)} XP required for next rank (${experience /
-                          (expRequiredForNextRank / 100)}% complete)`}
+                          getFlooredExp(
+                            experience,
+                          )} XP required for next rank (${percentOfLevelDone}% complete)`}
                         placement="right"
                       >
                         <progress value={getFlooredExp(experience)} max={expRequiredForNextRank} />

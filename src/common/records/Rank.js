@@ -14,22 +14,22 @@ export const RANKS = {
   MAGE: {
     name: 'Mage',
     img: mageImage,
-    expRequired: 500,
+    expRequired: 200,
   },
   DOGE: {
     name: 'Doge',
     img: dogeImage,
-    expRequired: 1500,
+    expRequired: 500,
   },
   MORPHEUS: {
     name: 'Morpheus',
     img: morpheusImage,
-    expRequired: 3000,
+    expRequired: 1000,
   },
   NEO: {
     name: 'Neo',
     img: neoImage,
-    expRequired: 5000,
+    expRequired: 2000,
   },
 }
 
