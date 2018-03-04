@@ -118,7 +118,7 @@ class Profile extends Component<Props> {
                 </Avatar>
                 {profile && (
                   <ListItemText
-                    primary={`Current streak: ${currentStreak} days`}
+                    primary={`Current streak: ${currentStreak}`}
                     secondary="Days without reset"
                   />
                 )}

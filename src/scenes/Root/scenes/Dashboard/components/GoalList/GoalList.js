@@ -12,6 +12,7 @@ import { withStyles } from 'material-ui/styles'
 import Avatar from 'material-ui/Avatar'
 import AssignmentIcon from 'material-ui-icons/Assignment'
 import TextField from 'material-ui/TextField'
+import Grid from 'material-ui/Grid'
 
 import GoalView from './components/GoalView/GoalView'
 import NewGoalForm from './components/NewGoalForm/NewGoalForm'
@@ -506,30 +507,36 @@ class GoalList extends Component<Props, State> {
         />
         <CardContent>
           <div className={classes.header}>
-            <Typography type="headline" component="h2" className={classes.title}>
-              <Avatar className={classes.primaryAvatar}>
-                <AssignmentIcon />
-              </Avatar>
-              {title}
-            </Typography>
-            <TextField
-              id="select-target-type"
-              select
-              label="Sort by"
-              value={sort}
-              onChange={this.handleChangeSort}
-              SelectProps={{
-                native: true,
-              }}
-              margin="normal"
-              className={classes.textField}
-            >
-              {GOAL_SORT_TYPES.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </TextField>
+            <Grid container alignItems="center" alignContent="center" justify="space-between">
+              <Grid item>
+                <Typography type="headline" component="h2" className={classes.title}>
+                  <Avatar className={classes.primaryAvatar}>
+                    <AssignmentIcon />
+                  </Avatar>
+                  {title}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <TextField
+                  id="select-target-type"
+                  select
+                  label="Sort by"
+                  value={sort}
+                  onChange={this.handleChangeSort}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  margin="normal"
+                  className={classes.textField}
+                >
+                  {GOAL_SORT_TYPES.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+            </Grid>
           </div>
           <div className={classes.goalsContainer}>
             <div>

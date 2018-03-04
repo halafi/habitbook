@@ -53,15 +53,12 @@ const styles = theme => ({
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    flexBasis: '33.33%',
-    flexShrink: 0,
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
   },
   starsContainer: {
-    marginLeft: '10px',
     color: theme.palette.text.secondary,
   },
   heatmap: {
@@ -111,22 +108,30 @@ class GoalView extends Component<Props> {
     return (
       <ExpansionPanel expanded={expanded} onChange={onExpand}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>
-            {goalName} {goal.draft && '(Draft)'}
-          </Typography>
-          {!goal.draft && (
-            <Typography className={classes.secondaryHeading}>
-              {elapsedDaysTillNow} / {goal.target}
-            </Typography>
-          )}
-          {goal.ascensionCount > 0 && (
-            <Typography className={classes.starsContainer}>
-              {R.times(
-                n => <StarBorder key={n} className={classes.rightIcon} />,
-                goal.ascensionCount,
+          <Grid container alignItems="center" justify="flex-start">
+            <Grid item md={5} xs={6}>
+              <Typography className={classes.heading}>
+                {goalName} {goal.draft && '(Draft)'}
+              </Typography>
+            </Grid>
+            <Grid item md={2} xs={3}>
+              {!goal.draft && (
+                <Typography className={classes.secondaryHeading}>
+                  {elapsedDaysTillNow} / {goal.target}
+                </Typography>
               )}
-            </Typography>
-          )}
+            </Grid>
+            <Grid item md={5} xs={3}>
+              {goal.ascensionCount > 0 && (
+                <Typography className={classes.starsContainer}>
+                  {R.times(
+                    n => <StarBorder key={n} className={classes.rightIcon} />,
+                    goal.ascensionCount,
+                  )}
+                </Typography>
+              )}
+            </Grid>
+          </Grid>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Grid container>

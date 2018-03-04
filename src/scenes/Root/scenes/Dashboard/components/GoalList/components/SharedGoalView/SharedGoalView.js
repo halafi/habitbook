@@ -55,10 +55,6 @@ type Props = {
 const styles = theme => ({
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    flexBasis: '33.33%',
-    flexShrink: 0,
-    display: 'flex',
-    alignItems: 'center',
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
@@ -126,21 +122,33 @@ class SharedGoalView extends PureComponent<Props> {
         .valueOf(),
     )
     const everyoneAccepted = R.all(x => x.accepted)(participants)
+    const activeParticipants = participants.filter(x => !x.failed).length
 
     return (
       <ExpansionPanel expanded={expanded} onChange={onExpand}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>
-            <GroupIcon fontSize color="action" />
-            <span className={classes.marginLeft}>
-              {goal.name} {goal.draft && '(Draft)'}
-            </span>
-          </Typography>
-          {!goal.draft && (
-            <Typography className={classes.secondaryHeading}>
-              {elapsedDaysTillNow} / {goal.target}
-            </Typography>
-          )}
+          <Grid container alignItems="center" justify="flex-start">
+            <Grid item md={5} xs={6}>
+              <Typography className={classes.heading}>
+                {goal.name} {goal.draft && '(Draft)'}
+              </Typography>
+            </Grid>
+            <Grid item md={2} xs={3}>
+              {!goal.draft && (
+                <Typography className={classes.secondaryHeading}>
+                  {elapsedDaysTillNow} / {goal.target}
+                </Typography>
+              )}
+            </Grid>
+            <Grid item md={5} xs={3}>
+              <Grid container alignItems="center">
+                <GroupIcon fontSize color="action" />
+                <Typography className={[classes.secondaryHeading, classes.marginLeft]}>
+                  {activeParticipants}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Grid container>
