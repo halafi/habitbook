@@ -10,6 +10,10 @@ import configureStore from './common/services/configureStore'
 const store = configureStore()
 const theme = createMuiTheme()
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+}
+
 render(
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>
