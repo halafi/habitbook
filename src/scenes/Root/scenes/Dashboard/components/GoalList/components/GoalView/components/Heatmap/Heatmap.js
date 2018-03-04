@@ -31,14 +31,6 @@ const styles = {
   // colorGitlab2: { fill: '#fa8d1' },
   // colorGitlab3: { fill: '#49729' },
   // colorGitlab4: { fill: '#254e77' },
-  reactCalendarHeatmap: {
-    height: '125px',
-    width: '100%',
-    borderRadius: '3px',
-    borderColor: '#d1d5da',
-    border: '1px #e1e4e8 solid',
-    padding: '0 16px 0 16px',
-  },
 }
 
 class Heatmap extends PureComponent<Props> {

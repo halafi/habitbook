@@ -24,6 +24,7 @@ import GoalEditForm from './components/GoalEditForm'
 import GoalNotes from './components/GoalNotes'
 import ProgressChart from './components/ProgressChart/ProgressChart'
 import Heatmap from './components/Heatmap/Heatmap'
+import { small } from '../../../../../../../../common/consts/styles/breakpoints'
 
 type Props = {
   goal: Goal,
@@ -64,11 +65,16 @@ const styles = theme => ({
     color: theme.palette.text.secondary,
   },
   heatmap: {
-    marginTop: '16px',
-    height: '150',
-    padding: '16px 16px 14px 16px',
+    marginTop: '8px',
     borderRadius: '3px',
     border: '1px #e1e4e8 solid',
+    padding: '4px 4px 0 4px',
+  },
+  [`@media ${small}`]: {
+    heatmap: {
+      marginTop: '16px',
+      padding: '12px 12px 8px 12px',
+    },
   },
 })
 
@@ -127,7 +133,7 @@ class GoalView extends Component<Props> {
             <Grid item xs={12}>
               <form>
                 <Grid container justify="space-between">
-                  <Grid item xs={goal.draft ? 12 : 9}>
+                  <Grid item xs={goal.draft ? 12 : 8}>
                     <Grid container direction="column">
                       <Grid item xs={12}>
                         <GoalEditForm
@@ -146,7 +152,7 @@ class GoalView extends Component<Props> {
                     </Grid>
                   </Grid>
                   {!goal.draft && (
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                       <ProgressChart goal={goal} finished={finished} lastReset={lastReset} />
                     </Grid>
                   )}

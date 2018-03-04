@@ -12,10 +12,9 @@ import type { Profile } from '../../common/records/Firebase/Profile'
 
 const styles = {
   root: {
-    margin: '0 auto',
     maxWidth: '900px',
-    padding: '24px',
-    marginBottom: '100px',
+    padding: '10px',
+    margin: '0 auto',
   },
 }
 
