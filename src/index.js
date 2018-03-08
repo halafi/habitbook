@@ -10,7 +10,10 @@ import configureStore from './common/services/configureStore'
 const store = configureStore()
 const theme = createMuiTheme()
 
-if ('serviceWorker' in navigator) {
+// TODO: process.env check (add environment info)
+const sw = true || process.env.NODE_ENV === 'production'
+
+if (sw && 'serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
 }
 
