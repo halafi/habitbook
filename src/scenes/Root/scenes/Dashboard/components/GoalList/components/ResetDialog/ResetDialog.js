@@ -18,6 +18,7 @@ type Props = {
   onClose: () => void,
   onConfirm: () => void,
   dateTime: ?number,
+  minDateTime: ?number, // should also be set to not allow reset before last reset
   onDateTimeChange: any => void,
 }
 
@@ -29,7 +30,7 @@ class ResetDialog extends React.Component<Props> {
   }
 
   render() {
-    const { open, onClose, onConfirm, dateTime, onDateTimeChange } = this.props
+    const { open, onClose, onConfirm, dateTime, minDateTime, onDateTimeChange } = this.props
 
     return (
       <Dialog
@@ -49,6 +50,7 @@ class ResetDialog extends React.Component<Props> {
                 id="reset"
                 label="Failed on"
                 value={dateTime}
+                minValue={minDateTime}
                 onChange={onDateTimeChange}
               />
             )}

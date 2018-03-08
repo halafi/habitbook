@@ -70,4 +70,8 @@ describe('DateTimePicker', () => {
         .props().value,
     ).toEqual('18:21')
   })
+
+  it('works with minValue', () => {
+    // TODO
+  })
 })

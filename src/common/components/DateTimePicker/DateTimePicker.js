@@ -11,6 +11,7 @@ type Props = {
   label: string,
   onChange: (?number) => void,
   value: number,
+  minValue?: ?number,
 }
 
 export const DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm'
@@ -19,7 +20,7 @@ const TIME_FORMAT = 'HH:mm'
 
 class DateTimePicker extends React.Component<Props> {
   handleChangeDate = (ev: any) => {
-    const { value, onChange } = this.props
+    const { value, minValue, onChange } = this.props
 
     if (!ev.target.value) {
       onChange(null)
@@ -29,6 +30,11 @@ class DateTimePicker extends React.Component<Props> {
     const dateTime: Array<string> = moment(value)
       .format(DATE_TIME_FORMAT)
       .split('T')
+
+    if (minValue && moment(value).isBefore(moment(minValue))) {
+      alert('invalid date, yo')
+      return
+    }
 
     const newValue: string = `${ev.target.value}T${dateTime[1]}`
 
@@ -36,7 +42,7 @@ class DateTimePicker extends React.Component<Props> {
   }
 
   handleChangeTime = (ev: any) => {
-    const { value, onChange } = this.props
+    const { value, minValue, onChange } = this.props
 
     if (!ev.target.value) {
       onChange(null)
@@ -46,6 +52,11 @@ class DateTimePicker extends React.Component<Props> {
     const dateTime: Array<string> = moment(value)
       .format(DATE_TIME_FORMAT)
       .split('T')
+
+    if (minValue && moment(value).isBefore(moment(minValue))) {
+      alert('invalid date, yo')
+      return
+    }
 
     const newValue: string = `${dateTime[0]}T${ev.target.value}`
 

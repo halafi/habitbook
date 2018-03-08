@@ -359,9 +359,13 @@ class GoalList extends Component<Props, State> {
       resets,
     })
 
-    firebase.updateProfile({
-      experience: getResetExpReward(profile.experience, newStreak),
-    })
+    if (newStreak > 0) {
+      // currently user can reset to past date
+      // TODO: do not allow reset before challenge start
+      firebase.updateProfile({
+        experience: getResetExpReward(profile.experience, newStreak),
+      })
+    }
 
     this.setState({
       modal: null,
@@ -495,6 +499,7 @@ class GoalList extends Component<Props, State> {
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmReset}
           dateTime={modalDateTime}
+          minDateTime={modalGoalId ? R.propOr(null, 'started')(goals[modalGoalId]) : null}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <ResetDialog
@@ -502,6 +507,7 @@ class GoalList extends Component<Props, State> {
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmFailShared}
           dateTime={modalDateTime}
+          minDateTime={modalGoalId ? R.propOr(null, 'started')(sharedGoals[modalGoalId]) : null}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <CardContent>
