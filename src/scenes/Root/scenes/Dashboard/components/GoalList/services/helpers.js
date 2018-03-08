@@ -13,9 +13,9 @@ export const getResetExpReward = (exp: ?number, streak: number): number =>
 export const getSharedGoalFinishExpReward = (exp: ?number, goal: SharedGoal): number =>
   !exp ? Number(goal.target) : Number(exp) + Number(goal.target) * 3
 
-export const getSortedSharedGoalsIds = (goals: SharedGoals, uid: string): ?Array<string> =>
+export const getSortedSharedGoalsIds = (goals: SharedGoals, uid: string): Array<string> =>
   R.compose(
-    R.defaultTo(null),
+    R.defaultTo([]),
     R.keys,
     R.fromPairs,
     R.filter(

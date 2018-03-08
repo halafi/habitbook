@@ -72,11 +72,13 @@ class Profile extends Component<Props> {
     const expRequiredForNextRank = getExpRequiredForNextRank(experience)
 
     // global streak across all goals (!shared)
-    const currentStreak = moment().diff(
-      getLastGoalReset(currUserGoals) || getFirstGoalStarted(currUserGoals),
-      'd',
+    const currentStreak = currUserGoals
+      ? moment().diff(getLastGoalReset(currUserGoals) || getFirstGoalStarted(currUserGoals), 'd')
+      : 0
+
+    const percentOfLevelDone = (getFlooredExp(experience) / (expRequiredForNextRank / 100)).toFixed(
+      2,
     )
-    const percentOfLevelDone = (getFlooredExp(experience) / (expRequiredForNextRank / 100)).toFixed(2)
 
     return (
       <Card className={classes.root}>

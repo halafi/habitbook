@@ -458,9 +458,8 @@ class GoalList extends Component<Props, State> {
     const formValid = name.length > 0
     const sort = profile.sort || 'oldestFirst'
     const sortedGoalIds = getSortedGoalsIds(goals, sort)
-    const sortedSharedGoalIds = sharedGoals
-      ? getSortedSharedGoalsIds(sharedGoals, selectedUserId || currentUserId)
-      : []
+    const sortedSharedGoalIds =
+      sharedGoals && getSortedSharedGoalsIds(sharedGoals, selectedUserId || currentUserId)
 
     const sharedGoal =
       modalGoalId && modal === GOAL_MODALS.DELETE_SHARED ? sharedGoals[modalGoalId] : null
@@ -591,7 +590,7 @@ class GoalList extends Component<Props, State> {
               )}
 
               {!goals &&
-                !sortedSharedGoalIds && (
+                !sortedSharedGoalIds.length && (
                   <div className={classes.imageWrapper}>
                     <img alt="no-goals" src={NoGoalsImg} />
                   </div>

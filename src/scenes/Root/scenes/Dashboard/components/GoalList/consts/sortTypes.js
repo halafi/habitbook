@@ -16,4 +16,4 @@ export const GOAL_SORT_TYPES = [
   ,
 ]
 
-export type SortType = 'default' | 'name' | 'progress' | 'oldestFirst'
+export type SortType = 'name' | 'progress' | 'oldestFirst'

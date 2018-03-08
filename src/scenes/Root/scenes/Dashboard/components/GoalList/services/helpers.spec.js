@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { getSortedGoalsIds, getSortedSharedGoalsIds } from './helpers'
+import { GOAL_SORT_TYPES } from '../consts/sortTypes'
 
 describe('helpers', () => {
   const dateNow = Date.now
@@ -47,10 +48,9 @@ describe('helpers', () => {
         visibility: 'public',
       },
     }
-    expect(getSortedGoalsIds(input, 'default')).toEqual(['1', '2', '3', '4', 'five'])
-    expect(getSortedGoalsIds(input, 'name')).toEqual(['2', '4', '1', '3', 'five'])
-    expect(getSortedGoalsIds(input, 'progress')).toEqual(['4', 'five', '2', '3', '1'])
-    expect(getSortedGoalsIds(input, 'oldest')).toEqual(['4', 'five', '2', '3', '1'])
+    expect(getSortedGoalsIds(input, GOAL_SORT_TYPES[0].value)).toEqual(['2', '4', '1', '3', 'five'])
+    expect(getSortedGoalsIds(input, GOAL_SORT_TYPES[1].value)).toEqual(['4', 'five', '2', '3', '1'])
+    expect(getSortedGoalsIds(input, GOAL_SORT_TYPES[2].value)).toEqual(['4', 'five', '2', '3', '1'])
   })
 
   test('#getSortedSharedGoalsIds', () => {
