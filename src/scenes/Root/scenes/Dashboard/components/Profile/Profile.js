@@ -23,6 +23,7 @@ import { getFirstGoalStarted, getLastGoalReset } from './services/utils'
 import {
   currentUserIdSelector,
   usersSelector,
+  goalsSelector,
 } from '../../../../../../common/selectors/firebaseSelectors'
 import { selectedUserIdSelector } from '../../../../../../common/selectors/dashboardSelectors'
 import {
@@ -135,10 +136,10 @@ class Profile extends Component<Props> {
 }
 
 export default compose(
-  firebaseConnect(['goals']),
+  firebaseConnect(['goals', 'users']),
   connect(state => ({
     users: usersSelector(state),
-    goals: state.firebase.data.goals,
+    goals: goalsSelector(state),
     currentUserId: currentUserIdSelector(state),
     selectedUserId: selectedUserIdSelector(state),
   })),

@@ -8,6 +8,7 @@ import { withStyles } from 'material-ui/styles'
 import NavBar from './components/NavBar'
 import Intro from './scenes/Welcome/Welcome'
 import Dashboard from './scenes/Dashboard/Dashboard'
+import { profileSelector } from '../../common/selectors/firebaseSelectors'
 import type { Profile } from '../../common/records/Firebase/Profile'
 
 const styles = {
@@ -40,7 +41,7 @@ class Root extends Component<Props> {
 
 export default compose(
   withStyles(styles),
-  connect(({ firebase: { profile } }) => ({
-    profile,
+  connect(state => ({
+    profile: profileSelector(state),
   })),
 )(Root)

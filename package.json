@@ -4,13 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel src/index.html -p 8080",
-    "dev": "parcel src/index.html -p 8080",
+    "start": "npx parcel src/index.html -p 8080",
+    "dev": "npx parcel src/index.html -p 8080",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
-    "build": "parcel build src/index.js --out-dir build --public-url ./",
-    "deploy": "parcel build src/index.js --out-dir build --public-url ./ && firebase deploy"
+    "build": "npx parcel build src/index.js --out-dir build --public-url ./",
+    "deploy": "npx parcel build src/index.js --out-dir build --public-url ./ && firebase deploy"
   },
   "author": "Filip Halas",
   "license": "ISC",

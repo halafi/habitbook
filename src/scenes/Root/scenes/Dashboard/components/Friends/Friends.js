@@ -1,10 +1,6 @@
 // @flow
 
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { compose, bindActionCreators } from 'redux'
-
-import { firebaseConnect } from 'react-redux-firebase'
 
 import Card, { CardContent, CardActions } from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
@@ -16,16 +12,9 @@ import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import IconButton from 'material-ui/IconButton'
 import DeleteIcon from 'material-ui-icons/Delete'
-import {
-  currentUserIdSelector,
-  usersSelector,
-  userEmailsSelector,
-} from '../../../../../../common/selectors/firebaseSelectors'
-import { selectedUserIdSelector } from '../../../../../../common/selectors/dashboardSelectors'
 import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 import type { Users, User } from '../../../../../../common/records/Firebase/User'
 import { getUserIdByEmail } from '../../../../../../common/records/Firebase/User'
-import { selectUser } from '../../../../../../common/actions/dashboardActions'
 import { getRankFromExp, getRankIdFromExp } from '../../../../../../common/records/Rank'
 import { emailValid } from '../../../../../../common/services/validators'
 
@@ -36,7 +25,7 @@ type Props = {
   profile: Profile,
   firebase: any,
   currentUserId: string,
-  selectUserAction: (?string) => void,
+  selectUser: (?string) => void,
   selectedUserId: string, // uid
 }
 
@@ -122,7 +111,7 @@ class Friends extends Component<Props, State> {
   }
 
   handleDeleteFriend = (id: string) => {
-    const { profile, firebase, selectUserAction } = this.props
+    const { profile, firebase, selectUser } = this.props
 
     const oldFriendList = profile.friends || []
     const newFriendList = oldFriendList.filter(e => e !== id)
@@ -131,15 +120,15 @@ class Friends extends Component<Props, State> {
       friends: newFriendList,
     })
 
-    selectUserAction(null)
+    selectUser(null)
   }
 
   handleSelectUser = userId => {
-    const { currentUserId, selectUserAction, selectedUserId } = this.props
+    const { currentUserId, selectUser, selectedUserId } = this.props
     if (userId.includes(currentUserId) || userId === selectedUserId) {
-      selectUserAction(null)
+      selectUser(null)
     } else {
-      selectUserAction(userId)
+      selectUser(userId)
     }
   }
 
@@ -231,20 +220,4 @@ class Friends extends Component<Props, State> {
   }
 }
 
-export default compose(
-  firebaseConnect(['goals', 'presence', 'users']),
-  connect(
-    state => ({
-      users: usersSelector(state),
-      userEmails: userEmailsSelector(state),
-      profile: state.firebase.profile,
-      // goals: firebase.data.goals,
-      currentUserId: currentUserIdSelector(state),
-      selectedUserId: selectedUserIdSelector(state),
-    }),
-    dispatch => ({
-      selectUserAction: bindActionCreators(selectUser, dispatch),
-    }),
-  ),
-  withStyles(styles),
-)(Friends)
+export default withStyles(styles)(Friends)
