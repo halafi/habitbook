@@ -29,15 +29,16 @@ import {
 import { selectUser } from '../../../../common/actions/dashboardActions'
 
 type Props = {
-  currentUserId: string,
-  goals: Goals,
-  selectedUserId: ?string,
-  sharedGoals: SharedGoals,
-  users: Users,
-  userEmails: Array<string>,
-  selectUserAction: (?string) => void,
   classes: Object,
+  currentUserId: string,
+  firebase: any,
+  goals: ?Goals,
   profile: ProfileType,
+  selectedUserId: ?string,
+  selectUserAction: (?string) => void,
+  sharedGoals: SharedGoals,
+  userEmails: Array<string>,
+  users: ?Users,
 }
 
 const styles = {
@@ -49,56 +50,67 @@ const styles = {
 class Dashboard extends Component<Props> {
   render() {
     const {
+      classes,
+      currentUserId,
+      firebase,
       goals,
       profile,
-      sharedGoals,
-      users,
-      userEmails,
       selectedUserId,
-      currentUserId,
-      classes,
       selectUserAction,
+      sharedGoals,
+      userEmails,
+      users,
     } = this.props
 
-    let shownGoals
-    if (goals) {
-      shownGoals = selectedUserId ? goals[selectedUserId] : goals[currentUserId]
-    }
-
-    const user = users && selectedUserId && users[selectedUserId]
-    const name = user && (user.userName || user.displayName)
-    // TODO: do not split userName
-    const title = user && name ? `${name.split(' ')[0]}'s Challenges` : 'Your Challenges'
-
-    if (!goals) {
+    if (!goals || !users) {
       return <Loader />
     }
+
+    const shownUserId = selectedUserId || currentUserId
+    const shownGoals = goals[shownUserId]
+
+    const selectedUser = selectedUserId && users[selectedUserId]
+    const selectedUserName = selectedUser && (selectedUser.userName || selectedUser.displayName)
+    const title =
+      selectedUser && selectedUserName
+        ? `${selectedUserName.split(' ')[0]}'s Challenges`
+        : 'Your Challenges'
 
     return (
       <div className={classes.root}>
         <Grid container direction="row">
           <Grid item xs={12}>
             <GoalList
-              title={title}
-              sharedGoals={sharedGoals}
+              currentUserId={currentUserId}
+              firebase={firebase}
               goals={shownGoals}
-              selectedUserId={selectedUserId}
+              profile={profile}
               readOnly={Boolean(selectedUserId)}
+              selectedUserId={selectedUserId}
+              sharedGoals={sharedGoals}
+              title={title}
+              users={users}
             />
           </Grid>
           <Grid item xs={12}>
             <Grid container direction="row" alignItems="center" justify="center">
               <Grid item xs={12} sm={6}>
-                <Profile />
+                <Profile
+                  firebase={firebase}
+                  goals={shownGoals}
+                  profile={users[shownUserId]}
+                  selectedUserId={selectedUserId}
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Friends
+                  firebase={firebase}
                   currentUserId={currentUserId}
-                  selectedUserId={selectedUserId}
-                  users={users}
-                  userEmails={userEmails}
                   profile={profile}
+                  selectedUserId={selectedUserId}
                   selectUser={selectUserAction}
+                  userEmails={userEmails}
+                  users={users}
                 />
               </Grid>
             </Grid>
@@ -111,16 +123,16 @@ class Dashboard extends Component<Props> {
 
 export default compose(
   withStyles(styles),
-  firebaseConnect(['sharedGoals', 'goals']),
+  firebaseConnect(['sharedGoals', 'goals', 'users']),
   connect(
     state => ({
       currentUserId: currentUserIdSelector(state),
       goals: goalsSelector(state),
+      profile: profileSelector(state),
       selectedUserId: selectedUserIdSelector(state),
       sharedGoals: sharedGoalsSelector(state),
-      users: usersSelector(state),
       userEmails: userEmailsSelector(state),
-      profile: profileSelector(state),
+      users: usersSelector(state),
     }),
     dispatch => ({
       selectUserAction: bindActionCreators(selectUser, dispatch),

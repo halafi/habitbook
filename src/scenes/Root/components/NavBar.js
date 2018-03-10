@@ -28,7 +28,7 @@ const NAVBAR_MODALS = {
   PROFILE: 'profile',
 }
 
-type NavbarModal = $Values<typeof NAVBAR_MODALS> // eslint-disable-line no-undef
+type NavbarModal = $Values<typeof NAVBAR_MODALS>
 
 type Props = {
   classes: any,

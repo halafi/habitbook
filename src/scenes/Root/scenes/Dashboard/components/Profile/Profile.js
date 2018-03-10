@@ -1,9 +1,6 @@
 // @flow
 
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { compose } from 'redux'
-import { firebaseConnect } from 'react-redux-firebase'
 import moment from 'moment'
 
 import Card, { CardContent } from 'material-ui/Card'
@@ -17,15 +14,9 @@ import List, { ListItem, ListItemText } from 'material-ui/List'
 import Tasks from './components/Tasks'
 
 import type { Goals } from '../../../../../../common/records/Goal'
-import type { Users } from '../../../../../../common/records/Firebase/User'
+import type { Profile as ProfileType } from '../../../../../../common/records/Firebase/Profile'
 
 import { getFirstGoalStarted, getLastGoalReset } from './services/utils'
-import {
-  currentUserIdSelector,
-  usersSelector,
-  goalsSelector,
-} from '../../../../../../common/selectors/firebaseSelectors'
-import { selectedUserIdSelector } from '../../../../../../common/selectors/dashboardSelectors'
 import {
   getExpRequiredForNextRank,
   getFlooredExp,
@@ -35,14 +26,11 @@ import {
 } from '../../../../../../common/records/Rank'
 
 type Props = {
-  firebase: any,
   classes: Object,
-  goals: {
-    [userId: string]: Goals,
-  },
-  currentUserId: string,
+  firebase: any,
+  goals: Goals,
+  profile: ProfileType, // TODO: check type
   selectedUserId: string,
-  users: Users,
 }
 
 const styles = theme => ({
@@ -62,24 +50,17 @@ const styles = theme => ({
 
 class Profile extends Component<Props> {
   render() {
-    const { users, classes, goals, currentUserId, selectedUserId, firebase } = this.props
+    const { classes, profile, goals, selectedUserId, firebase } = this.props
 
-    const shownUserId = selectedUserId || currentUserId
-    const profile = users && users[shownUserId]
-    const currUserGoals = goals ? goals[shownUserId] : {}
-
-    // exp
-    const experience = (profile && profile.experience) || 0
-    const expRequiredForNextRank = getExpRequiredForNextRank(experience)
+    const experience = profile.experience || 0
+    const expRequiredNextRank = getExpRequiredForNextRank(experience)
 
     // global streak across all goals (!shared)
-    const currentStreak = currUserGoals
-      ? moment().diff(getLastGoalReset(currUserGoals) || getFirstGoalStarted(currUserGoals), 'd')
+    const currentStreak = goals
+      ? moment().diff(getLastGoalReset(goals) || getFirstGoalStarted(goals), 'd')
       : 0
 
-    const percentOfLevelDone = (getFlooredExp(experience) / (expRequiredForNextRank / 100)).toFixed(
-      2,
-    )
+    const percentOfLevelDone = (getFlooredExp(experience) / (expRequiredNextRank / 100)).toFixed(2)
 
     return (
       <Card className={classes.root}>
@@ -103,13 +84,13 @@ class Profile extends Component<Props> {
                     secondary={
                       <Tooltip
                         id="tooltip-progress-profile"
-                        title={`${expRequiredForNextRank -
+                        title={`${expRequiredNextRank -
                           getFlooredExp(
                             experience,
                           )} XP required for next rank (${percentOfLevelDone}% complete)`}
                         placement="right"
                       >
-                        <progress value={getFlooredExp(experience)} max={expRequiredForNextRank} />
+                        <progress value={getFlooredExp(experience)} max={expRequiredNextRank} />
                       </Tooltip>
                     }
                   />,
@@ -135,13 +116,4 @@ class Profile extends Component<Props> {
   }
 }
 
-export default compose(
-  firebaseConnect(['goals', 'users']),
-  connect(state => ({
-    users: usersSelector(state),
-    goals: goalsSelector(state),
-    currentUserId: currentUserIdSelector(state),
-    selectedUserId: selectedUserIdSelector(state),
-  })),
-  withStyles(styles),
-)(Profile)
+export default withStyles(styles)(Profile)

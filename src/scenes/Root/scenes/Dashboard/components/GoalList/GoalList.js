@@ -1,9 +1,6 @@
 // @flow
 
 import React, { Component } from 'react'
-import { compose } from 'redux'
-import { connect } from 'react-redux'
-import { firebaseConnect } from 'react-redux-firebase'
 import moment from 'moment'
 import * as R from 'ramda'
 import Card, { CardContent } from 'material-ui/Card'
@@ -32,22 +29,19 @@ import {
 import NoGoalsImg from '../../../../../../../images/nogoals.svg'
 import { GOAL_SORT_TYPES } from './consts/sortTypes'
 import ResetDialog from './components/ResetDialog/ResetDialog'
-import { usersSelector } from '../../../../../../common/selectors/firebaseSelectors'
 import type { SharedGoals } from '../../../../../../common/records/SharedGoal'
 import SharedGoalView from './components/SharedGoalView/SharedGoalView'
 
 type Props = {
   classes: Object,
-  title: string,
-  profile: Profile,
-  goals: {
-    [userId: string]: Goals,
-  },
-  sharedGoals: SharedGoals,
-  firebase: any,
   currentUserId: string,
-  selectedUserId: string,
+  firebase: any,
+  goals: { [userId: string]: Goals },
+  profile: Profile,
   readOnly: boolean,
+  selectedUserId: string,
+  sharedGoals: SharedGoals,
+  title: string,
   users: ?Users,
 }
 
@@ -58,7 +52,7 @@ const GOAL_MODALS = {
   RESET_SHARED: 'resetShared',
 }
 
-type GoalModal = $Values<typeof GOAL_MODALS> // eslint-disable-line no-undef
+type GoalModal = $Values<typeof GOAL_MODALS>
 
 type Friends = Array<{ value: string, label: string }>
 
@@ -622,12 +616,4 @@ class GoalList extends Component<Props, State> {
   }
 }
 
-export default compose(
-  firebaseConnect(),
-  connect(state => ({
-    profile: state.firebase.profile,
-    users: usersSelector(state),
-    currentUserId: state.firebase.auth.uid,
-  })),
-  withStyles(styles),
-)(GoalList)
+export default withStyles(styles)(GoalList)

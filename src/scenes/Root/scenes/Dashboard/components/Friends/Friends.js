@@ -20,13 +20,13 @@ import { emailValid } from '../../../../../../common/services/validators'
 
 type Props = {
   classes: Object,
-  users: Users,
-  userEmails: Array<string>,
-  profile: Profile,
-  firebase: any,
   currentUserId: string,
-  selectUser: (?string) => void,
+  firebase: any,
+  profile: Profile,
   selectedUserId: string, // uid
+  selectUser: (?string) => void,
+  userEmails: Array<string>,
+  users: Users,
 }
 
 type State = {

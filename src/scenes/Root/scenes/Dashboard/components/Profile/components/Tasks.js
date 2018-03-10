@@ -81,9 +81,9 @@ const Tasks = ({ profile, firebase }: Props) => (
           >
             <ListItemText
               primary={`Task: ${goal.title}`}
-              secondary={`Reward: ${goal.reward} XP ${goal.checked(profile)
-                ? '(click to collect)'
-                : ''}`}
+              secondary={`Reward: ${goal.reward} XP ${
+                goal.checked(profile) ? '(click to collect)' : ''
+              }`}
             />
             <ListItemSecondaryAction>
               <Checkbox disabled checked={goal.checked(profile)} />
