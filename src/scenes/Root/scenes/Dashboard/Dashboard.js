@@ -3,7 +3,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { compose, bindActionCreators } from 'redux'
-import { withStyles } from 'material-ui/styles'
 import { firebaseConnect } from 'react-redux-firebase'
 import Grid from 'material-ui/Grid'
 
@@ -29,7 +28,6 @@ import {
 import { selectUser } from '../../../../common/actions/dashboardActions'
 
 type Props = {
-  classes: Object,
   currentUserId: string,
   firebase: any,
   goals: ?Goals,
@@ -41,16 +39,9 @@ type Props = {
   users: ?Users,
 }
 
-const styles = {
-  root: {
-    flexGrow: 1,
-  },
-}
-
 class Dashboard extends Component<Props> {
   render() {
     const {
-      classes,
       currentUserId,
       firebase,
       goals,
@@ -77,52 +68,49 @@ class Dashboard extends Component<Props> {
         : 'Your Challenges'
 
     return (
-      <div className={classes.root}>
-        <Grid container direction="row">
-          <Grid item xs={12}>
-            <GoalList
-              currentUserId={currentUserId}
-              firebase={firebase}
-              goals={shownGoals}
-              profile={profile}
-              readOnly={Boolean(selectedUserId)}
-              selectedUserId={selectedUserId}
-              sharedGoals={sharedGoals}
-              title={title}
-              users={users}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Grid container direction="row" alignItems="center" justify="center">
-              <Grid item xs={12} sm={6}>
-                <Profile
-                  firebase={firebase}
-                  goals={shownGoals}
-                  profile={users[shownUserId]}
-                  selectedUserId={selectedUserId}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Friends
-                  firebase={firebase}
-                  currentUserId={currentUserId}
-                  profile={profile}
-                  selectedUserId={selectedUserId}
-                  selectUser={selectUserAction}
-                  userEmails={userEmails}
-                  users={users}
-                />
-              </Grid>
+      <Grid container direction="row">
+        <Grid item xs={12}>
+          <GoalList
+            currentUserId={currentUserId}
+            firebase={firebase}
+            goals={shownGoals}
+            profile={profile}
+            readOnly={Boolean(selectedUserId)}
+            selectedUserId={selectedUserId}
+            sharedGoals={sharedGoals}
+            title={title}
+            users={users}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Grid container direction="row" alignItems="center" justify="center">
+            <Grid item xs={12} sm={6}>
+              <Profile
+                firebase={firebase}
+                goals={shownGoals}
+                profile={users[shownUserId]}
+                selectedUserId={selectedUserId}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Friends
+                firebase={firebase}
+                currentUserId={currentUserId}
+                profile={profile}
+                selectedUserId={selectedUserId}
+                selectUser={selectUserAction}
+                userEmails={userEmails}
+                users={users}
+              />
             </Grid>
           </Grid>
         </Grid>
-      </div>
+      </Grid>
     )
   }
 }
 
 export default compose(
-  withStyles(styles),
   firebaseConnect(['sharedGoals', 'goals', 'users']),
   connect(
     state => ({
