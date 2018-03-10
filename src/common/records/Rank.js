@@ -1,6 +1,9 @@
+// @flow
+
 import * as R from 'ramda'
 import neoImage from '../../../images/avatar-neo.jpg'
 import paesantImage from '../../../images/avatar-paesant.png'
+// $FlowFixMe
 import morpheusImage from '../../../images/avatar-morpheus.jpeg'
 import mageImage from '../../../images/avatar-mage.png'
 import dogeImage from '../../../images/avatar-doge.png'
@@ -33,7 +36,7 @@ export const RANKS = {
   },
 }
 
-export type Rank = 'Paesant' | 'Mage' | 'Neo'
+export type Rank = 'Paesant' | 'Mage' | 'Doge' | 'Morpheus' | 'Neo'
 
 export const getRankIdFromExp = (exp: number): number => {
   if (!exp) return 0
@@ -45,7 +48,10 @@ export const getRankIdFromExp = (exp: number): number => {
 
 export const getRankFromExp = (exp: number): Rank => {
   const rankValues = Object.values(RANKS)
-  if (!exp || exp < 0) return RANKS.PAESANT.name
+  if (!exp || exp < 0) {
+    return RANKS.PAESANT.name
+  }
+  // $FlowFixMe
   return rankValues[getRankIdFromExp(exp)].name
 }
 
@@ -55,6 +61,7 @@ export const getExpRequiredForNextRank = (exp: number): number => {
   if (!nextRank) {
     return 666666
   }
+  // $FlowFixMe
   return nextRank.expRequired - Object.values(RANKS)[currRank].expRequired
 }
 
@@ -64,11 +71,14 @@ export const getFlooredExp = (exp: number): number => {
   if (!prevRank) {
     return exp
   }
+  // $FlowFixMe
   return 0 + exp - Object.values(RANKS)[currRank].expRequired
 }
 
 export const getNextRankFromExp = (exp: number): ?Rank =>
+  // $FlowFixMe
   Object.values(RANKS)[getRankIdFromExp(exp) + 1] || null
 
 export const getAvatarFromExp = (exp: number): string =>
+  // $FlowFixMe
   Object.values(RANKS)[getRankIdFromExp(exp)].img

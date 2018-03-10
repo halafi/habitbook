@@ -1,3 +1,5 @@
+// @flow
+
 export type Goal = {
   ascensionCount: number,
   created: number,

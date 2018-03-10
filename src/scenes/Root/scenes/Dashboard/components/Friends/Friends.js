@@ -12,7 +12,6 @@ import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import IconButton from 'material-ui/IconButton'
 import DeleteIcon from 'material-ui-icons/Delete'
-import type { Profile } from '../../../../../../common/records/Firebase/Profile'
 import type { Users, User } from '../../../../../../common/records/Firebase/User'
 import { getUserIdByEmail } from '../../../../../../common/records/Firebase/User'
 import { getRankFromExp, getRankIdFromExp } from '../../../../../../common/records/Rank'
@@ -22,7 +21,7 @@ type Props = {
   classes: Object,
   currentUserId: string,
   firebase: any,
-  profile: Profile,
+  profile: User,
   selectedUserId: string, // uid
   selectUser: (?string) => void,
   userEmails: Array<string>,
@@ -152,7 +151,7 @@ class Friends extends Component<Props, State> {
                 Object.keys(users).map(userId => {
                   const user: User = users[userId]
 
-                  if (!profile.friends || !profile.friends.includes(userId)) {
+                  if (!profile.friends || (profile.friends && !profile.friends.includes(userId))) {
                     return null
                   }
 
@@ -169,9 +168,8 @@ class Friends extends Component<Props, State> {
                         src={user.photoURL || user.avatarUrl}
                       />
                       <ListItemText
-                        secondary={`Rank ${getRankIdFromExp(user.experience) + 1} - ${getRankFromExp(
-                          user.experience,
-                        )}`}
+                        secondary={`Rank ${getRankIdFromExp(user.experience || 0) +
+                          1} - ${getRankFromExp(user.experience || 0)}`}
                         primary={user.userName || user.displayName}
                       />
                       <ListItemSecondaryAction>

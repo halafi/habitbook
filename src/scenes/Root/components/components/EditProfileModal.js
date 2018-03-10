@@ -8,11 +8,11 @@ import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog'
 
-import type { Profile } from '../../../../common/records/Firebase/Profile'
+import type { User } from '../../../../common/records/Firebase/User'
 
 type Props = {
   firebase: any,
-  profile: Profile,
+  profile: User,
   open: boolean,
   onClose: () => void,
 }
@@ -122,5 +122,4 @@ export default compose(
   connect(state => ({
     profile: state.firebase.profile,
   })),
-  // withStyles(styles),
 )(EditProfileModal)

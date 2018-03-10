@@ -1,3 +1,5 @@
+// @flow
+
 export const GOAL_VISIBILITIES = [
   {
     value: 'secret',

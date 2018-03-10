@@ -7,14 +7,13 @@ import { firebaseConnect } from 'react-redux-firebase'
 import Grid from 'material-ui/Grid'
 
 import GoalList from './components/GoalList/GoalList'
-import { selectedUserIdSelector } from '../../../../common/selectors/dashboardSelectors'
+import { selectedUserIdSelector } from './services/selectors/dashboardSelectors'
 import Loader from './components/Loader/Loader'
 import Friends from './components/Friends/Friends'
 import Profile from './components/Profile/Profile'
 
-import type { Profile as ProfileType } from '../../../../common/records/Firebase/Profile'
 import type { Goals } from '../../../../common/records/Goal'
-import type { Users } from '../../../../common/records/Firebase/User'
+import type { User, Users } from '../../../../common/records/Firebase/User'
 import type { SharedGoals } from '../../../../common/records/SharedGoal'
 
 import {
@@ -25,13 +24,13 @@ import {
   profileSelector,
   userEmailsSelector,
 } from '../../../../common/selectors/firebaseSelectors'
-import { selectUser } from '../../../../common/actions/dashboardActions'
+import { selectUser } from './services/actions/dashboardActions'
 
 type Props = {
   currentUserId: string,
   firebase: any,
   goals: ?Goals,
-  profile: ProfileType,
+  profile: User,
   selectedUserId: ?string,
   selectUserAction: (?string) => void,
   sharedGoals: SharedGoals,

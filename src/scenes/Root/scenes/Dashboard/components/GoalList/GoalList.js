@@ -17,8 +17,7 @@ import ConfirmationModal from '../../../../../../common/components/ConfirmationM
 import { getElapsedDaysBetween } from '../../../../../../common/services/dateTimeUtils'
 import { getGoalVisibility } from '../../../../../../common/records/GoalVisibility'
 import type { Goals } from '../../../../../../common/records/Goal'
-import type { Profile } from '../../../../../../common/records/Firebase/Profile'
-import type { Users } from '../../../../../../common/records/Firebase/User'
+import type { User, Users } from '../../../../../../common/records/Firebase/User'
 import {
   getFinishExpReward,
   getResetExpReward,
@@ -36,13 +35,13 @@ type Props = {
   classes: Object,
   currentUserId: string,
   firebase: any,
-  goals: { [userId: string]: Goals },
-  profile: Profile,
+  goals: Goals,
+  profile: User,
   readOnly: boolean,
   selectedUserId: string,
   sharedGoals: SharedGoals,
   title: string,
-  users: ?Users,
+  users: Users,
 }
 
 const GOAL_MODALS = {
@@ -450,7 +449,9 @@ class GoalList extends Component<Props, State> {
       users,
       currentUserId,
       selectedUserId,
+      firebase,
     } = this.props
+
     const { name, modal, modalDateTime, expandedGoalId, friends, modalGoalId } = this.state
 
     const formValid = name.length > 0
@@ -584,6 +585,7 @@ class GoalList extends Component<Props, State> {
                       onChangeType={R.partial(this.handleChangeTypeShared, [goalId])}
                       onAcceptSharedGoal={R.partial(this.handleAcceptSharedGoal, [goalId])}
                       onFail={R.partial(this.openModal, [GOAL_MODALS.RESET_SHARED, goalId])}
+                      firebase={firebase}
                     />
                   ))}
                 </div>

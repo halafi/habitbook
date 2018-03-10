@@ -1,6 +1,15 @@
+// @flow
+
 import { combineReducers } from 'redux'
 import { firebaseReducer } from 'react-redux-firebase'
-import dashboardReducer from './dashboardReducer'
+import dashboardReducer from '../../scenes/Root/scenes/Dashboard/services'
+
+import type { State as DashboardState } from '../../scenes/Root/scenes/Dashboard/services'
+
+export type GlobalState = {
+  firebase: any,
+  dashboard: DashboardState,
+}
 
 const rootReducer = combineReducers({
   firebase: firebaseReducer,

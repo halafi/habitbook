@@ -1,7 +1,9 @@
-import { DASHBOARD_SELECT_USER } from '../actions/dashboardActions'
+// @flow
 
-type State = {
-  selectedUserId: string, // uid
+import { DASHBOARD_SELECT_USER } from './actions/dashboardActions'
+
+export type State = {
+  selectedUser: ?string, // uid
 }
 
 const initialState = {

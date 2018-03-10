@@ -3,13 +3,19 @@
 import React, { Component } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
+import { isEmpty } from 'react-redux-firebase'
 import { withStyles } from 'material-ui/styles'
 
 import NavBar from './components/NavBar'
 import Intro from './scenes/Welcome/Welcome'
 import Dashboard from './scenes/Dashboard/Dashboard'
 import { profileSelector } from '../../common/selectors/firebaseSelectors'
-import type { Profile } from '../../common/records/Firebase/Profile'
+import type { User } from '../../common/records/Firebase/User'
+
+type Props = {
+  profile: User,
+  classes: Object,
+}
 
 const styles = {
   root: {
@@ -17,11 +23,6 @@ const styles = {
     padding: '10px',
     margin: '0 auto',
   },
-}
-
-type Props = {
-  profile: Profile,
-  classes: Object,
 }
 
 class Root extends Component<Props> {
@@ -32,7 +33,7 @@ class Root extends Component<Props> {
       <div>
         <NavBar profile={profile} />
         <div className={classes.root}>
-          {profile.isLoaded && <div>{profile.isEmpty ? <Intro /> : <Dashboard />}</div>}
+          {profile.isLoaded && <div>{isEmpty(profile) ? <Intro /> : <Dashboard />}</div>}
         </div>
       </div>
     )

@@ -9,7 +9,7 @@ import { withStyles } from 'material-ui/styles'
 import Input from 'material-ui/Input'
 import Grid from 'material-ui/Grid'
 
-import type { Users } from '../../../../../../../../common/records/Firebase/User'
+import type { Users, Friends } from '../../../../../../../../common/records/Firebase/User'
 import SelectWrapped from './components/SelectWrapped/SelectWrapped'
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
   name: string,
   formValid: boolean,
   friendsSelected: ?any,
-  friends: Array<String>,
+  friends: Friends,
   onChangeSelectedFriends: string => void,
   users: Users,
 }

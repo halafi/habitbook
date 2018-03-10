@@ -1,9 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react'
-import { compose } from 'redux'
 import * as R from 'ramda'
-import { withFirebase } from 'react-redux-firebase'
 import moment from 'moment'
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -23,13 +21,13 @@ import TextField from 'material-ui/TextField'
 import IconButton from 'material-ui/IconButton'
 import PersonAddIcon from 'material-ui-icons/PersonAdd'
 import GroupIcon from 'material-ui-icons/Group'
-import type { SharedGoal, SharedGoalUser } from '../../../../../../../../common/records/SharedGoal'
 import {
   getElapsedMinutesBetween,
   getElapsedDaysTillNow,
   getElapsedDaysBetween,
 } from '../../../../../../../../common/services/dateTimeUtils'
-import type { User, Users } from '../../../../../../../../common/records/Firebase/User'
+import type { SharedGoal, SharedGoalUser } from '../../../../../../../../common/records/SharedGoal'
+import type { User, Users, Friends } from '../../../../../../../../common/records/Firebase/User'
 import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
 
 type Props = {
@@ -37,7 +35,7 @@ type Props = {
   goal: SharedGoal,
   users: Users,
   currentUserId: string,
-  friends: Array<String>,
+  friends: Friends,
   onDelete: () => void,
   onChangeDate: (?number) => void,
   onChangeTarget: any => void,
@@ -333,4 +331,4 @@ class SharedGoalView extends PureComponent<Props> {
     )
   }
 }
-export default compose(withFirebase, withStyles(styles))(SharedGoalView)
+export default withStyles(styles)(SharedGoalView)

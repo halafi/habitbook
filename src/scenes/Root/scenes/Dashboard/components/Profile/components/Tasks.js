@@ -4,11 +4,11 @@ import React from 'react'
 import Checkbox from 'material-ui/Checkbox'
 import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List'
 
-import type { Profile } from '../../../../../../../common/records/Firebase/Profile'
+import type { User } from '../../../../../../../common/records/Firebase/User'
 
 type Props = {
   firebase: any,
-  profile: Profile, // not sure about type here
+  profile: User,
 }
 
 const GOALS_ENUM = {

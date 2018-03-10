@@ -14,7 +14,7 @@ import List, { ListItem, ListItemText } from 'material-ui/List'
 import Tasks from './components/Tasks'
 
 import type { Goals } from '../../../../../../common/records/Goal'
-import type { Profile as ProfileType } from '../../../../../../common/records/Firebase/Profile'
+import type { User } from '../../../../../../common/records/Firebase/User'
 
 import { getFirstGoalStarted, getLastGoalReset } from './services/utils'
 import {
@@ -29,7 +29,7 @@ type Props = {
   classes: Object,
   firebase: any,
   goals: Goals,
-  profile: ProfileType, // TODO: check type
+  profile: User,
   selectedUserId: string,
 }
 

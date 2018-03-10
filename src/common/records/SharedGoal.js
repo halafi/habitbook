@@ -1,3 +1,5 @@
+// @flow
+
 export type SharedGoalUser = {
   id: string,
   accepted: boolean,
