@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
@@ -10,19 +12,23 @@ import configureStore from './common/services/configureStore'
 const store = configureStore()
 const theme = createMuiTheme()
 
-// TODO: process.env check (add environment info)
-const sw = true || process.env.NODE_ENV === 'production'
+const registerServiceWorker = false || process.env.NODE_ENV === 'production'
 
-if (sw && 'serviceWorker' in navigator) {
+if (registerServiceWorker && 'serviceWorker' in navigator) {
+  // $FlowFixMe
   navigator.serviceWorker.register('service-worker.js')
 }
 
-render(
-  <Provider store={store}>
-    <MuiThemeProvider theme={theme}>
-      <Reboot />
-      <Root />
-    </MuiThemeProvider>
-  </Provider>,
-  document.getElementById('container'),
-)
+const container = document.getElementById('container')
+
+if (container) {
+  render(
+    <Provider store={store}>
+      <MuiThemeProvider theme={theme}>
+        <Reboot />
+        <Root />
+      </MuiThemeProvider>
+    </Provider>,
+    container,
+  )
+}

@@ -8,7 +8,7 @@ import Grid from 'material-ui/Grid'
 
 import GoalList from './components/GoalList/GoalList'
 import { selectedUserIdSelector } from '../../../../common/selectors/dashboardSelectors'
-import Loader from './components/GoalList/components/Loader/Loader'
+import Loader from './components/Loader/Loader'
 import Friends from './components/Friends/Friends'
 import Profile from './components/Profile/Profile'
 

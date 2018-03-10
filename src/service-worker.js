@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-globals */
+// @flow
 
 // Name our cache
 const CACHE_NAME_STATIC = 'static-v2'
