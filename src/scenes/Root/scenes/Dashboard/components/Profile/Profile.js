@@ -9,7 +9,6 @@ import { withStyles } from 'material-ui/styles/index'
 import Avatar from 'material-ui/Avatar'
 import PersonIcon from 'material-ui-icons/Person'
 import TrendingUpIcon from 'material-ui-icons/TrendingUp'
-import Tooltip from 'material-ui/Tooltip'
 import List, { ListItem, ListItemText } from 'material-ui/List'
 import Tasks from './components/Tasks'
 
@@ -47,6 +46,9 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  displayInherit: {
+    display: 'inherit',
+  },
 })
 
 class Profile extends Component<Props> {
@@ -61,7 +63,7 @@ class Profile extends Component<Props> {
       ? moment().diff(getLastGoalReset(goals) || getFirstGoalStarted(goals), 'd')
       : 0
 
-    const percentOfLevelDone = (getFlooredExp(experience) / (expRequiredNextRank / 100)).toFixed(2)
+    const percentOfLevelDone = (getFlooredExp(experience) / (expRequiredNextRank / 100)).toFixed(1)
 
     return (
       <Card className={classes.root}>
@@ -75,27 +77,23 @@ class Profile extends Component<Props> {
           <Typography component="div" paragraph>
             <List dense={false}>
               <ListItem>
-                {profile && [
-                  <Avatar key="avatar" src={getAvatarFromExp(experience)} />,
-                  <ListItemText
-                    key="ranktext"
-                    primary={`Rank ${getRankIdFromExp(experience) + 1}: ${getRankFromExp(
-                      experience,
-                    )}`}
-                    secondary={
-                      <Tooltip
-                        id="tooltip-progress-profile"
-                        title={`${expRequiredNextRank -
-                          getFlooredExp(
-                            experience,
-                          )} XP required for next rank (${percentOfLevelDone}% complete)`}
-                        placement="right"
-                      >
-                        <progress value={getFlooredExp(experience)} max={expRequiredNextRank} />
-                      </Tooltip>
-                    }
-                  />,
-                ]}
+                {profile && (
+                  <div className={classes.displayInherit}>
+                    <Avatar src={getAvatarFromExp(experience)} />
+                    <ListItemText
+                      primary={`Rank ${getRankIdFromExp(experience) + 1}: ${getRankFromExp(
+                        experience,
+                      )}`}
+                      secondary={
+                        <div>
+                          <progress value={getFlooredExp(experience)} max={expRequiredNextRank} />
+                          <br />
+                          {getFlooredExp(experience)} / {expRequiredNextRank} XP ({percentOfLevelDone}%)
+                        </div>
+                      }
+                    />
+                  </div>
+                )}
               </ListItem>
               <ListItem>
                 <Avatar>

@@ -71,17 +71,17 @@ class Dashboard extends Component<Props> {
     return (
       <Grid container direction="row">
         <Grid item xs={12}>
-          <GoalList
-            currentUserId={currentUserId}
-            firebase={firebase}
-            goals={shownGoals}
-            profile={profile}
-            readOnly={Boolean(selectedUserId)}
-            selectedUserId={selectedUserId}
-            sharedGoals={sharedGoals}
-            title={title}
-            users={users}
-          />
+          {/*<GoalList*/}
+            {/*currentUserId={currentUserId}*/}
+            {/*firebase={firebase}*/}
+            {/*goals={shownGoals}*/}
+            {/*profile={profile}*/}
+            {/*readOnly={Boolean(selectedUserId)}*/}
+            {/*selectedUserId={selectedUserId}*/}
+            {/*sharedGoals={sharedGoals}*/}
+            {/*title={title}*/}
+            {/*users={users}*/}
+          {/*/>*/}
         </Grid>
         <Grid item xs={12}>
           <Grid container direction="row" alignItems="center" justify="center">
