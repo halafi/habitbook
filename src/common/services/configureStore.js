@@ -1,7 +1,6 @@
 import firebase from 'firebase'
 import { createStore, applyMiddleware, compose } from 'redux'
 import { reactReduxFirebase } from 'react-redux-firebase'
-// import thunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 
 import rootReducer from '../reducers/index'
@@ -29,15 +28,22 @@ export default function configureStore() {
     firebase.initializeApp(firebaseConfig)
   }
 
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose // eslint-disable-line no-underscore-dangle
+
+  if (process.env.NODE_ENV === 'production') {
+    const createStoreWithFirebase = composeEnhancers(reactReduxFirebase(firebase, rrfConfig))(
+      createStore,
+    )
+    return createStoreWithFirebase(rootReducer)
+  }
+
+  // development
   const logger = createLogger({
     collapsed: true,
     diff: true,
   })
-
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose // eslint-disable-line no-underscore-dangle
   const createStoreWithFirebase = composeEnhancers(
     reactReduxFirebase(firebase, rrfConfig),
-    // applyMiddleware(thunk),
     applyMiddleware(logger),
   )(createStore)
 

@@ -49,6 +49,9 @@ const styles = theme => ({
   displayInherit: {
     display: 'inherit',
   },
+  progress: {
+    height: '8px',
+  },
 })
 
 class Profile extends Component<Props> {
@@ -86,9 +89,15 @@ class Profile extends Component<Props> {
                       )}`}
                       secondary={
                         <span>
-                          <progress value={getFlooredExp(experience)} max={expRequiredNextRank} />
+                          <progress
+                            className={classes.progress}
+                            value={getFlooredExp(experience)}
+                            max={expRequiredNextRank}
+                          />
                           <br />
-                          {getFlooredExp(experience)} / {expRequiredNextRank} XP ({percentOfLevelDone}%)
+                          <span>
+                            {getFlooredExp(experience)} / {expRequiredNextRank} XP ({percentOfLevelDone}%)
+                          </span>
                         </span>
                       }
                     />
