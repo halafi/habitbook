@@ -13,6 +13,7 @@ import Tooltip from 'material-ui/Tooltip'
 import List, { ListItem, ListItemText } from 'material-ui/List'
 import Tasks from './components/Tasks'
 
+import type { Firebase } from '../../../../../../common/records/Firebase/Firebase'
 import type { Goals } from '../../../../../../common/records/Goal'
 import type { User } from '../../../../../../common/records/Firebase/User'
 
@@ -27,7 +28,7 @@ import {
 
 type Props = {
   classes: Object,
-  firebase: any,
+  firebase: Firebase,
   goals: Goals,
   profile: User,
   selectedUserId: string,

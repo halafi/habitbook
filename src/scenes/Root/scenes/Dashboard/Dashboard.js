@@ -12,6 +12,7 @@ import Loader from './components/Loader/Loader'
 import Friends from './components/Friends/Friends'
 import Profile from './components/Profile/Profile'
 
+import type { Firebase } from '../../../../common/records/Firebase/Firebase'
 import type { Goals } from '../../../../common/records/Goal'
 import type { User, Users } from '../../../../common/records/Firebase/User'
 import type { SharedGoals } from '../../../../common/records/SharedGoal'
@@ -28,7 +29,7 @@ import { selectUser } from './services/actions/dashboardActions'
 
 type Props = {
   currentUserId: string,
-  firebase: any,
+  firebase: Firebase,
   goals: ?Goals,
   profile: User,
   selectedUserId: ?string,
@@ -59,12 +60,13 @@ class Dashboard extends Component<Props> {
     const shownUserId = selectedUserId || currentUserId
     const shownGoals = goals[shownUserId]
 
-    const selectedUser = selectedUserId && users[selectedUserId]
-    const selectedUserName = selectedUser && (selectedUser.userName || selectedUser.displayName)
-    const title =
-      selectedUser && selectedUserName
-        ? `${selectedUserName.split(' ')[0]}'s Challenges`
-        : 'Your Challenges'
+    let title = 'My Challenges'
+    if (selectedUserId && users[selectedUserId]) {
+      const selectedUser = users[selectedUserId]
+      title = selectedUser.userName
+        ? `${selectedUser.userName}'s Challenges`
+        : `${selectedUser.displayName.split(' ')[0]}'s Challenges`
+    }
 
     return (
       <Grid container direction="row">

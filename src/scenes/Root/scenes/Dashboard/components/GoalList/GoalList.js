@@ -29,12 +29,13 @@ import NoGoalsImg from '../../../../../../../images/nogoals.svg'
 import { GOAL_SORT_TYPES } from './consts/sortTypes'
 import ResetDialog from './components/ResetDialog/ResetDialog'
 import type { SharedGoals } from '../../../../../../common/records/SharedGoal'
+import type { Firebase } from '../../../../../../common/records/Firebase/Firebase'
 import SharedGoalView from './components/SharedGoalView/SharedGoalView'
 
 type Props = {
   classes: Object,
   currentUserId: string,
-  firebase: any,
+  firebase: Firebase,
   goals: Goals,
   profile: User,
   readOnly: boolean,

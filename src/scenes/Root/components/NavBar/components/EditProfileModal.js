@@ -8,10 +8,11 @@ import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog'
 
-import type { User } from '../../../../common/records/Firebase/User'
+import type { User } from '../../../../../common/records/Firebase/User'
+import type { Firebase } from '../../../../../common/records/Firebase/Firebase'
 
 type Props = {
-  firebase: any,
+  firebase: Firebase,
   profile: User,
   open: boolean,
   onClose: () => void,

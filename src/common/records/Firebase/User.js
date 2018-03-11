@@ -10,12 +10,15 @@ type Email = string
 // $FlowFixMe
 export type Friends = Array<Email>
 
-export type User = {
+type UserAlways = {
   isLoaded: boolean,
   isEmpty: boolean,
+  displayName: string, // provider
+}
+
+export type UserOptional = {
   avatarUrl?: string, // provider
   photoURL?: string, // custom
-  displayName: string, // provider
   userName?: string, // custom
   email?: Email,
   providerData?: ProviderData,
@@ -26,6 +29,8 @@ export type User = {
   tasks?: Array<string>, // values of GOALS_ENUM
   experience?: number,
 }
+
+export type User = UserAlways & UserOptional
 
 export type Users = {
   [key: string]: User,

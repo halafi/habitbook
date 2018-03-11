@@ -28,10 +28,11 @@ import {
 } from '../../../../../../../../common/services/dateTimeUtils'
 import type { SharedGoal, SharedGoalUser } from '../../../../../../../../common/records/SharedGoal'
 import type { User, Users, Friends } from '../../../../../../../../common/records/Firebase/User'
+import type { Firebase } from '../../../../../../../../common/records/Firebase/Firebase'
 import DateTimePicker from '../../../../../../../../common/components/DateTimePicker/DateTimePicker'
 
 type Props = {
-  firebase: any,
+  firebase: Firebase,
   goal: SharedGoal,
   users: Users,
   currentUserId: string,

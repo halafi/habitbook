@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { isEmpty } from 'react-redux-firebase'
 import { withStyles } from 'material-ui/styles'
 
-import NavBar from './components/NavBar'
+import NavBar from './components/NavBar/NavBar'
 import Intro from './scenes/Welcome/Welcome'
 import Dashboard from './scenes/Dashboard/Dashboard'
 import { profileSelector } from '../../common/selectors/firebaseSelectors'

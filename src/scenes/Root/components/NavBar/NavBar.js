@@ -13,9 +13,10 @@ import IconButton from 'material-ui/IconButton'
 import Avatar from 'material-ui/Avatar'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import Button from 'material-ui/Button'
-import type { User } from '../../../common/records/Firebase/User'
-import { selectUser } from '../scenes/Dashboard/services/actions/dashboardActions'
-import { selectedUserIdSelector } from '../scenes/Dashboard/services/selectors/dashboardSelectors'
+import type { User } from '../../../../common/records/Firebase/User'
+import type { Firebase } from '../../../../common/records/Firebase/Firebase'
+import { selectUser } from '../../scenes/Dashboard/services/actions/dashboardActions'
+import { selectedUserIdSelector } from '../../scenes/Dashboard/services/selectors/dashboardSelectors'
 import EditProfileModal from './components/EditProfileModal'
 
 const styles = {
@@ -32,7 +33,7 @@ type NavbarModal = $Values<typeof NAVBAR_MODALS>
 
 type Props = {
   classes: Object,
-  firebase: any,
+  firebase: Firebase,
   profile: User,
   selectUserAction: (?string) => void,
   selectedUserId: string,

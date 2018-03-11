@@ -12,7 +12,10 @@ import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import IconButton from 'material-ui/IconButton'
 import DeleteIcon from 'material-ui-icons/Delete'
+
 import type { Users, User } from '../../../../../../common/records/Firebase/User'
+import type { Firebase } from '../../../../../../common/records/Firebase/Firebase'
+
 import { getUserIdByEmail } from '../../../../../../common/records/Firebase/User'
 import { getRankFromExp, getRankIdFromExp } from '../../../../../../common/records/Rank'
 import { emailValid } from '../../../../../../common/services/validators'
@@ -20,7 +23,7 @@ import { emailValid } from '../../../../../../common/services/validators'
 type Props = {
   classes: Object,
   currentUserId: string,
-  firebase: any,
+  firebase: Firebase,
   profile: User,
   selectedUserId: string, // uid
   selectUser: (?string) => void,

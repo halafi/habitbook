@@ -5,9 +5,10 @@ import Checkbox from 'material-ui/Checkbox'
 import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List'
 
 import type { User } from '../../../../../../../common/records/Firebase/User'
+import type { Firebase } from '../../../../../../../common/records/Firebase/Firebase'
 
 type Props = {
-  firebase: any,
+  firebase: Firebase,
   profile: User,
 }
 

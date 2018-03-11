@@ -5,9 +5,10 @@ import { firebaseReducer } from 'react-redux-firebase'
 import dashboardReducer from '../../scenes/Root/scenes/Dashboard/services'
 
 import type { State as DashboardState } from '../../scenes/Root/scenes/Dashboard/services'
+import type { Firebase } from '../records/Firebase/Firebase'
 
 export type GlobalState = {
-  firebase: any,
+  firebase: Firebase,
   dashboard: DashboardState,
 }
 
