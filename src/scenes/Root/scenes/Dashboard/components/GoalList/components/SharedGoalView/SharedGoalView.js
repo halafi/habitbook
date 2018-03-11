@@ -59,11 +59,13 @@ const styles = theme => ({
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
   },
+  secondaryHeadingMarginLeft: {
+    fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
+    marginLeft: '8px',
+  },
   paddedText: {
     margin: '16px 0',
-  },
-  marginLeft: {
-    marginLeft: '8px',
   },
 })
 
@@ -141,8 +143,8 @@ class SharedGoalView extends PureComponent<Props> {
             </Grid>
             <Grid item md={5} xs={3}>
               <Grid container alignItems="center">
-                <GroupIcon fontSize color="action" />
-                <Typography className={[classes.secondaryHeading, classes.marginLeft]}>
+                <GroupIcon color="action" />
+                <Typography className={classes.secondaryHeadingMarginLeft}>
                   {activeParticipants}
                 </Typography>
               </Grid>
@@ -207,7 +209,7 @@ class SharedGoalView extends PureComponent<Props> {
               </form>
             </Grid>
             <Grid item xs={12}>
-              <Typography>
+              <Typography component="div">
                 <div className={classes.paddedText}>
                   {goal.type === GOAL_TYPES.DURATION ? (
                     <span>{goal.target} days required to complete. If you fail you are out.</span>
@@ -259,11 +261,7 @@ class SharedGoalView extends PureComponent<Props> {
                     return (
                       <ListItem key={x.email} dense className={classes.listItem}>
                         <Avatar src={x.photoURL || x.avatarUrl} />
-                        <ListItemText
-                          primary={x.userName || x.displayName}
-                          secondary={status}
-                          dense
-                        />
+                        <ListItemText primary={x.userName || x.displayName} secondary={status} />
                         <ListItemSecondaryAction>
                           <IconButton
                             disabled={

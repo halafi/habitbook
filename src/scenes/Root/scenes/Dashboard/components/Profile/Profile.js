@@ -85,11 +85,11 @@ class Profile extends Component<Props> {
                         experience,
                       )}`}
                       secondary={
-                        <div>
+                        <span>
                           <progress value={getFlooredExp(experience)} max={expRequiredNextRank} />
                           <br />
                           {getFlooredExp(experience)} / {expRequiredNextRank} XP ({percentOfLevelDone}%)
-                        </div>
+                        </span>
                       }
                     />
                   </div>
