@@ -39,7 +39,7 @@ export const RANKS = {
 export type Rank = 'Paesant' | 'Mage' | 'Doge' | 'Morpheus' | 'Neo'
 
 export const getRankIdFromExp = (exp: number): number => {
-  if (!exp) return 0
+  if (!exp || exp < 0) return 0
   const rank = R.compose(R.head, R.last, R.filter(pair => pair[1].expRequired <= exp), R.toPairs)(
     RANKS,
   )
@@ -74,10 +74,6 @@ export const getFlooredExp = (exp: number): number => {
   // $FlowFixMe
   return 0 + exp - Object.values(RANKS)[currRank].expRequired
 }
-
-export const getNextRankFromExp = (exp: number): ?Rank =>
-  // $FlowFixMe
-  Object.values(RANKS)[getRankIdFromExp(exp) + 1] || null
 
 export const getAvatarFromExp = (exp: number): string =>
   // $FlowFixMe

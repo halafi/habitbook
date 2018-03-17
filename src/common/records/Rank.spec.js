@@ -1,43 +1,81 @@
-import { RANKS, getRankFromExp, getNextRankFromExp, getExpRequiredForNextRank } from './Rank'
+import {
+  RANKS,
+  getRankFromExp,
+  getRankIdFromExp,
+  getExpRequiredForNextRank,
+  getAvatarFromExp,
+  getFlooredExp,
+} from './Rank'
 
 describe('Rank', () => {
-  test('getRankFromExp', () => {
-    const rankValues = Object.values(RANKS)
-    expect(getRankFromExp(-5)).toEqual(undefined)
-    expect(getRankFromExp(0)).toEqual(rankValues[0])
-    expect(getRankFromExp(999)).toEqual(rankValues[0])
-    expect(getRankFromExp(1000)).toEqual(rankValues[1])
-    expect(getRankFromExp(1001)).toEqual(rankValues[1])
-    expect(getRankFromExp(1999)).toEqual(rankValues[1])
-    expect(getRankFromExp(2000)).toEqual(rankValues[2])
-    expect(getRankFromExp(3000)).toEqual(rankValues[3])
-    expect(getRankFromExp(3999)).toEqual(rankValues[3])
-    expect(getRankFromExp(7999)).toEqual(rankValues[7])
-    expect(getRankFromExp(10999)).toEqual(rankValues[rankValues.length - 1]) // should return last rank
+  test('getRankIdFromExp', () => {
+    expect(getRankIdFromExp(-1)).toEqual(0)
+    expect(getRankIdFromExp(0)).toEqual(0)
+    expect(getRankIdFromExp(1)).toEqual(0)
+    expect(getRankIdFromExp(RANKS.MAGE.expRequired)).toEqual(1)
+    expect(getRankIdFromExp(RANKS.MAGE.expRequired + 1)).toEqual(1)
+    expect(getRankIdFromExp(RANKS.DOGE.expRequired)).toEqual(2)
+    expect(getRankIdFromExp(RANKS.DOGE.expRequired + 50)).toEqual(2)
+    expect(getRankIdFromExp(RANKS.MORPHEUS.expRequired - 1)).toEqual(2)
+    expect(getRankIdFromExp(RANKS.MORPHEUS.expRequired)).toEqual(3)
+    expect(getRankIdFromExp(RANKS.NEO.expRequired)).toEqual(4)
+    expect(getRankIdFromExp(RANKS.NEO.expRequired + 1000)).toEqual(4)
   })
-  test('getNextRankFromExp', () => {
-    const rankValues = Object.values(RANKS)
-    expect(getNextRankFromExp(-5)).toEqual(rankValues[0])
-    expect(getNextRankFromExp(0)).toEqual(rankValues[1])
-    expect(getNextRankFromExp(999)).toEqual(rankValues[1])
-    expect(getNextRankFromExp(1000)).toEqual(rankValues[2])
-    expect(getNextRankFromExp(1001)).toEqual(rankValues[2])
-    expect(getNextRankFromExp(1999)).toEqual(rankValues[2])
-    expect(getNextRankFromExp(2000)).toEqual(rankValues[3])
-    expect(getNextRankFromExp(3000)).toEqual(rankValues[4])
-    expect(getNextRankFromExp(3999)).toEqual(rankValues[4])
-    expect(getNextRankFromExp(7999)).toEqual(rankValues[8])
-    expect(getNextRankFromExp(10999)).toEqual(null)
+  test('getRankFromExp', () => {
+    expect(getRankFromExp(-1)).toEqual(RANKS.PAESANT.name)
+    expect(getRankFromExp(0)).toEqual(RANKS.PAESANT.name)
+    expect(getRankFromExp(1)).toEqual(RANKS.PAESANT.name)
+    expect(getRankFromExp(RANKS.MAGE.expRequired)).toEqual(RANKS.MAGE.name)
+    expect(getRankFromExp(RANKS.MAGE.expRequired + 1)).toEqual(RANKS.MAGE.name)
+    expect(getRankFromExp(RANKS.DOGE.expRequired)).toEqual(RANKS.DOGE.name)
+    expect(getRankFromExp(RANKS.DOGE.expRequired + 50)).toEqual(RANKS.DOGE.name)
+    expect(getRankFromExp(RANKS.MORPHEUS.expRequired - 1)).toEqual(RANKS.DOGE.name)
+    expect(getRankFromExp(RANKS.MORPHEUS.expRequired)).toEqual(RANKS.MORPHEUS.name)
+    expect(getRankFromExp(RANKS.NEO.expRequired)).toEqual(RANKS.NEO.name)
+    expect(getRankFromExp(RANKS.NEO.expRequired + 1000)).toEqual(RANKS.NEO.name)
   })
   test('getExpRequiredForNextRank', () => {
-    expect(getExpRequiredForNextRank(0)).toEqual(1000)
-    expect(getExpRequiredForNextRank(500)).toEqual(1000)
-    expect(getExpRequiredForNextRank(999)).toEqual(1000)
-    expect(getExpRequiredForNextRank(1000)).toEqual(2000)
-    expect(getExpRequiredForNextRank(1999)).toEqual(2000)
-    expect(getExpRequiredForNextRank(8999)).toEqual(9000)
-    expect(getExpRequiredForNextRank(9999)).toEqual(10000)
-    expect(getExpRequiredForNextRank(10000)).toEqual(10000)
-    expect(getExpRequiredForNextRank(20000)).toEqual(10000)
+    expect(getExpRequiredForNextRank(-1)).toEqual(RANKS.MAGE.expRequired)
+    expect(getExpRequiredForNextRank(0)).toEqual(RANKS.MAGE.expRequired)
+    expect(getExpRequiredForNextRank(1)).toEqual(RANKS.MAGE.expRequired)
+    expect(getExpRequiredForNextRank(RANKS.MAGE.expRequired)).toEqual(
+      RANKS.DOGE.expRequired - RANKS.MAGE.expRequired,
+    )
+    expect(getExpRequiredForNextRank(RANKS.DOGE.expRequired)).toEqual(
+      RANKS.MORPHEUS.expRequired - RANKS.DOGE.expRequired,
+    )
+    expect(getExpRequiredForNextRank(RANKS.MORPHEUS.expRequired)).toEqual(
+      RANKS.NEO.expRequired - RANKS.MORPHEUS.expRequired,
+    )
+    expect(getExpRequiredForNextRank(RANKS.NEO.expRequired)).toEqual(666666)
+  })
+  test('getAvatarFromExp', () => {
+    expect(getAvatarFromExp(-1)).toEqual(RANKS.PAESANT.img)
+    expect(getAvatarFromExp(0)).toEqual(RANKS.PAESANT.img)
+    expect(getAvatarFromExp(1)).toEqual(RANKS.PAESANT.img)
+    Object.keys(RANKS).forEach(rank => {
+      expect(getAvatarFromExp(RANKS[rank].expRequired)).toEqual(RANKS[rank].img)
+    })
+  })
+  test('getFlooredExp', () => {
+    expect(getFlooredExp(-1)).toEqual(-1)
+    expect(getFlooredExp(0)).toEqual(0)
+    expect(getFlooredExp(1)).toEqual(1)
+
+    Object.keys(RANKS).forEach(rank => {
+      expect(getFlooredExp(RANKS[rank].expRequired)).toEqual(0)
+      expect(getFlooredExp(RANKS[rank].expRequired + 5)).toEqual(5)
+      expect(getFlooredExp(RANKS[rank].expRequired + 50)).toEqual(50)
+    })
+    expect(getFlooredExp(RANKS.DOGE.expRequired + RANKS.MORPHEUS.expRequired - 1)).toEqual(
+      RANKS.MORPHEUS.expRequired - RANKS.DOGE.expRequired - 1,
+    )
+    expect(getFlooredExp(RANKS.DOGE.expRequired + RANKS.MORPHEUS.expRequired - 500)).toEqual(0)
+    expect(getFlooredExp(RANKS.DOGE.expRequired + RANKS.MORPHEUS.expRequired)).toEqual(
+      RANKS.MORPHEUS.expRequired - RANKS.DOGE.expRequired,
+    )
+    expect(getFlooredExp(RANKS.DOGE.expRequired + RANKS.MORPHEUS.expRequired)).toEqual(
+      RANKS.MORPHEUS.expRequired - RANKS.DOGE.expRequired,
+    )
   })
 })

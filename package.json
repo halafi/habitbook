@@ -20,9 +20,18 @@
       "src/**/*.js",
       "!**/node_modules/**",
       "!**/dist/**",
+      "!**/consts/**",
+      "!**/records/**",
       "!**/build/**",
-      "!**/setupTests.js"
-    ]
+      "!**/setupTests.js",
+      "!**/src/service-worker.js",
+      "!**/src/assetsTransformer.js",
+      "!**/src/index.js"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/assetsTransformer.js",
+      "\\.(css|less)$": "<rootDir>/src/assetsTransformer.js"
+    }
   },
   "dependencies": {
     "enzyme": "^3.3.0",

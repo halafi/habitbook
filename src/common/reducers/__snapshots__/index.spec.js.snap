@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Root reducer should return the initial state 1`] = `
+Object {
+  "dashboard": Object {
+    "selectedUser": null,
+  },
+  "firebase": Object {
+    "auth": Object {
+      "isEmpty": true,
+      "isLoaded": false,
+    },
+    "authError": null,
+    "data": Object {},
+    "errors": Array [],
+    "isInitializing": false,
+    "listeners": Object {
+      "allIds": Array [],
+      "byId": Object {},
+    },
+    "ordered": Object {},
+    "profile": Object {
+      "isEmpty": true,
+      "isLoaded": false,
+    },
+    "requested": Object {},
+    "requesting": Object {},
+    "timestamps": Object {},
+  },
+}
+`;

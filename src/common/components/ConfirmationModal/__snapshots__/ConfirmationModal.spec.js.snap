@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmationModal renders component 1`] = `
+<WithStyles(Dialog)
+  aria-describedby="alert-dialog-description"
+  aria-labelledby="alert-dialog-title"
+  onClose={[MockFunction]}
+  open={true}
+>
+  <WithStyles(DialogTitle)
+    id="alert-dialog-title"
+  >
+    Title
+  </WithStyles(DialogTitle)>
+  <WithStyles(DialogContent)>
+    <WithStyles(DialogContentText)
+      id="alert-dialog-description"
+    />
+  </WithStyles(DialogContent)>
+  <WithStyles(DialogActions)>
+    <WithStyles(Button)
+      autoFocus={true}
+      color="primary"
+      onClick={[MockFunction]}
+    >
+      Confirm
+    </WithStyles(Button)>
+    <WithStyles(Button)
+      onClick={[MockFunction]}
+    >
+      Cancel
+    </WithStyles(Button)>
+  </WithStyles(DialogActions)>
+</WithStyles(Dialog)>
+`;
+
+exports[`ConfirmationModal renders component 2`] = `
+Object {
+  "aria-describedby": "alert-dialog-description",
+  "aria-labelledby": "alert-dialog-title",
+  "children": Array [
+    <WithStyles(DialogTitle)
+      id="alert-dialog-title"
+    >
+      Title
+    </WithStyles(DialogTitle)>,
+    <WithStyles(DialogContent)>
+      <WithStyles(DialogContentText)
+        id="alert-dialog-description"
+      />
+    </WithStyles(DialogContent)>,
+    <WithStyles(DialogActions)>
+      <WithStyles(Button)
+        autoFocus={true}
+        color="primary"
+        onClick={[MockFunction]}
+      >
+        Confirm
+      </WithStyles(Button)>
+      <WithStyles(Button)
+        onClick={[MockFunction]}
+      >
+        Cancel
+      </WithStyles(Button)>
+    </WithStyles(DialogActions)>,
+  ],
+  "onClose": [MockFunction],
+  "open": true,
+}
+`;
