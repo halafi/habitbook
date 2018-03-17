@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 import { compose } from 'redux'
-import { connect } from 'react-redux'
 import { withFirebase } from 'react-redux-firebase'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
@@ -118,9 +117,4 @@ class EditProfileModal extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  withFirebase,
-  connect(state => ({
-    profile: state.firebase.profile,
-  })),
-)(EditProfileModal)
+export default EditProfileModal

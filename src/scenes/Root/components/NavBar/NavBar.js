@@ -1,9 +1,7 @@
 // @flow
 
 import React from 'react'
-import { bindActionCreators, compose } from 'redux'
-import { connect } from 'react-redux'
-import { isEmpty, isLoaded, withFirebase } from 'react-redux-firebase'
+import { isEmpty, isLoaded } from 'react-redux-firebase'
 
 import { withStyles } from 'material-ui/styles'
 import AppBar from 'material-ui/AppBar'
@@ -15,8 +13,6 @@ import Menu, { MenuItem } from 'material-ui/Menu'
 import Button from 'material-ui/Button'
 import type { User } from '../../../../common/records/Firebase/User'
 import type { Firebase } from '../../../../common/records/Firebase/Firebase'
-import { selectUser } from '../../scenes/Dashboard/services/actions/dashboardActions'
-import { selectedUserIdSelector } from '../../scenes/Dashboard/services/selectors/dashboardSelectors'
 import EditProfileModal from './components/EditProfileModal'
 
 const styles = {
@@ -82,6 +78,8 @@ class NavBar extends React.Component<Props, State> {
             <EditProfileModal
               open={modal === NAVBAR_MODALS.PROFILE}
               onClose={this.handleCloseModal}
+              profile={profile}
+              firebase={firebase}
             />
           )}
           {unauthenticated && (
@@ -130,15 +128,4 @@ class NavBar extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  withFirebase,
-  connect(
-    state => ({
-      selectedUserId: selectedUserIdSelector(state),
-    }),
-    dispatch => ({
-      selectUserAction: bindActionCreators(selectUser, dispatch),
-    }),
-  ),
-  withStyles(styles),
-)(NavBar)
+export default withStyles(styles)(NavBar)

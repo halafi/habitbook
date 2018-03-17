@@ -1,9 +1,9 @@
 // @flow
 
 import React, { Component } from 'react'
-import { compose } from 'redux'
+import { compose, bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { isEmpty } from 'react-redux-firebase'
+import { isEmpty, withFirebase } from 'react-redux-firebase'
 import { withStyles } from 'material-ui/styles'
 
 import NavBar from './components/NavBar/NavBar'
@@ -11,9 +11,15 @@ import Intro from './scenes/Welcome/Welcome'
 import Dashboard from './scenes/Dashboard/Dashboard'
 import { profileSelector } from '../../common/selectors/firebaseSelectors'
 import type { User } from '../../common/records/Firebase/User'
+import type { Firebase } from '../../common/records/Firebase/Firebase'
+import { selectUser } from './scenes/Dashboard/services/actions/dashboardActions'
+import { selectedUserIdSelector } from './scenes/Dashboard/services/selectors/dashboardSelectors'
 
 type Props = {
+  firebase: Firebase,
   profile: User,
+  selectUserAction: (?string) => void,
+  selectedUserId: string,
   classes: Object,
 }
 
@@ -27,11 +33,16 @@ const styles = {
 
 class Root extends Component<Props> {
   render() {
-    const { profile, classes } = this.props
+    const { firebase, profile, selectUserAction, selectedUserId, classes } = this.props
 
     return (
       <div>
-        <NavBar profile={profile} />
+        <NavBar
+          firebase={firebase}
+          profile={profile}
+          selectedUserId={selectedUserId}
+          selectUserAction={selectUserAction}
+        />
         <div className={classes.root}>
           {profile.isLoaded && <div>{isEmpty(profile) ? <Intro /> : <Dashboard />}</div>}
         </div>
@@ -41,8 +52,15 @@ class Root extends Component<Props> {
 }
 
 export default compose(
+  withFirebase,
   withStyles(styles),
-  connect(state => ({
-    profile: profileSelector(state),
-  })),
+  connect(
+    state => ({
+      profile: profileSelector(state),
+      selectedUserId: selectedUserIdSelector(state),
+    }),
+    dispatch => ({
+      selectUserAction: bindActionCreators(selectUser, dispatch),
+    }),
+  ),
 )(Root)

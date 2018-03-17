@@ -1,0 +1,120 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditProfileModal renders component 1`] = `
+<WithStyles(Dialog)
+  aria-describedby="alert-dialog-description"
+  aria-labelledby="alert-dialog-title"
+  fullWidth={true}
+  onClose={[Function]}
+  open={true}
+>
+  <WithStyles(DialogTitle)
+    id="alert-dialog-title"
+  >
+    Edit Profile
+  </WithStyles(DialogTitle)>
+  <WithStyles(DialogContent)>
+    <form
+      autoComplete="off"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <TextField
+        fullWidth={true}
+        id="name"
+        label="Display name"
+        margin="dense"
+        onChange={[Function]}
+        required={false}
+        select={false}
+        value="foo"
+      />
+      <TextField
+        fullWidth={true}
+        id="photourl"
+        label="Avatar Url"
+        margin="dense"
+        onChange={[Function]}
+        required={false}
+        select={false}
+        value=""
+      />
+    </form>
+  </WithStyles(DialogContent)>
+  <WithStyles(DialogActions)>
+    <WithStyles(Button)
+      autoFocus={true}
+      color="primary"
+      disabled={false}
+      onClick={[Function]}
+    >
+      Save
+    </WithStyles(Button)>
+    <WithStyles(Button)
+      onClick={[Function]}
+    >
+      Cancel
+    </WithStyles(Button)>
+  </WithStyles(DialogActions)>
+</WithStyles(Dialog)>
+`;
+
+exports[`EditProfileModal renders component 2`] = `
+Object {
+  "aria-describedby": "alert-dialog-description",
+  "aria-labelledby": "alert-dialog-title",
+  "children": Array [
+    <WithStyles(DialogTitle)
+      id="alert-dialog-title"
+    >
+      Edit Profile
+    </WithStyles(DialogTitle)>,
+    <WithStyles(DialogContent)>
+      <form
+        autoComplete="off"
+        noValidate={true}
+        onSubmit={[Function]}
+      >
+        <TextField
+          fullWidth={true}
+          id="name"
+          label="Display name"
+          margin="dense"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          value="foo"
+        />
+        <TextField
+          fullWidth={true}
+          id="photourl"
+          label="Avatar Url"
+          margin="dense"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          value=""
+        />
+      </form>
+    </WithStyles(DialogContent)>,
+    <WithStyles(DialogActions)>
+      <WithStyles(Button)
+        autoFocus={true}
+        color="primary"
+        disabled={false}
+        onClick={[Function]}
+      >
+        Save
+      </WithStyles(Button)>
+      <WithStyles(Button)
+        onClick={[Function]}
+      >
+        Cancel
+      </WithStyles(Button)>
+    </WithStyles(DialogActions)>,
+  ],
+  "fullWidth": true,
+  "onClose": [Function],
+  "open": true,
+}
+`;
