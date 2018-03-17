@@ -224,13 +224,14 @@ class SharedGoalView extends PureComponent<Props> {
                 )}
                 <List dense>
                   {participants.map(x => {
-                    const completedMinutes = x.failed
-                      ? getElapsedMinutesBetween(goal.started, x.failed)
-                      : getElapsedMinutesBetween(goal.started, moment().valueOf())
+                    const completedMinutes = getElapsedMinutesBetween(
+                      goal.started,
+                      x.failed || moment().valueOf(),
+                    )
 
                     const elapsedDaysBetweenStartedFailed = getElapsedDaysBetween(
                       goal.started,
-                      x.failed,
+                      x.failed || moment().valueOf(),
                     )
                     const completedDays =
                       elapsedDaysBetweenStartedFailed > goal.target

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Welcome renders component 1`] = `
+<Welcome
+  classes={
+    Object {
+      "card": "Welcome-card-1",
+      "media": "Welcome-media-2",
+    }
+  }
+/>
+`;
+
+exports[`Welcome renders component 2`] = `
+Object {
+  "classes": Object {
+    "card": "Welcome-card-1",
+    "media": "Welcome-media-2",
+  },
+}
+`;

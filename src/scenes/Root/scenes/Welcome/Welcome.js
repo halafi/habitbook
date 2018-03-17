@@ -21,7 +21,7 @@ const styles = {
   },
 }
 
-const Intro = ({ classes }: Props) => (
+const Welcome = ({ classes }: Props) => (
   <Card className={classes.card}>
     <CardContent>
       <Typography type="headline" component="h2">
@@ -35,4 +35,4 @@ const Intro = ({ classes }: Props) => (
   </Card>
 )
 
-export default withStyles(styles)(Intro)
+export default withStyles(styles)(Welcome)

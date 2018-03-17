@@ -1,6 +1,5 @@
-// TODO: improve
 export const emailValid = email => {
-  if (!email.length) {
+  if (!email || !email.length) {
     return false
   }
   const re = /\S+@\S+\.\S+/
