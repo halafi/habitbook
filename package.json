@@ -26,6 +26,7 @@
       "!**/setupTests.js",
       "!**/src/service-worker.js",
       "!**/src/assetsTransformer.js",
+      "!**/src/configureStore.js",
       "!**/src/index.js"
     ],
     "moduleNameMapper": {

@@ -3,7 +3,7 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import { reactReduxFirebase } from 'react-redux-firebase'
 import { createLogger } from 'redux-logger'
 
-import rootReducer from '../reducers/index'
+import rootReducer from './common/reducers/index'
 
 export default function configureStore() {
   const firebaseConfig = {
