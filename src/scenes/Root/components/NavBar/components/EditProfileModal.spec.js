@@ -9,6 +9,7 @@ describe('EditProfileModal', () => {
       <EditProfileModal
         firebase={{ updateProfile: jest.fn() }}
         open
+        currentUserId="currentUserId"
         onClose={jest.fn()}
         profile={{ userName: 'foo', displayName: 'bar' }}
       />,

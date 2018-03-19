@@ -9,7 +9,7 @@ import { withStyles } from 'material-ui/styles'
 import NavBar from './components/NavBar/NavBar'
 import Intro from './scenes/Welcome/Welcome'
 import Dashboard from './scenes/Dashboard/Dashboard'
-import { profileSelector } from '../../common/selectors/firebaseSelectors'
+import { currentUserIdSelector, profileSelector } from '../../common/selectors/firebaseSelectors'
 import type { User } from '../../common/records/Firebase/User'
 import type { Firebase } from '../../common/records/Firebase/Firebase'
 import { selectUser } from './scenes/Dashboard/services/actions/dashboardActions'
@@ -19,6 +19,7 @@ type Props = {
   firebase: Firebase,
   profile: User,
   selectUserAction: (?string) => void,
+  currentUserId: string,
   selectedUserId: string,
   classes: Object,
 }
@@ -33,7 +34,14 @@ const styles = {
 
 class Root extends Component<Props> {
   render() {
-    const { firebase, profile, selectUserAction, selectedUserId, classes } = this.props
+    const {
+      firebase,
+      profile,
+      selectUserAction,
+      selectedUserId,
+      currentUserId,
+      classes,
+    } = this.props
 
     return (
       <div>
@@ -42,6 +50,7 @@ class Root extends Component<Props> {
           profile={profile}
           selectedUserId={selectedUserId}
           selectUserAction={selectUserAction}
+          currentUserId={currentUserId}
         />
         <div className={classes.root}>
           {profile.isLoaded && <div>{isEmpty(profile) ? <Intro /> : <Dashboard />}</div>}
@@ -57,6 +66,7 @@ export default compose(
   connect(
     state => ({
       profile: profileSelector(state),
+      currentUserId: currentUserIdSelector(state),
       selectedUserId: selectedUserIdSelector(state),
     }),
     dispatch => ({

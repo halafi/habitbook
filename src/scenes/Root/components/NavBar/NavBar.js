@@ -31,6 +31,7 @@ type Props = {
   classes: Object,
   firebase: Firebase,
   profile: User,
+  currentUserId: string,
   selectUserAction: (?string) => void,
   selectedUserId: string,
 }
@@ -61,7 +62,7 @@ class NavBar extends React.Component<Props, State> {
   handleCloseModal = () => this.setState({ modal: null })
 
   render() {
-    const { classes, firebase, profile } = this.props
+    const { classes, firebase, profile, currentUserId } = this.props
     const { anchorEl, modal } = this.state
 
     const menuOpen = Boolean(anchorEl)
@@ -80,6 +81,7 @@ class NavBar extends React.Component<Props, State> {
               onClose={this.handleCloseModal}
               profile={profile}
               firebase={firebase}
+              currentUserId={currentUserId}
             />
           )}
           {unauthenticated && (

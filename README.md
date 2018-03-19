@@ -12,9 +12,8 @@ Progressive Web App that helps you create and maintain good habits, or eliminate
 
 ### Deploy
 Until parcel fixes PWA support:
-* `index.html` and `manifest.json` needs to be manually put to `/build` (duplicated) for deploy
+* `index.html`, `manifest.json`, `images/icons` need to be manually put to `/build` for deploy
 
 Deploy to Firebase:
-* edit `firebaseConfig` in `configureStore.js`, optionally: `firebase.json`, `firebaserc`, `database.rules.json`
 * `firebase login`
 * `yarn deploy`

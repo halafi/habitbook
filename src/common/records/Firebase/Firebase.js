@@ -15,4 +15,5 @@ export type Firebase = {
   updateEmail: string => Promise<void>,
   updatePassword: string => Promise<void>,
   updateProfile: UserOptional => Promise<void>,
+  storage: any,
 }

@@ -11,7 +11,7 @@ export default function configureStore() {
     authDomain: 'concerning-habits.firebaseapp.com',
     databaseURL: 'https://concerning-habits.firebaseio.com',
     projectId: 'concerning-habits',
-    storageBucket: '',
+    storageBucket: 'concerning-habits.appspot.com',
     messagingSenderId: '988346533806',
   }
 

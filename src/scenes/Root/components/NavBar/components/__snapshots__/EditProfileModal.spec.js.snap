@@ -20,6 +20,7 @@ exports[`EditProfileModal renders component 1`] = `
       onSubmit={[Function]}
     >
       <TextField
+        disabled={false}
         fullWidth={true}
         id="name"
         label="Display name"
@@ -30,14 +31,19 @@ exports[`EditProfileModal renders component 1`] = `
         value="foo"
       />
       <TextField
+        disabled={false}
         fullWidth={true}
         id="photourl"
         label="Avatar Url"
         margin="dense"
-        onChange={[Function]}
         required={false}
         select={false}
         value=""
+      />
+      <input
+        disabled={false}
+        onChange={[Function]}
+        type="file"
       />
     </form>
   </WithStyles(DialogContent)>
@@ -51,6 +57,7 @@ exports[`EditProfileModal renders component 1`] = `
       Save
     </WithStyles(Button)>
     <WithStyles(Button)
+      disabled={false}
       onClick={[Function]}
     >
       Cancel
@@ -76,6 +83,7 @@ Object {
         onSubmit={[Function]}
       >
         <TextField
+          disabled={false}
           fullWidth={true}
           id="name"
           label="Display name"
@@ -86,14 +94,19 @@ Object {
           value="foo"
         />
         <TextField
+          disabled={false}
           fullWidth={true}
           id="photourl"
           label="Avatar Url"
           margin="dense"
-          onChange={[Function]}
           required={false}
           select={false}
           value=""
+        />
+        <input
+          disabled={false}
+          onChange={[Function]}
+          type="file"
         />
       </form>
     </WithStyles(DialogContent)>,
@@ -107,6 +120,7 @@ Object {
         Save
       </WithStyles(Button)>
       <WithStyles(Button)
+        disabled={false}
         onClick={[Function]}
       >
         Cancel

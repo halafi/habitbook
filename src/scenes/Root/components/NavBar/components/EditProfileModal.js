@@ -1,8 +1,6 @@
 // @flow
 
 import * as React from 'react'
-import { compose } from 'redux'
-import { withFirebase } from 'react-redux-firebase'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog'
@@ -13,6 +11,7 @@ import type { Firebase } from '../../../../../common/records/Firebase/Firebase'
 type Props = {
   firebase: Firebase,
   profile: User,
+  currentUserId: string,
   open: boolean,
   onClose: () => void,
 }
@@ -20,7 +19,10 @@ type Props = {
 type State = {
   name: string,
   url: string,
+  loading: boolean,
 }
+
+type FileType = any
 
 class EditProfileModal extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -29,6 +31,7 @@ class EditProfileModal extends React.Component<Props, State> {
     this.state = {
       name: props.profile.userName || props.profile.displayName,
       url: props.profile.photoURL || '',
+      loading: false,
     }
   }
 
@@ -68,9 +71,49 @@ class EditProfileModal extends React.Component<Props, State> {
     onClose()
   }
 
+  handleFileInputChange = (ev: any): void => {
+    const file = ev.target.files[0]
+    const split = file.name.split('.')
+    const ext = split[split.length - 1]
+
+    if (file.size > 4000000) {
+      alert('file too big, yo (max 5MB)')
+    } else if (ext !== 'jpg' && ext !== 'jpeg' && ext !== 'gif' && ext !== 'png') {
+      alert('invalid file extension, yo')
+    } else {
+      this.fileUpload(file)
+    }
+  }
+
+  fileUpload(file: FileType) {
+    const { firebase, currentUserId } = this.props
+
+    this.setState(
+      {
+        loading: true,
+      },
+      () => {
+        firebase
+          .storage()
+          .ref()
+          .child(currentUserId)
+          .put(file)
+          .then(snapshot => {
+            this.setState({
+              url: snapshot.downloadURL,
+              loading: false,
+            })
+            firebase.updateProfile({
+              photoURL: snapshot.downloadURL,
+            })
+          })
+      },
+    )
+  }
+
   render() {
     const { open } = this.props
-    const { name, url } = this.state
+    const { name, url, loading } = this.state
 
     return (
       <Dialog
@@ -90,27 +133,31 @@ class EditProfileModal extends React.Component<Props, State> {
               onChange={ev => this.setState({ name: ev.target.value })}
               margin="dense"
               fullWidth
+              disabled={loading}
             />
             <TextField
               id="photourl"
               label="Avatar Url"
               value={url}
-              onChange={ev => this.setState({ url: ev.target.value })}
               margin="dense"
               fullWidth
+              disabled={loading}
             />
+            <input type="file" onChange={this.handleFileInputChange} disabled={loading} />
           </form>
         </DialogContent>
         <DialogActions>
           <Button
-            disabled={!this.formValid()}
+            disabled={loading || !this.formValid()}
             onClick={this.handleSubmit}
             color="primary"
             autoFocus
           >
             Save
           </Button>
-          <Button onClick={this.handleClose}>Cancel</Button>
+          <Button disabled={loading} onClick={this.handleClose}>
+            Cancel
+          </Button>
         </DialogActions>
       </Dialog>
     )
