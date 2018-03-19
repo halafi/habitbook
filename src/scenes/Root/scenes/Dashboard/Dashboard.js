@@ -54,7 +54,7 @@ class Dashboard extends Component<Props> {
     } = this.props
 
     if (!goals || !users) {
-      return <Loader />
+      return <Loader windowWidth={window.innerWidth > 0 ? window.innerWidth : screen.width} /> // eslint-disable-line no-restricted-globals
     }
 
     const shownUserId = selectedUserId || currentUserId
