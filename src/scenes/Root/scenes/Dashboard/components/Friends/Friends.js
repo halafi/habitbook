@@ -67,6 +67,10 @@ const styles = theme => ({
     marginRight: '8px',
     minWidth: '125px',
   },
+  friendsWrapper: {
+    overflowY: 'auto',
+    height: '216px',
+  },
 })
 
 class Friends extends Component<Props, State> {
@@ -148,7 +152,7 @@ class Friends extends Component<Props, State> {
             Friends
           </Typography>
           <Typography component="div" paragraph>
-            <List>
+            <List classes={{ root: classes.friendsWrapper }}>
               {users &&
                 profile &&
                 Object.keys(users).map(userId => {

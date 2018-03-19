@@ -125,8 +125,7 @@ class GoalList extends Component<Props, State> {
   handleExpand = (goalId: string) =>
     this.setState({ expandedGoalId: this.state.expandedGoalId === goalId ? null : goalId })
 
-  handleChangeSelectedFriends = (val: Friends) =>
-    this.setState(state => (val.length > 2 ? state : { friends: val }))
+  handleChangeSelectedFriends = (val: Friends) => this.setState({ friends: val })
 
   handleStartGoal = (goalId: string) => this.updateUserGoal(goalId, { draft: false })
 
