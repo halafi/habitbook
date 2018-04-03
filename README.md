@@ -1,7 +1,5 @@
 # Habitbook
 
-![Travis](https://img.shields.io/badge/build-passing-brightgreen.svg)
-
 Progressive Web App that helps you create and maintain good habits, or eliminate old ones.
 
 ### Build
