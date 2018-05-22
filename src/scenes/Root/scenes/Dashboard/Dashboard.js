@@ -53,12 +53,12 @@ class Dashboard extends Component<Props> {
       users,
     } = this.props
 
-    if (!goals || !users) {
+    if (!users) {
       return <Loader windowWidth={window.innerWidth > 0 ? window.innerWidth : screen.width} /> // eslint-disable-line no-restricted-globals
     }
 
     const shownUserId = selectedUserId || currentUserId
-    const shownGoals = goals[shownUserId]
+    const shownGoals = goals ? goals[shownUserId] : []
 
     let title = 'My Challenges'
     if (selectedUserId && users[selectedUserId]) {

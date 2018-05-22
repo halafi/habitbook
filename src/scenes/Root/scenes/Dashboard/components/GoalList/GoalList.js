@@ -461,7 +461,9 @@ class GoalList extends Component<Props, State> {
       sharedGoals && getSortedSharedGoalsIds(sharedGoals, selectedUserId || currentUserId)
 
     const sharedGoal =
-      modalGoalId && modal === GOAL_MODALS.DELETE_SHARED ? sharedGoals[modalGoalId] : null
+      modalGoalId && modal === GOAL_MODALS.DELETE_SHARED && sharedGoals
+        ? sharedGoals[modalGoalId]
+        : null
 
     const willDeleteSharedGoal =
       modal === GOAL_MODALS.DELETE_SHARED &&
@@ -494,7 +496,7 @@ class GoalList extends Component<Props, State> {
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmReset}
           dateTime={modalDateTime}
-          minDateTime={modalGoalId ? R.propOr(null, 'started')(goals[modalGoalId]) : null}
+          minDateTime={modalGoalId && goals ? R.propOr(null, 'started')(goals[modalGoalId]) : null}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <ResetDialog
@@ -502,7 +504,7 @@ class GoalList extends Component<Props, State> {
           onClose={() => this.setState({ modal: null })}
           onConfirm={this.handleConfirmFailShared}
           dateTime={modalDateTime}
-          minDateTime={modalGoalId ? R.propOr(null, 'started')(sharedGoals[modalGoalId]) : null}
+          minDateTime={modalGoalId && sharedGoals ? R.propOr(null, 'started')(sharedGoals[modalGoalId]) : null}
           onDateTimeChange={val => this.setState({ modalDateTime: val || moment().valueOf() })}
         />
         <CardContent>
@@ -540,7 +542,7 @@ class GoalList extends Component<Props, State> {
           </div>
           <div className={classes.goalsContainer}>
             <div>
-              {goals && (
+              {sortedGoalIds.length > 0 && (
                 <div className={classes.goalsPart}>
                   {sortedGoalIds.map(goalId => (
                     <GoalView
@@ -591,8 +593,8 @@ class GoalList extends Component<Props, State> {
                 </div>
               )}
 
-              {!goals &&
-                !sortedSharedGoalIds.length && (
+              {(!goals || !sortedGoalIds.length) &&
+                (!sortedSharedGoalIds || !sortedSharedGoalIds.length) && (
                   <div className={classes.imageWrapper}>
                     <img alt="no-goals" src={NoGoalsImg} />
                   </div>
